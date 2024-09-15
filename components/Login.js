@@ -1,5 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
+
 import { Ionicons } from "@expo/vector-icons";
 import {
   Pressable,
@@ -9,10 +11,60 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { logIn } from "../services/authService";
 
 export const Login = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validateForm = () => {
+    setIsFormValid(email.trim().length > 0 && password.trim().length > 0);
+  };
+
+  const login = async () => {
+    const dataUser = { email, password };
+    try {
+      const data = await logIn(dataUser);
+      console.log(data);
+      await SecureStore.setItemAsync("token", data.token);
+      const userString = JSON.stringify(data.user);
+      await SecureStore.setItemAsync("user", userString);
+      navigation.navigate("Home");
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRegister = () => {
+    login();
+    return;
+  };
+
+  const handleEmailChange = (text) => {
+    setEmail(text.trim());
+    if (text.trim().length === 0) {
+      setIsFormValid(false);
+    } else {
+      validateForm();
+    }
+  };
+
+  const handlePasswordChange = (text) => {
+    console.log(text);
+    setPassword(text.trim());
+    if (text.trim().length === 0) {
+      setIsFormValid(false);
+    } else {
+      validateForm();
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <View style={{ flex: 1, marginHorizontal: 22 }}>
@@ -53,6 +105,7 @@ export const Login = () => {
               placeholderTextColor="f89fa1"
               keyboardType="email-address"
               style={{ width: "100%" }}
+              onChangeText={handleEmailChange}
             />
           </View>
         </View>
@@ -78,6 +131,7 @@ export const Login = () => {
               placeholderTextColor="f89fa1"
               secureTextEntry={!isPasswordVisible}
               style={{ width: "100%" }}
+              onChangeText={handlePasswordChange}
             />
             <TouchableOpacity
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -109,6 +163,7 @@ export const Login = () => {
             height: 51,
             backgroundColor: "#67104c",
           }}
+          onPress={handleRegister}
           //   onPress={handleRegister}
           //   disabled={!isFormValid}
         >

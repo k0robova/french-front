@@ -1,6 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import { StyleSheet } from "react-native";
 import {
+  Alert,
   Pressable,
   Text,
   TextInput,
@@ -10,11 +13,120 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { CheckBox } from "react-native-btr";
+import * as Validate from "../helpers/validationInput";
+import { singUp } from "../services/authService";
+// import { createFormDataRegister } from "../helpers/createFormDataRegister";
+import { handleChange } from "../helpers/handleChangeInput";
 
 export const Registration = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    birthDate: "",
+    email: "",
+    password: "",
+  });
+  const [formErrors, setFormErrors] = useState({
+    nameError: "",
+    birthDateError: "",
+    emailError: "",
+    passwordError: "",
+  });
+
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    validateForm();
+  }, [formData, formErrors]);
+
+  const register = async () => {
+    newUser = {
+      name: formData.name,
+      birthDate: formData.birthDate,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    try {
+      setIsFormValid(false);
+      const data = await singUp(newUser);
+      await SecureStore.setItemAsync("token", data.token);
+      await SecureStore.setItemAsync("user", JSON.stringify(data.user));
+      setIsFormValid(true);
+      navigation.navigate("Home");
+      Alert.alert(
+        "",
+        "Your registration has been successful! Welcome on board!",
+        [{ text: "Close" }]
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRegister = async () => {
+    await register();
+    return;
+  };
+
+  const handleNameChange = handleChange(
+    setFormData,
+    "name",
+    Validate.validateName,
+    setFormErrors,
+    "nameError",
+    "Start with a capital letter and a minimum of 3 letters"
+  );
+
+  const handleBirthDateChange = handleChange(
+    setFormData,
+    "birthDate",
+    Validate.validateBirthDate,
+    setFormErrors,
+    "birthDateError",
+    "User must be at least 14 years old"
+  );
+
+  const handleEmailChange = handleChange(
+    setFormData,
+    "email",
+    Validate.validateEmail,
+    setFormErrors,
+    "emailError",
+    "Enter a valid email address"
+  );
+
+  const handlePasswordChange = handleChange(
+    setFormData,
+    "password",
+    Validate.validatePassword,
+    setFormErrors,
+    "passwordError",
+    "The password must contain at least 6 characters"
+  );
+
+  const validateForm = () => {
+    const isNameValid = formData.name && !formErrors.nameError;
+    const isDateOfBirthValid =
+      formData.dateOfBirth && !formErrors.dateOfBirthError;
+    const isEmailValid = formData.email && !formErrors.emailError;
+    const isPasswordValid = formData.password && !formErrors.passwordError;
+
+    setIsFormValid(
+      isNameValid && isDateOfBirthValid && isEmailValid && isPasswordValid
+    );
+  };
+
+  const renderError = (error, errorMessage) => {
+    return error ? <Text style={errorMessage}>{error}</Text> : null;
+  };
+
+  // const toggleCheckBox = () => {
+  //   setIsChecked(!isChecked);
+  // };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -52,10 +164,15 @@ export const Registration = () => {
           >
             <TextInput
               placeholder="Enter your name"
-              placeholderTextColor="f89fa1"
-              keyboardType="email-address"
+              placeholderTextColor="#f89fa1"
+              keyboardType="default"
               style={{ width: "100%" }}
+              onChangeText={handleNameChange}
             />
+            {renderError(formErrors.nameError, [
+              styles.errorMessage,
+              { top: -20 },
+            ])}
           </View>
         </View>
 
@@ -77,10 +194,15 @@ export const Registration = () => {
           >
             <TextInput
               placeholder="Enter your date of birth"
-              placeholderTextColor="f89fa1"
-              keyboardType="email-address"
+              placeholderTextColor="#f89fa1"
+              keyboardType="numeric"
               style={{ width: "100%" }}
+              onChangeText={handleBirthDateChange}
             />
+            {renderError(formErrors.birthDateError, [
+              styles.errorMessage,
+              { top: -20 },
+            ])}
           </View>
         </View>
 
@@ -102,10 +224,15 @@ export const Registration = () => {
           >
             <TextInput
               placeholder="Enter your email "
-              placeholderTextColor="f89fa1"
+              placeholderTextColor="#f89fa1"
               keyboardType="email-address"
               style={{ width: "100%" }}
+              onChangeText={handleEmailChange}
             />
+            {renderError(formErrors.emailError, [
+              styles.errorMessage,
+              { top: 38 },
+            ])}
           </View>
         </View>
 
@@ -127,10 +254,15 @@ export const Registration = () => {
           >
             <TextInput
               placeholder="Enter your password "
-              placeholderTextColor="f89fa1"
+              placeholderTextColor="#f89fa1"
               secureTextEntry={!isPasswordVisible}
               style={{ width: "100%" }}
+              onChangeText={handlePasswordChange}
             />
+            {renderError(formErrors.passwordError, [
+              styles.errorMessage,
+              { bottom: 40 },
+            ])}
             <TouchableOpacity
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
               style={{ position: "absolute", right: 12 }}
@@ -173,7 +305,7 @@ export const Registration = () => {
             height: 51,
             backgroundColor: "#67104c",
           }}
-          //   onPress={handleRegister}
+          onPress={handleRegister}
           //   disabled={!isFormValid}
         >
           <Text
@@ -210,3 +342,13 @@ export const Registration = () => {
     </SafeAreaView>
   );
 };
+
+export const styles = StyleSheet.create({
+  errorMessage: {
+    fontFamily: "Montserrat-Regular",
+    position: "absolute",
+    fontSize: 12,
+    color: "red",
+    left: 0,
+  },
+});

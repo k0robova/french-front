@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { IntroScreen } from "./screens/IntroScreen";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
+import { Home } from "./screens/Home";
 
 export default function App() {
   const MainStack = createNativeStackNavigator();
@@ -52,11 +53,11 @@ export default function App() {
             component={Login}
             options={{ headerShown: false }}
           />
-          {/* <MainStack.Screen
+          <MainStack.Screen
             name="Home"
-            component={TabNavigate}
+            component={Home}
             options={{ headerShown: false }}
-          /> */}
+          />
         </MainStack.Navigator>
       </Suspense>
     </NavigationContainer>
