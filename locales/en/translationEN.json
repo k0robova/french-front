@@ -17,5 +17,8 @@
     "alreadyAccount": "Do yo have already the account?",
     "dontHaveAcc": "Don't have an account ?",
     "login": "Login"
+  },
+  "hm": {
+    "welcome": "Welcome! This is your Home Page"
   }
 }

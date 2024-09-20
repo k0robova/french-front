@@ -1,15 +1,65 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
 import { StyleSheet, Text, View } from "react-native";
 import { IntroScreen } from "./screens/IntroScreen";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { Home } from "./screens/Home";
+import { getProfile } from "./services/authService";
+
+const fetchAndStoreUserProfile = async (token) => {
+  try {
+    const data = await getProfile(token);
+    await SecureStore.setItemAsync("user", JSON.stringify(data));
+  } catch (error) {
+    console.log("Error fetching and storing user profile:", error);
+    throw error;
+  }
+};
 
 export default function App() {
   const MainStack = createNativeStackNavigator();
+
+  const [isToken, setIsToken] = useState(null);
+
+  const checkToken = async () => {
+    try {
+      const storedToken = await SecureStore.getItemAsync("token");
+      if (storedToken) {
+        await fetchAndStoreUserProfile(storedToken);
+        setIsToken(true);
+      } else {
+        setIsToken(false);
+      }
+    } catch (error) {
+      setIsToken(false);
+      console.log("Error checking token:", error);
+    }
+  };
+
+  const loadAppData = async () => {
+    try {
+      await checkToken();
+    } catch (error) {
+      console.log("Error loading app data:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadAppData();
+  }, []);
+
+  if (isToken === null) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
       <Suspense
@@ -19,7 +69,9 @@ export default function App() {
           </View>
         }
       >
-        <MainStack.Navigator>
+        <MainStack.Navigator
+          initialRouteName={isToken ? "Home" : "IntroScreen"}
+        >
           <MainStack.Screen
             name="IntroScreen"
             component={IntroScreen}

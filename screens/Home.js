@@ -1,9 +1,31 @@
-import { SafeAreaView, Text, View, StyleSheet } from "react-native";
+import { SafeAreaView, Text, View, StyleSheet, Button } from "react-native";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 export const Home = () => {
+  const { t, i18n } = useTranslation();
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang); // зміна мови в додатку
+  };
+
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>Welcome! This is your Home Page</Text>
+      <View style={{ padding: 20 }}>
+        <Button
+          title={t("rg.changeLanguage")}
+          onPress={() => changeLanguage(i18n.language === "en" ? "ua" : "en")}
+        />
+        <Button
+          title={isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"}
+          onPress={toggleTheme}
+        />
+      </View>
+      <Text style={styles.text}>{t("hm.welcome")}</Text>
       <Text style={styles.text}>Study and train</Text>
       <Text style={styles.text}>Lessons by subscriptions</Text>
     </SafeAreaView>
