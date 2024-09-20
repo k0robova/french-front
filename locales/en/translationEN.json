@@ -1,0 +1,21 @@
+{
+  "rg": {
+    "changeLanguage": "change the language",
+    "register": "Create account",
+    "welcomeBack": "Hey Welcome back !",
+    "name": "Name",
+    "placeName": "Enter name",
+    "placePass": "Enter password",
+    "placeEmail": "Enter email",
+    "placeDoB": "Enter date of birth",
+    "email": "Email",
+    "password": "Password",
+    "dateOfBirth": "Date of birth",
+    "createAcc": "Create account",
+    "letsAcq": "Let's get acquinted!",
+    "agreeTerms": "I agree with conditions and requirmens",
+    "alreadyAccount": "Do yo have already the account?",
+    "dontHaveAcc": "Don't have an account ?",
+    "login": "Login"
+  }
+}

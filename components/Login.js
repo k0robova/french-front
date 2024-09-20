@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
-
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import {
   Pressable,
   SafeAreaView,
@@ -10,17 +10,20 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Button,
 } from "react-native";
 import { logIn } from "../services/authService";
 
 export const Login = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-
   const [isFormValid, setIsFormValid] = useState(false);
+
+  // Додаємо стейт для теми
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const validateForm = () => {
     setIsFormValid(email.trim().length > 0 && password.trim().length > 0);
@@ -56,7 +59,6 @@ export const Login = () => {
   };
 
   const handlePasswordChange = (text) => {
-    console.log(text);
     setPassword(text.trim());
     if (text.trim().length === 0) {
       setIsFormValid(false);
@@ -65,8 +67,18 @@ export const Login = () => {
     }
   };
 
+  // Функція зміни теми
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: isDarkTheme ? "#67104c" : "white",
+      }}
+    >
       <View style={{ flex: 1, marginHorizontal: 22 }}>
         <View style={{ marginVertical: 22 }}>
           <Text
@@ -74,25 +86,34 @@ export const Login = () => {
               fontSize: 22,
               fontWeight: "bold",
               marginVertical: 12,
-              color: "black",
+              color: isDarkTheme ? "white" : "black",
             }}
           >
-            Hey Welcome back !
+            {t("rg.welcomeBack")}
           </Text>
-          <Text style={{ fontSize: 16, color: "black" }}>
-            Let's get acquinted!
+          <Text
+            style={{ fontSize: 16, color: isDarkTheme ? "white" : "black" }}
+          >
+            {t("rg.letsAcq")}
           </Text>
         </View>
 
         <View style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            Email
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 400,
+              marginVertical: 8,
+              color: isDarkTheme ? "white" : "black",
+            }}
+          >
+            {t("rg.email")}
           </Text>
           <View
             style={{
-              width: "100 %",
+              width: "100%",
               height: 48,
-              borderColor: "black",
+              borderColor: isDarkTheme ? "white" : "black",
               borderWidth: 1,
               borderRadius: 8,
               alignItems: "center",
@@ -101,24 +122,31 @@ export const Login = () => {
             }}
           >
             <TextInput
-              placeholder="Enter your email "
-              placeholderTextColor="f89fa1"
+              placeholder={t("rg.placeEmail")}
+              placeholderTextColor={isDarkTheme ? "lightgray" : "#f89fa1"}
               keyboardType="email-address"
-              style={{ width: "100%" }}
+              style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
               onChangeText={handleEmailChange}
             />
           </View>
         </View>
 
         <View style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            Password
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 400,
+              marginVertical: 8,
+              color: isDarkTheme ? "white" : "black",
+            }}
+          >
+            {t("rg.password")}
           </Text>
           <View
             style={{
-              width: "100 %",
+              width: "100%",
               height: 48,
-              borderColor: "black",
+              borderColor: isDarkTheme ? "white" : "black",
               borderWidth: 1,
               borderRadius: 8,
               alignItems: "center",
@@ -127,10 +155,10 @@ export const Login = () => {
             }}
           >
             <TextInput
-              placeholder="Enter your password "
-              placeholderTextColor="f89fa1"
+              placeholder={t("rg.placePass")}
+              placeholderTextColor={isDarkTheme ? "lightgray" : "#f89fa1"}
               secureTextEntry={!isPasswordVisible}
-              style={{ width: "100%" }}
+              style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
               onChangeText={handlePasswordChange}
             />
             <TouchableOpacity
@@ -138,19 +166,23 @@ export const Login = () => {
               style={{ position: "absolute", right: 12 }}
             >
               {isPasswordVisible === true ? (
-                <Ionicons name="eye" size={24} color="black" />
+                <Ionicons
+                  name="eye"
+                  size={24}
+                  color={isDarkTheme ? "white" : "black"}
+                />
               ) : (
-                <Ionicons name="eye-off" size={24} color="black" />
+                <Ionicons
+                  name="eye-off"
+                  size={24}
+                  color={isDarkTheme ? "white" : "black"}
+                />
               )}
             </TouchableOpacity>
           </View>
         </View>
 
         <Pressable
-          //   style={[
-          //     styles.button,
-          //     (!isFormValid || !isChecked) && styles.buttonDisabled,
-          //   ]}
           title="Register"
           color="white"
           style={{
@@ -161,16 +193,18 @@ export const Login = () => {
             paddingHorizontal: 32,
             width: 343,
             height: 51,
-            backgroundColor: "#67104c",
+            backgroundColor: isDarkTheme ? "white" : "#67104c",
           }}
           onPress={handleRegister}
-          //   onPress={handleRegister}
-          //   disabled={!isFormValid}
         >
           <Text
-            style={{ color: "white", fontWeight: "bold", textAlign: "center" }}
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
           >
-            Login
+            {t("rg.login")}
           </Text>
         </Pressable>
 
@@ -182,21 +216,25 @@ export const Login = () => {
           }}
         >
           <Text style={{ fontSize: 16, color: "black" }}>
-            Don't have an account ?
+            {t("rg.dontHaveAcc")}
           </Text>
           <Pressable onPress={() => navigation.navigate("Registration")}>
             <Text
               style={{
                 fontSize: 16,
-                color: "#67104c",
+                color: isDarkTheme ? "white" : "#67104c",
                 fontWeight: "bold",
                 marginLeft: 6,
               }}
             >
-              Registration
+              {t("rg.register")}
             </Text>
           </Pressable>
         </View>
+        <Button
+          title={isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"}
+          onPress={toggleTheme}
+        />
       </View>
     </SafeAreaView>
   );

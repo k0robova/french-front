@@ -1,0 +1,21 @@
+{
+  "rg": {
+    "changeLanguage": "Змінити мову",
+    "welcomeBack": "Hey Welcome back !",
+    "register": "Створити акаунт",
+    "name": "Ім'я",
+    "placeName": "Введи ім'я",
+    "placePass": "Введи пароль",
+    "placeEmail": "Введи пошту",
+    "placeDoB": "Введи дату народження",
+    "email": "Електронна пошта",
+    "password": "Пароль",
+    "dateOfBirth": "Дата народження",
+    "createAcc": "Створити акаунт",
+    "letsAcq": "Давай познайомимось!",
+    "agreeTerms": "Я погоджуюся з умовами та положеннями",
+    "alreadyAccount": "Вже маєте акаунт?",
+    "dontHaveAcc": "Немає облікового запису?",
+    "login": "Увійти"
+  }
+}

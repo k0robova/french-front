@@ -1,8 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { StyleSheet } from "react-native";
 import {
+  Button,
+  StyleSheet,
   Alert,
   Pressable,
   Text,
@@ -10,6 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
+import "../i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { CheckBox } from "react-native-btr";
@@ -22,6 +25,7 @@ export const Registration = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -41,6 +45,10 @@ export const Registration = () => {
   useEffect(() => {
     validateForm();
   }, [formData, formErrors]);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang); // зміна мови в додатку
+  };
 
   const register = async () => {
     newUser = {
@@ -132,6 +140,14 @@ export const Registration = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <View style={{ flex: 1, marginHorizontal: 22 }}>
         <View style={{ marginVertical: 22 }}>
+          <View style={{ padding: 20 }}>
+            <Button
+              title={t("rg.changeLanguage")}
+              onPress={() =>
+                changeLanguage(i18n.language === "en" ? "ua" : "en")
+              }
+            />
+          </View>
           <Text
             style={{
               fontSize: 22,
@@ -140,15 +156,15 @@ export const Registration = () => {
               color: "black",
             }}
           >
-            Create your account
+            {t("rg.register")}
           </Text>
           <Text style={{ fontSize: 16, color: "black" }}>
-            Let's get acquinted!
+            {t("rg.letsAcq")}
           </Text>
         </View>
         <View style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            Name
+            {t("rg.name")}
           </Text>
           <View
             style={{
@@ -163,7 +179,7 @@ export const Registration = () => {
             }}
           >
             <TextInput
-              placeholder="Enter your name"
+              placeholder={t("rg.placeName")}
               placeholderTextColor="#f89fa1"
               keyboardType="default"
               style={{ width: "100%" }}
@@ -178,7 +194,7 @@ export const Registration = () => {
 
         <View style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            Date of birth
+            {t("rg.dateOfBirth")}
           </Text>
           <View
             style={{
@@ -193,7 +209,7 @@ export const Registration = () => {
             }}
           >
             <TextInput
-              placeholder="Enter your date of birth"
+              placeholder={t("rg.placeDoB")}
               placeholderTextColor="#f89fa1"
               keyboardType="numeric"
               style={{ width: "100%" }}
@@ -208,7 +224,7 @@ export const Registration = () => {
 
         <View style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            Email
+            {t("rg.email")}
           </Text>
           <View
             style={{
@@ -223,7 +239,7 @@ export const Registration = () => {
             }}
           >
             <TextInput
-              placeholder="Enter your email "
+              placeholder={t("rg.placeEmail")}
               placeholderTextColor="#f89fa1"
               keyboardType="email-address"
               style={{ width: "100%" }}
@@ -238,7 +254,7 @@ export const Registration = () => {
 
         <View style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            Password
+            {t("rg.password")}
           </Text>
           <View
             style={{
@@ -253,7 +269,7 @@ export const Registration = () => {
             }}
           >
             <TextInput
-              placeholder="Enter your password "
+              placeholder={t("rg.placePass")}
               placeholderTextColor="#f89fa1"
               secureTextEntry={!isPasswordVisible}
               style={{ width: "100%" }}
@@ -284,9 +300,7 @@ export const Registration = () => {
             onPress={() => setIsChecked(!isChecked)}
             color={isChecked ? "#67104c" : "black"}
           />
-          <Text style={{ marginLeft: 5 }}>
-            I agree to the terms and conditions
-          </Text>
+          <Text style={{ marginLeft: 5 }}>{t("rg.agreeTerms")}</Text>
         </View>
         <Pressable
           //   style={[
@@ -311,7 +325,7 @@ export const Registration = () => {
           <Text
             style={{ color: "white", fontWeight: "bold", textAlign: "center" }}
           >
-            Create an account
+            {t("rg.createAcc")}
           </Text>
         </Pressable>
 
@@ -323,7 +337,7 @@ export const Registration = () => {
           }}
         >
           <Text style={{ fontSize: 16, color: "black" }}>
-            Already have an account
+            {t("rg.alreadyAccount")}
           </Text>
           <Pressable onPress={() => navigation.navigate("Login")}>
             <Text
@@ -334,7 +348,7 @@ export const Registration = () => {
                 marginLeft: 6,
               }}
             >
-              Login
+              {t("rg.login")}
             </Text>
           </Pressable>
         </View>
