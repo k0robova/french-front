@@ -1,4 +1,3 @@
-import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Suspense, useEffect, useState } from "react";
@@ -9,6 +8,9 @@ import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { Home } from "./screens/Home";
 import { getProfile } from "./services/authService";
+import { Profile } from "./screens/Profile";
+import { StudyAndTrain } from "./components/StudyAndTrain";
+import { LessonsBySubscription } from "./components/LessonsBySubscription";
 
 const fetchAndStoreUserProfile = async (token) => {
   try {
@@ -110,20 +112,26 @@ export default function App() {
             component={Home}
             options={{ headerShown: false }}
           />
+          <MainStack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="StudyAndTrain"
+            component={StudyAndTrain}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="LessonsBySubscription"
+            component={LessonsBySubscription}
+            options={{ headerShown: false }}
+          />
         </MainStack.Navigator>
       </Suspense>
     </NavigationContainer>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });
 
 const styles = StyleSheet.create({
   container: {

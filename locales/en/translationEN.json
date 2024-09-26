@@ -7,16 +7,26 @@
     "placeName": "Enter name",
     "placePass": "Enter password",
     "placeEmail": "Enter email",
+    "placeNewEmail": "Enter new email",
     "placeDoB": "Enter date of birth",
     "email": "Email",
     "password": "Password",
+    "newPassword": "New Password",
+    "placeNewPassword": "Enter new password",
     "dateOfBirth": "Date of birth",
     "createAcc": "Create account",
     "letsAcq": "Let's get acquinted!",
     "agreeTerms": "I agree with conditions and requirmens",
     "alreadyAccount": "Do yo have already the account?",
     "dontHaveAcc": "Don't have an account ?",
-    "login": "Login"
+    "login": "Login",
+    "try": "Try",
+    "studyAndTrain": "Study and Train",
+    "lessonsBySubscr": "Lessons by subscription",
+    "changeInfo": "You can change your info in",
+    "profile": "Profile",
+    "hello": "Hello",
+    "saveChanges": "Save Changes"
   },
   "hm": {
     "welcome": "Welcome! This is your Home Page"
