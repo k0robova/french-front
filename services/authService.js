@@ -14,7 +14,6 @@ export const deleteToken = () => {
 
 export const singUp = async (formData) => {
   const { data } = await instance.post("/users/register", formData);
-
   setToken(`Bearer ${data.token}`);
   return data;
 };
@@ -34,9 +33,14 @@ export const logout = async () => {
   }
 };
 
-export const getProfile = async (token) => {
-  setToken(`Bearer ${token}`);
-  const { data } = await instance.get("/users/current");
+export const getProfile = async () => {
+  const { data } = await instance.get("/users/current", {
+    headers: {
+      "Cache-Control": "no-cache", // Вимикаємо кешування
+      Pragma: "no-cache", // Для деяких старих браузерів
+      Expires: "0", // Вказує, що відповідь вже не є актуальною
+    },
+  });
   return data;
 };
 
@@ -62,4 +66,14 @@ export const forgotPass = async (body) => {
 
 export const restorePassword = async (otp, body) => {
   const data = await instance.post(`/users//restorePassword/${otp}`, body);
+};
+
+export const updateTheme = async (body) => {
+  const { data } = await instance.patch("/users/theme", body);
+  return data;
+};
+
+export const updateLng = async (body) => {
+  const { data } = await instance.patch("/users/lng".body);
+  return data;
 };

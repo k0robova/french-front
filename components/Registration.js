@@ -1,6 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import * as SecureStore from "expo-secure-store";
 import {
   Button,
   StyleSheet,
@@ -21,15 +20,16 @@ import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CheckBox } from "react-native-btr";
 import * as Validate from "../helpers/validationInput";
-import { singUp } from "../services/authService";
-// import { createFormDataRegister } from "../helpers/createFormDataRegister";
 import { handleChange } from "../helpers/handleChangeInput";
+import { useDispatch } from "react-redux";
+import { getProfileThunk, registerThunk } from "../store/auth/authThunks";
 
 export const Registration = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,37 +51,22 @@ export const Registration = () => {
   }, [formData, formErrors]);
 
   const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang); // зміна мови в додатку
-  };
-
-  const register = async () => {
-    newUser = {
-      name: formData.name,
-      birthDate: formData.birthDate,
-      email: formData.email,
-      password: formData.password,
-    };
-
-    try {
-      setIsFormValid(false);
-      const data = await singUp(newUser);
-      await SecureStore.setItemAsync("token", data.token);
-      await SecureStore.setItemAsync("user", JSON.stringify(data.user));
-      setIsFormValid(true);
-      navigation.navigate("Home");
-      Alert.alert(
-        "",
-        "Your registration has been successful! Welcome on board!",
-        [{ text: "Close" }]
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    i18n.changeLanguage(lang);
+    dispatch(getProfileThunk());
   };
 
   const handleRegister = async () => {
-    await register();
-    return;
+    try {
+      const resultAction = await dispatch(registerThunk(formData));
+      if (registerThunk.fulfilled.match(resultAction)) {
+        navigation.navigate("Home");
+      } else {
+        Alert.alert("Error", resultAction.error.message);
+      }
+    } catch (error) {
+      console.log("Registration failed:", error);
+      Alert.alert("Error", error.message);
+    }
   };
 
   const handleNameChange = handleChange(
@@ -152,14 +137,6 @@ export const Registration = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
           <View style={{ flex: 1, marginHorizontal: 22 }}>
             <View style={{ marginVertical: 22 }}>
-              {/* <View style={{ padding: 20 }}>
-                <Button
-                  title={t("rg.changeLanguage")}
-                  onPress={() =>
-                    changeLanguage(i18n.language === "en" ? "ua" : "en")
-                  }
-                />
-              </View> */}
               <View>
                 <Pressable
                   onPress={() =>

@@ -13,18 +13,36 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useDispatch } from "react-redux";
+import { logoutThunk } from "../store/auth/authThunks";
 
 export const Home = () => {
   const { t, i18n } = useTranslation();
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang); // зміна мови в додатку
+    i18n.changeLanguage(lang);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const resultAction = await dispatch(logoutThunk());
+      if (logoutThunk.fulfilled.match(resultAction)) {
+        navigation.navigate("Login");
+      } else {
+        Alert.alert("Error", resultAction.error.message);
+      }
+    } catch (error) {
+      console.log("Registration failed:", error);
+      Alert.alert("Error", error.message);
+    }
   };
 
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
+    handleLogout();
   };
 
   const handleLogOut = async () => {

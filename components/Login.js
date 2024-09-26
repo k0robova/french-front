@@ -1,5 +1,4 @@
 import { useNavigation } from "@react-navigation/native";
-import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -12,9 +11,11 @@ import {
   TouchableOpacity,
   View,
   Button,
+  Alert,
 } from "react-native";
-import { logIn } from "../services/authService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { loginThunk } from "../store/auth/authThunks";
+import { useDispatch } from "react-redux";
 
 export const Login = () => {
   const navigation = useNavigation();
@@ -23,6 +24,7 @@ export const Login = () => {
   const [email, setEmail] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch();
 
   // Додаємо стейт для теми
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -31,23 +33,20 @@ export const Login = () => {
     setIsFormValid(email.trim().length > 0 && password.trim().length > 0);
   };
 
-  const login = async () => {
-    const dataUser = { email, password };
+  const handleRegister = async () => {
     try {
-      const data = await logIn(dataUser);
-      console.log(data);
-      await SecureStore.setItemAsync("token", data.token);
-      const userString = JSON.stringify(data.user);
-      await SecureStore.setItemAsync("user", userString);
-      navigation.navigate("Home");
-      return data;
+      const resultAction = await dispatch(loginThunk({ email, password }));
+      // Якщо реєстрація була успішною, `resultAction` не буде помилкою
+      if (loginThunk.fulfilled.match(resultAction)) {
+        navigation.navigate("Home");
+      } else {
+        // Тут можна обробити помилку, якщо потрібно
+        Alert.alert("Error", resultAction.error.message);
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Registration failed:", error);
+      Alert.alert("Error", error.message);
     }
-  };
-
-  const handleRegister = () => {
-    login();
     return;
   };
 
