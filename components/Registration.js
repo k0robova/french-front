@@ -10,11 +10,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import "../i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CheckBox } from "react-native-btr";
 import * as Validate from "../helpers/validationInput";
 import { singUp } from "../services/authService";
@@ -118,8 +122,7 @@ export const Registration = () => {
 
   const validateForm = () => {
     const isNameValid = formData.name && !formErrors.nameError;
-    const isDateOfBirthValid =
-      formData.dateOfBirth && !formErrors.dateOfBirthError;
+    const isDateOfBirthValid = formData.birthDate && !formErrors.birthDateError;
     const isEmailValid = formData.email && !formErrors.emailError;
     const isPasswordValid = formData.password && !formErrors.passwordError;
 
@@ -132,228 +135,274 @@ export const Registration = () => {
     return error ? <Text style={errorMessage}>{error}</Text> : null;
   };
 
-  // const toggleCheckBox = () => {
-  //   setIsChecked(!isChecked);
-  // };
+  const toggleCheckBox = () => {
+    setIsChecked(!isChecked);
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
-        <View style={{ marginVertical: 22 }}>
-          <View style={{ padding: 20 }}>
-            <Button
-              title={t("rg.changeLanguage")}
-              onPress={() =>
-                changeLanguage(i18n.language === "en" ? "ua" : "en")
-              }
-            />
-          </View>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginVertical: 12,
-              color: "black",
-            }}
-          >
-            {t("rg.register")}
-          </Text>
-          <Text style={{ fontSize: 16, color: "black" }}>
-            {t("rg.letsAcq")}
-          </Text>
-        </View>
-        <View style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            {t("rg.name")}
-          </Text>
-          <View
-            style={{
-              width: "100 %",
-              height: 48,
-              borderColor: "black",
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              placeholder={t("rg.placeName")}
-              placeholderTextColor="#f89fa1"
-              keyboardType="default"
-              style={{ width: "100%" }}
-              onChangeText={handleNameChange}
-            />
-            {renderError(formErrors.nameError, [
-              styles.errorMessage,
-              { top: -20 },
-            ])}
-          </View>
-        </View>
+    <TouchableOpacity
+      style={{ flex: 1 }}
+      onPress={Keyboard.dismiss}
+      activeOpacity={1}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, justifyContent: "flex-end" }}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+          <View style={{ flex: 1, marginHorizontal: 22 }}>
+            <View style={{ marginVertical: 22 }}>
+              {/* <View style={{ padding: 20 }}>
+                <Button
+                  title={t("rg.changeLanguage")}
+                  onPress={() =>
+                    changeLanguage(i18n.language === "en" ? "ua" : "en")
+                  }
+                />
+              </View> */}
+              <View>
+                <Pressable
+                  onPress={() =>
+                    changeLanguage(i18n.language === "en" ? "ua" : "en")
+                  }
+                >
+                  <MaterialIcons name="language" size={26} color="black" />
+                </Pressable>
+              </View>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginVertical: 12,
+                  color: "black",
+                }}
+              >
+                {t("rg.register")}
+              </Text>
+              <Text style={{ fontSize: 16, color: "black" }}>
+                {t("rg.letsAcq")}
+              </Text>
+            </View>
+            <View style={{ marginBottom: 12 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginVertical: 8,
+                  marginBottom: 10,
+                }}
+              >
+                {t("rg.name")}
+              </Text>
+              <View
+                style={{
+                  width: "100 %",
+                  height: 48,
+                  borderColor: "black",
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingLeft: 22,
+                }}
+              >
+                <TextInput
+                  placeholder={t("rg.placeName")}
+                  // placeholderTextColor="#f89fa1"
+                  keyboardType="default"
+                  style={{ width: "100%" }}
+                  onChangeText={handleNameChange}
+                />
+                {renderError(formErrors.nameError, [styles.errorMessage])}
+              </View>
+            </View>
 
-        <View style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            {t("rg.dateOfBirth")}
-          </Text>
-          <View
-            style={{
-              width: "100 %",
-              height: 48,
-              borderColor: "black",
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              placeholder={t("rg.placeDoB")}
-              placeholderTextColor="#f89fa1"
-              keyboardType="numeric"
-              style={{ width: "100%" }}
-              onChangeText={handleBirthDateChange}
-            />
-            {renderError(formErrors.birthDateError, [
-              styles.errorMessage,
-              { top: -20 },
-            ])}
-          </View>
-        </View>
+            <View style={{ marginBottom: 12 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginVertical: 8,
+                  marginBottom: 10,
+                }}
+              >
+                {t("rg.dateOfBirth")}
+              </Text>
+              <View
+                style={{
+                  width: "100 %",
+                  height: 48,
+                  borderColor: "black",
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingLeft: 22,
+                }}
+              >
+                <TextInput
+                  placeholder={t("rg.placeDoB")}
+                  // placeholderTextColor="#f89fa1"
+                  keyboardType="numeric"
+                  style={{ width: "100%" }}
+                  onChangeText={handleBirthDateChange}
+                />
+                {renderError(formErrors.birthDateError, [styles.errorMessage])}
+              </View>
+            </View>
 
-        <View style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            {t("rg.email")}
-          </Text>
-          <View
-            style={{
-              width: "100 %",
-              height: 48,
-              borderColor: "black",
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              placeholder={t("rg.placeEmail")}
-              placeholderTextColor="#f89fa1"
-              keyboardType="email-address"
-              style={{ width: "100%" }}
-              onChangeText={handleEmailChange}
-            />
-            {renderError(formErrors.emailError, [
-              styles.errorMessage,
-              { top: 38 },
-            ])}
-          </View>
-        </View>
+            <View style={{ marginBottom: 12 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginVertical: 8,
+                  marginBottom: 10,
+                }}
+              >
+                {t("rg.email")}
+              </Text>
+              <View
+                style={{
+                  width: "100 %",
+                  height: 48,
+                  borderColor: "black",
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingLeft: 22,
+                }}
+              >
+                <TextInput
+                  placeholder={t("rg.placeEmail")}
+                  // placeholderTextColor="#f89fa1"
+                  keyboardType="email-address"
+                  style={{ width: "100%" }}
+                  onChangeText={handleEmailChange}
+                />
+                {renderError(formErrors.emailError, [styles.errorMessage])}
+              </View>
+            </View>
 
-        <View style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-            {t("rg.password")}
-          </Text>
-          <View
-            style={{
-              width: "100 %",
-              height: 48,
-              borderColor: "black",
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              placeholder={t("rg.placePass")}
-              placeholderTextColor="#f89fa1"
-              secureTextEntry={!isPasswordVisible}
-              style={{ width: "100%" }}
-              onChangeText={handlePasswordChange}
-            />
-            {renderError(formErrors.passwordError, [
-              styles.errorMessage,
-              { bottom: 40 },
-            ])}
-            <TouchableOpacity
-              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-              style={{ position: "absolute", right: 12 }}
+            <View style={{ marginBottom: 12 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginVertical: 8,
+                  marginBottom: 10,
+                }}
+              >
+                {t("rg.password")}
+              </Text>
+              <View
+                style={{
+                  width: "100 %",
+                  height: 48,
+                  borderColor: "black",
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingLeft: 22,
+                }}
+              >
+                <TextInput
+                  placeholder={t("rg.placePass")}
+                  // placeholderTextColor="#f89fa1"
+                  secureTextEntry={!isPasswordVisible}
+                  style={{ width: "100%" }}
+                  onChangeText={handlePasswordChange}
+                />
+                {renderError(formErrors.passwordError, [styles.errorMessage])}
+                <TouchableOpacity
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                  style={{ position: "absolute", right: 12 }}
+                >
+                  {isPasswordVisible === true ? (
+                    <Ionicons name="eye" size={24} color="black" />
+                  ) : (
+                    <Ionicons name="eye-off" size={24} color="black" />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={{ flexDirection: "row", marginVertical: 6 }}>
+              <CheckBox
+                style={{ marginRight: 8 }}
+                checked={isChecked}
+                onPress={toggleCheckBox}
+                color={isChecked ? "#67104c" : "black"}
+              />
+              <Text style={{ marginLeft: 5 }}>{t("rg.agreeTerms")}</Text>
+            </View>
+            <Pressable
+              style={[
+                styles.button,
+                (!isFormValid || !isChecked) && styles.buttonDisabled,
+              ]}
+              title="Register"
+              onPress={handleRegister}
+              disabled={!isFormValid}
+              // style={[
+              //   styles.button,
+              //   (!isFormValid || !isChecked) && styles.buttonDisabled,
+              // ]}
+              // title="Register"
+              // color="white"
+              // style={{
+              //   marginTop: 18,
+              //   marginBottom: 4,
+              //   borderRadius: 100,
+              //   paddingVertical: 16,
+              //   paddingHorizontal: 32,
+              //   width: 343,
+              //   height: 51,
+              //   backgroundColor: "#67104c",
+              // }}
+              // onPress={handleRegister}
+              // disabled={!isFormValid}
             >
-              {isPasswordVisible === true ? (
-                <Ionicons name="eye" size={24} color="black" />
-              ) : (
-                <Ionicons name="eye-off" size={24} color="black" />
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
+              <Text
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                {t("rg.createAcc")}
+              </Text>
+            </Pressable>
 
-        <View style={{ flexDirection: "row", marginVertical: 6 }}>
-          <CheckBox
-            style={{ marginRight: 8 }}
-            checked={isChecked}
-            // onValueChange={setIsChecked}
-            onPress={() => setIsChecked(!isChecked)}
-            color={isChecked ? "#67104c" : "black"}
-          />
-          <Text style={{ marginLeft: 5 }}>{t("rg.agreeTerms")}</Text>
-        </View>
-        <Pressable
-          //   style={[
-          //     styles.button,
-          //     (!isFormValid || !isChecked) && styles.buttonDisabled,
-          //   ]}
-          title="Register"
-          color="white"
-          style={{
-            marginTop: 18,
-            marginBottom: 4,
-            borderRadius: 100,
-            paddingVertical: 16,
-            paddingHorizontal: 32,
-            width: 343,
-            height: 51,
-            backgroundColor: "#67104c",
-          }}
-          onPress={handleRegister}
-          //   disabled={!isFormValid}
-        >
-          <Text
-            style={{ color: "white", fontWeight: "bold", textAlign: "center" }}
-          >
-            {t("rg.createAcc")}
-          </Text>
-        </Pressable>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginVertical: 22,
-          }}
-        >
-          <Text style={{ fontSize: 16, color: "black" }}>
-            {t("rg.alreadyAccount")}
-          </Text>
-          <Pressable onPress={() => navigation.navigate("Login")}>
-            <Text
+            <View
               style={{
-                fontSize: 16,
-                color: "#67104c",
-                fontWeight: "bold",
-                marginLeft: 6,
+                flexDirection: "row",
+                justifyContent: "center",
+                marginVertical: 22,
               }}
             >
-              {t("rg.login")}
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    </SafeAreaView>
+              <Text style={{ fontSize: 16, color: "black" }}>
+                {t("rg.alreadyAccount")}
+              </Text>
+              <Pressable onPress={() => navigation.navigate("Login")}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: "#67104c",
+                    fontWeight: "bold",
+                    marginLeft: 6,
+                  }}
+                >
+                  {t("rg.login")}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </TouchableOpacity>
   );
 };
 
@@ -361,8 +410,20 @@ export const styles = StyleSheet.create({
   errorMessage: {
     fontFamily: "Montserrat-Regular",
     position: "absolute",
-    fontSize: 12,
+    fontSize: 10,
     color: "red",
     left: 0,
+    top: -13,
   },
+  button: {
+    marginTop: 18,
+    marginBottom: 4,
+    borderRadius: 100,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    width: 343,
+    height: 51,
+    backgroundColor: "#67104c",
+  },
+  buttonDisabled: { backgroundColor: "#CCCCCC", pointerEvents: "none" },
 });

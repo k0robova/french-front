@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import "../i18n";
 import {
   Pressable,
   SafeAreaView,
@@ -13,14 +14,15 @@ import {
   Button,
 } from "react-native";
 import { logIn } from "../services/authService";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const Login = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
+  const { t, i18n } = useTranslation();
 
   // Додаємо стейт для теми
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -72,6 +74,10 @@ export const Login = () => {
     setIsDarkTheme(!isDarkTheme);
   };
 
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang); // зміна мови в додатку
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -80,6 +86,17 @@ export const Login = () => {
       }}
     >
       <View style={{ flex: 1, marginHorizontal: 22 }}>
+        <View style={{ paddingTop: 20 }}>
+          <Pressable
+            onPress={() => changeLanguage(i18n.language === "en" ? "ua" : "en")}
+          >
+            <MaterialIcons
+              name="language"
+              size={26}
+              color={isDarkTheme ? "white" : "black"}
+            />
+          </Pressable>
+        </View>
         <View style={{ marginVertical: 22 }}>
           <Text
             style={{
@@ -91,11 +108,11 @@ export const Login = () => {
           >
             {t("rg.welcomeBack")}
           </Text>
-          <Text
+          {/* <Text
             style={{ fontSize: 16, color: isDarkTheme ? "white" : "black" }}
           >
             {t("rg.letsAcq")}
-          </Text>
+          </Text> */}
         </View>
 
         <View style={{ marginBottom: 12 }}>
@@ -123,7 +140,7 @@ export const Login = () => {
           >
             <TextInput
               placeholder={t("rg.placeEmail")}
-              placeholderTextColor={isDarkTheme ? "lightgray" : "#f89fa1"}
+              placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
               keyboardType="email-address"
               style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
               onChangeText={handleEmailChange}
@@ -156,7 +173,7 @@ export const Login = () => {
           >
             <TextInput
               placeholder={t("rg.placePass")}
-              placeholderTextColor={isDarkTheme ? "lightgray" : "#f89fa1"}
+              placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
               secureTextEntry={!isPasswordVisible}
               style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
               onChangeText={handlePasswordChange}

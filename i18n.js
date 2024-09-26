@@ -3,6 +3,8 @@ import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization";
 import translationUK from "./locales/uk/translationUK.json";
 import translationEN from "./locales/en/translationEN.json";
+// import "@formatjs/intl-pluralrules/polyfill";
+// import "@formatjs/intl-pluralrules/locale-data/en"; // для англійської (або будь-якої іншої мови)
 
 // Тексти для англійської та української мов
 const resources = {
