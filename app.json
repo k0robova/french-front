@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./images/2024-09-14 13.37.15.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,9 +23,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-secure-store",
-      "expo-localization"
-    ]
+    "plugins": ["expo-secure-store", "expo-localization"]
   }
 }

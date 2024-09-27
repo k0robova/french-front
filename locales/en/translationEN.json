@@ -26,7 +26,14 @@
     "changeInfo": "You can change your info in",
     "profile": "Profile",
     "hello": "Hello",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "haveAccButForgotPass": "Forgot your password?",
+    "resetPassHere": "Reset password",
+    "code": "Code",
+    "placeCode": "Enter your code",
+    "save": "Save",
+    "sendCode": "Please enter the email address you used to register your account",
+    "send": "Send"
   },
   "hm": {
     "welcome": "Welcome! This is your Home Page"

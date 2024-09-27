@@ -110,7 +110,7 @@ export const Profile = () => {
               <AntDesign
                 name="arrowleft"
                 size={24}
-                color={isDarkTheme ? "white" : "black"}
+                color={isDarkTheme ? "white" : "#67104c"}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -121,7 +121,7 @@ export const Profile = () => {
               <MaterialIcons
                 name="language"
                 size={26}
-                color={isDarkTheme ? "white" : "black"}
+                color={isDarkTheme ? "white" : "#67104c"}
               />
             </TouchableOpacity>
           </View>
@@ -151,7 +151,7 @@ export const Profile = () => {
               style={{
                 width: "100 %",
                 height: 48,
-                borderColor: isDarkTheme ? "white" : "black",
+                borderColor: isDarkTheme ? "white" : "#67104c",
                 borderWidth: 1,
                 borderRadius: 8,
                 alignItems: "center",
@@ -188,7 +188,7 @@ export const Profile = () => {
               style={{
                 width: "100 %",
                 height: 48,
-                borderColor: isDarkTheme ? "white" : "black",
+                borderColor: isDarkTheme ? "white" : "#67104c",
                 borderWidth: 1,
                 borderRadius: 8,
                 alignItems: "center",

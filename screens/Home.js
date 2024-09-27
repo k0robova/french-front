@@ -42,19 +42,8 @@ export const Home = () => {
 
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
-    handleLogout();
   };
 
-  const handleLogOut = async () => {
-    try {
-      await SecureStore.deleteItemAsync("token");
-      await SecureStore.deleteItemAsync("user");
-      console.log("Токен успішно видалено");
-      navigation.navigate("Login");
-    } catch (error) {
-      console.log("Помилка при видаленні токену:", error);
-    }
-  };
   return (
     <SafeAreaView
       style={[
@@ -69,14 +58,14 @@ export const Home = () => {
           <MaterialIcons
             name="language"
             size={28}
-            color={isDarkTheme ? "white" : "black"}
+            color={isDarkTheme ? "white" : "#67104c"}
           />
         </Pressable>
-        <Pressable onPress={handleLogOut}>
+        <Pressable onPress={handleLogout}>
           <Ionicons
             name="log-out"
             size={28}
-            color={isDarkTheme ? "white" : "black"}
+            color={isDarkTheme ? "white" : "#67104c"}
           />
         </Pressable>
       </View>
@@ -105,7 +94,7 @@ export const Home = () => {
             style={[
               styles.linkText,
               styles.boldText,
-              { color: isDarkTheme ? "white" : "black" },
+              { color: isDarkTheme ? "white" : "#67104c" },
             ]}
           >
             {t("rg.studyAndTrain")}
@@ -124,7 +113,7 @@ export const Home = () => {
             style={[
               styles.linkText,
               styles.boldText,
-              { color: isDarkTheme ? "white" : "black" },
+              { color: isDarkTheme ? "white" : "#67104c" },
             ]}
           >
             {t("rg.lessonsBySubscr")}
@@ -143,7 +132,7 @@ export const Home = () => {
             style={[
               styles.linkText,
               styles.boldText,
-              { color: isDarkTheme ? "white" : "black" },
+              { color: isDarkTheme ? "white" : "#67104c" },
             ]}
           >
             {t("rg.profile")}

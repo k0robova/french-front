@@ -25,8 +25,6 @@ export const Login = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
-
-  // Додаємо стейт для теми
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const validateForm = () => {
@@ -68,13 +66,12 @@ export const Login = () => {
     }
   };
 
-  // Функція зміни теми
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   };
 
   const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang); // зміна мови в додатку
+    i18n.changeLanguage(lang);
   };
 
   return (
@@ -92,7 +89,7 @@ export const Login = () => {
             <MaterialIcons
               name="language"
               size={26}
-              color={isDarkTheme ? "white" : "black"}
+              color={isDarkTheme ? "white" : "#67104c"}
             />
           </Pressable>
         </View>
@@ -129,7 +126,7 @@ export const Login = () => {
             style={{
               width: "100%",
               height: 48,
-              borderColor: isDarkTheme ? "white" : "black",
+              borderColor: isDarkTheme ? "white" : "#67104c",
               borderWidth: 1,
               borderRadius: 8,
               alignItems: "center",
@@ -162,7 +159,7 @@ export const Login = () => {
             style={{
               width: "100%",
               height: 48,
-              borderColor: isDarkTheme ? "white" : "black",
+              borderColor: isDarkTheme ? "white" : "#67104c",
               borderWidth: 1,
               borderRadius: 8,
               alignItems: "center",
@@ -185,13 +182,13 @@ export const Login = () => {
                 <Ionicons
                   name="eye"
                   size={24}
-                  color={isDarkTheme ? "white" : "black"}
+                  color={isDarkTheme ? "white" : "#67104c"}
                 />
               ) : (
                 <Ionicons
                   name="eye-off"
                   size={24}
-                  color={isDarkTheme ? "white" : "black"}
+                  color={isDarkTheme ? "white" : "#67104c"}
                 />
               )}
             </TouchableOpacity>
@@ -231,7 +228,9 @@ export const Login = () => {
             marginVertical: 22,
           }}
         >
-          <Text style={{ fontSize: 16, color: "black" }}>
+          <Text
+            style={{ fontSize: 16, color: isDarkTheme ? "white" : "#67104c" }}
+          >
             {t("rg.dontHaveAcc")}
           </Text>
           <Pressable onPress={() => navigation.navigate("Registration")}>
@@ -244,6 +243,33 @@ export const Login = () => {
               }}
             >
               {t("rg.register")}
+            </Text>
+          </Pressable>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              color: isDarkTheme ? "white" : "#67104c",
+            }}
+          >
+            {t("rg.haveAccButForgotPass")}
+          </Text>
+          <Pressable onPress={() => navigation.navigate("ForgotPassword")}>
+            <Text
+              style={{
+                fontSize: 16,
+                color: isDarkTheme ? "white" : "#67104c",
+                fontWeight: "bold",
+                marginLeft: 6,
+              }}
+            >
+              {t("rg.resetPassHere")}
             </Text>
           </Pressable>
         </View>

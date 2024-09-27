@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { getProfileThunk } from "../store/auth/authThunks";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Profile } from "../screens/Profile";
+import { ForgotPassword } from "./ForgotPassword";
 
 const MainStack = createNativeStackNavigator();
 
@@ -24,7 +26,9 @@ export const AppNavigator = () => {
         navigation.navigate("Home");
       }
       return;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -32,12 +36,12 @@ export const AppNavigator = () => {
   }, []);
 
   return (
-    <MainStack.Navigator initialRouteName={isToken ? "Home" : "IntroScreen"}>
-      <MainStack.Screen
+    <MainStack.Navigator>
+      {/* <MainStack.Screen
         name="IntroScreen"
         component={IntroScreen}
         options={{ headerShown: false }}
-      />
+      /> */}
       <MainStack.Screen
         name="Registration"
         component={Registration}
@@ -84,6 +88,11 @@ export const AppNavigator = () => {
       <MainStack.Screen
         name="LessonsBySubscription"
         component={LessonsBySubscription}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
         options={{ headerShown: false }}
       />
     </MainStack.Navigator>

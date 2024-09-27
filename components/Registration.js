@@ -59,7 +59,9 @@ export const Registration = () => {
     try {
       const resultAction = await dispatch(registerThunk(formData));
       if (registerThunk.fulfilled.match(resultAction)) {
+        // setFormData({ name: "", birthDate: "", email: "", password: "" });
         navigation.navigate("Home");
+        Alert.alert("", "Hello! Nice to meet you", [{ text: "Close" }]);
       } else {
         Alert.alert("Error", resultAction.error.message);
       }
@@ -143,7 +145,7 @@ export const Registration = () => {
                     changeLanguage(i18n.language === "en" ? "ua" : "en")
                   }
                 >
-                  <MaterialIcons name="language" size={26} color="black" />
+                  <MaterialIcons name="language" size={26} color="#67104c" />
                 </Pressable>
               </View>
               <Text
@@ -175,7 +177,7 @@ export const Registration = () => {
                 style={{
                   width: "100 %",
                   height: 48,
-                  borderColor: "black",
+                  borderColor: "#67104c",
                   borderWidth: 1,
                   borderRadius: 8,
                   alignItems: "center",
@@ -209,7 +211,7 @@ export const Registration = () => {
                 style={{
                   width: "100 %",
                   height: 48,
-                  borderColor: "black",
+                  borderColor: "#67104c",
                   borderWidth: 1,
                   borderRadius: 8,
                   alignItems: "center",
@@ -243,7 +245,7 @@ export const Registration = () => {
                 style={{
                   width: "100 %",
                   height: 48,
-                  borderColor: "black",
+                  borderColor: "#67104c",
                   borderWidth: 1,
                   borderRadius: 8,
                   alignItems: "center",
@@ -277,7 +279,7 @@ export const Registration = () => {
                 style={{
                   width: "100 %",
                   height: 48,
-                  borderColor: "black",
+                  borderColor: "#67104c",
                   borderWidth: 1,
                   borderRadius: 8,
                   alignItems: "center",
@@ -298,9 +300,9 @@ export const Registration = () => {
                   style={{ position: "absolute", right: 12 }}
                 >
                   {isPasswordVisible === true ? (
-                    <Ionicons name="eye" size={24} color="black" />
+                    <Ionicons name="eye" size={24} color="#67104c" />
                   ) : (
-                    <Ionicons name="eye-off" size={24} color="black" />
+                    <Ionicons name="eye-off" size={24} color="#67104c" />
                   )}
                 </TouchableOpacity>
               </View>
@@ -311,7 +313,7 @@ export const Registration = () => {
                 style={{ marginRight: 8 }}
                 checked={isChecked}
                 onPress={toggleCheckBox}
-                color={isChecked ? "#67104c" : "black"}
+                color={isChecked ? "#67104c" : "#67104c"}
               />
               <Text style={{ marginLeft: 5 }}>{t("rg.agreeTerms")}</Text>
             </View>

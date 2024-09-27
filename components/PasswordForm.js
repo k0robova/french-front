@@ -58,7 +58,7 @@ const PasswordForm = ({ theme, buttonSave }) => {
           style={{
             width: "100 %",
             height: 48,
-            borderColor: theme === "dark" ? "white" : "black",
+            borderColor: theme === "dark" ? "white" : "#67104c",
             borderWidth: 1,
             borderRadius: 8,
             alignItems: "center",
@@ -84,13 +84,13 @@ const PasswordForm = ({ theme, buttonSave }) => {
               <Ionicons
                 name="eye"
                 size={24}
-                color={theme === "dark" ? "white" : "black"}
+                color={theme === "dark" ? "white" : "#67104c"}
               />
             ) : (
               <Ionicons
                 name="eye-off"
                 size={24}
-                color={theme === "dark" ? "white" : "black"}
+                color={theme === "dark" ? "white" : "#67104c"}
               />
             )}
           </TouchableOpacity>
@@ -112,7 +112,7 @@ const PasswordForm = ({ theme, buttonSave }) => {
           style={{
             width: "100 %",
             height: 48,
-            borderColor: theme === "dark" ? "white" : "black",
+            borderColor: theme === "dark" ? "white" : "#67104c",
             borderWidth: 1,
             borderRadius: 8,
             alignItems: "center",
@@ -138,13 +138,13 @@ const PasswordForm = ({ theme, buttonSave }) => {
               <Ionicons
                 name="eye"
                 size={24}
-                color={theme === "dark" ? "white" : "black"}
+                color={theme === "dark" ? "white" : "#67104c"}
               />
             ) : (
               <Ionicons
                 name="eye-off"
                 size={24}
-                color={theme === "dark" ? "white" : "black"}
+                color={theme === "dark" ? "white" : "#67104c"}
               />
             )}
           </TouchableOpacity>
