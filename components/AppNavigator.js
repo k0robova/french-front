@@ -12,6 +12,7 @@ import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Profile } from "../screens/Profile";
 import { ForgotPassword } from "./ForgotPassword";
+import { Support } from "./Support";
 
 const MainStack = createNativeStackNavigator();
 
@@ -93,6 +94,11 @@ export const AppNavigator = () => {
       <MainStack.Screen
         name="ForgotPassword"
         component={ForgotPassword}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="Support"
+        component={Support}
         options={{ headerShown: false }}
       />
     </MainStack.Navigator>

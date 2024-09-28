@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import IconSetting from "react-native-vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+import "../i18n";
 import {
   Pressable,
   SafeAreaView,
@@ -7,40 +10,50 @@ import {
   TextInput,
   View,
   Text,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { updatePassword } from "../services/authService";
-import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useTranslation } from "react-i18next";
-import "../i18n";
+import { updaterPasswordThunk } from "../store/auth/authThunks";
 
 const PasswordForm = ({ theme, buttonSave }) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const dispatch = useDispatch();
+
   const [userPass, setUserPass] = useState({
     password: "",
     newPassword: "",
   });
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { t, i18n } = useTranslation();
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-  };
 
   const updateUserPass = async () => {
     try {
-      await updatePassword(userPass);
-      setUserPass({ password: "", newPassword: "" });
-      console.log("пароль обновлено");
+      const resultAction = await dispatch(updaterPasswordThunk(userPass));
+      if (updaterPasswordThunk.fulfilled.match(resultAction)) {
+        setUserPass({ password: "", newPassword: "" });
+        Alert.alert("", t("alert.passwordChanged"), [
+          { text: t("alert.close") },
+        ]);
+        console.log("Пароль успішно змінено");
+      } else {
+        Alert.alert("Error", resultAction.error.message);
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Changes password failed:", error);
+      Alert.alert("Error", error.message);
     }
   };
 
-  const handlePress = () => {
-    setIsPasswordVisible(!isPasswordVisible);
+  // const updateUserPass = async () => {
+  //   try {
+  //     await updatePassword(userPass);
+  //     setUserPass({ password: "", newPassword: "" });
+  //     console.log("Пароль успішно змінено");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-    updateUserPass();
-  };
   return (
     <SafeAreaView>
       <View style={{ marginBottom: 12, padding: 10 }}>
@@ -70,7 +83,8 @@ const PasswordForm = ({ theme, buttonSave }) => {
             placeholder={t("rg.placePass")}
             secureTextEntry={!isPasswordVisible}
             placeholderTextColor={theme === "dark" ? "white" : undefined}
-            keyboardType="email-address"
+            keyboardType="default"
+            value={userPass.password}
             style={{ width: "100%" }}
             onChangeText={(text) =>
               setUserPass((prevNote) => ({ ...prevNote, password: text }))
@@ -124,6 +138,7 @@ const PasswordForm = ({ theme, buttonSave }) => {
             placeholder={t("rg.placeNewPassword")}
             placeholderTextColor={theme === "dark" ? "white" : undefined}
             keyboardType="default"
+            value={userPass.newPassword}
             secureTextEntry={!isPasswordVisible}
             style={{ width: "100%" }}
             onChangeText={(text) =>

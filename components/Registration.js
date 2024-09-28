@@ -1,7 +1,12 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { CheckBox } from "react-native-btr";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+import "../i18n";
 import {
-  Button,
   StyleSheet,
   Alert,
   Pressable,
@@ -12,23 +17,14 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Platform,
+  SafeAreaView,
 } from "react-native";
-import { useTranslation } from "react-i18next";
-import "../i18n";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { CheckBox } from "react-native-btr";
 import * as Validate from "../helpers/validationInput";
 import { handleChange } from "../helpers/handleChangeInput";
-import { useDispatch } from "react-redux";
 import { getProfileThunk, registerThunk } from "../store/auth/authThunks";
 
 export const Registration = () => {
   const navigation = useNavigation();
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
-  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -45,15 +41,9 @@ export const Registration = () => {
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
-
-  useEffect(() => {
-    validateForm();
-  }, [formData, formErrors]);
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    dispatch(getProfileThunk());
-  };
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const handleRegister = async () => {
     try {
@@ -61,7 +51,7 @@ export const Registration = () => {
       if (registerThunk.fulfilled.match(resultAction)) {
         // setFormData({ name: "", birthDate: "", email: "", password: "" });
         navigation.navigate("Home");
-        Alert.alert("", "Hello! Nice to meet you", [{ text: "Close" }]);
+        Alert.alert("", t("alert.welcome"), [{ text: t("alert.close") }]);
       } else {
         Alert.alert("Error", resultAction.error.message);
       }
@@ -77,7 +67,7 @@ export const Registration = () => {
     Validate.validateName,
     setFormErrors,
     "nameError",
-    "Start with a capital letter and a minimum of 3 letters"
+    t("validation.name")
   );
 
   const handleBirthDateChange = handleChange(
@@ -86,7 +76,7 @@ export const Registration = () => {
     Validate.validateBirthDate,
     setFormErrors,
     "birthDateError",
-    "User must be at least 14 years old"
+    t("validation.birthDate")
   );
 
   const handleEmailChange = handleChange(
@@ -95,7 +85,7 @@ export const Registration = () => {
     Validate.validateEmail,
     setFormErrors,
     "emailError",
-    "Enter a valid email address"
+    t("validation.email")
   );
 
   const handlePasswordChange = handleChange(
@@ -104,7 +94,7 @@ export const Registration = () => {
     Validate.validatePassword,
     setFormErrors,
     "passwordError",
-    "The password must contain at least 6 characters"
+    t("validation.password")
   );
 
   const validateForm = () => {
@@ -116,6 +106,15 @@ export const Registration = () => {
     setIsFormValid(
       isNameValid && isDateOfBirthValid && isEmailValid && isPasswordValid
     );
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [formData, formErrors]);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(getProfileThunk());
   };
 
   const renderError = (error, errorMessage) => {
@@ -189,6 +188,7 @@ export const Registration = () => {
                   placeholder={t("rg.placeName")}
                   // placeholderTextColor="#f89fa1"
                   keyboardType="default"
+                  value={formData.name}
                   style={{ width: "100%" }}
                   onChangeText={handleNameChange}
                 />
@@ -223,6 +223,7 @@ export const Registration = () => {
                   placeholder={t("rg.placeDoB")}
                   // placeholderTextColor="#f89fa1"
                   keyboardType="numeric"
+                  value={formData.birthDate}
                   style={{ width: "100%" }}
                   onChangeText={handleBirthDateChange}
                 />
@@ -257,6 +258,7 @@ export const Registration = () => {
                   placeholder={t("rg.placeEmail")}
                   // placeholderTextColor="#f89fa1"
                   keyboardType="email-address"
+                  value={formData.email}
                   style={{ width: "100%" }}
                   onChangeText={handleEmailChange}
                 />
@@ -291,6 +293,7 @@ export const Registration = () => {
                   placeholder={t("rg.placePass")}
                   // placeholderTextColor="#f89fa1"
                   secureTextEntry={!isPasswordVisible}
+                  value={formData.password}
                   style={{ width: "100%" }}
                   onChangeText={handlePasswordChange}
                 />
@@ -325,24 +328,6 @@ export const Registration = () => {
               title="Register"
               onPress={handleRegister}
               disabled={!isFormValid}
-              // style={[
-              //   styles.button,
-              //   (!isFormValid || !isChecked) && styles.buttonDisabled,
-              // ]}
-              // title="Register"
-              // color="white"
-              // style={{
-              //   marginTop: 18,
-              //   marginBottom: 4,
-              //   borderRadius: 100,
-              //   paddingVertical: 16,
-              //   paddingHorizontal: 32,
-              //   width: 343,
-              //   height: 51,
-              //   backgroundColor: "#67104c",
-              // }}
-              // onPress={handleRegister}
-              // disabled={!isFormValid}
             >
               <Text
                 style={{

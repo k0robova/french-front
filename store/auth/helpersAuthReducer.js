@@ -56,6 +56,14 @@ export const handleFulfilledUpdatePassword = (state, { payload }) => {
   state.error = "";
 };
 
+export const handleFulfilledForgotPass = (state, { payload }) => {
+  state.isRefreshing = false;
+  state.error = "";
+  state.user = payload;
+};
+
+// export const handleFulfilledRestorePassword
+
 export const handleRejected = (state, { payload }) => {
   state.isRefreshing = false;
   state.error = payload;

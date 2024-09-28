@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Button,
   Pressable,
+  Alert,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";

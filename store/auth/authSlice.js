@@ -32,19 +32,19 @@ export const authSlice = createSlice({
         HelpersReducer.handleFulfilledLogout
       )
       .addCase(
-        authThunks.updaterUserData.fulfilled,
+        authThunks.updaterUserDataThunk.fulfilled,
         HelpersReducer.handleFulfilledUpdateUserData
       )
       .addCase(
-        authThunks.updaterUserTheme.fulfilled,
+        authThunks.updaterUserThemeThunk.fulfilled,
         HelpersReducer.handleFulfilledUpdateTheme
       )
       .addCase(
-        authThunks.updaterPassword.fulfilled,
+        authThunks.updaterPasswordThunk.fulfilled,
         HelpersReducer.handleFulfilledUpdatePassword
       )
       .addCase(
-        authThunks.updateUserLng.fulfilled,
+        authThunks.updateUserLngThunk.fulfilled,
         HelpersReducer.handleFulfilledUpdateLng
       )
       .addMatcher(

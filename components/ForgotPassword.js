@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import "../i18n";
 import {
-  Button,
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -12,22 +18,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { Ionicons } from "@expo/vector-icons";
-import "../i18n";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { handleChange } from "../helpers/handleChangeInput";
 import { forgotPass, restorePassword } from "../services/authService";
 import * as Validate from "../helpers/validationInput";
 
 export const ForgotPassword = () => {
   const navigation = useNavigation();
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const { t, i18n } = useTranslation();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,22 +35,12 @@ export const ForgotPassword = () => {
     emailError: "",
     passwordError: "",
   });
-
   const [isOtpCode, setIsOtpCode] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
-
-  //   const toggleTheme = () => {
-  //     setIsDarkTheme(!isDarkTheme);
-  //   };
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-  };
-
-  useEffect(() => {
-    validateForm();
-  }, [formData, formErrors]);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const handleSendOtpCode = async () => {
     try {
@@ -67,6 +53,7 @@ export const ForgotPassword = () => {
       });
       setIsOtpCode(true);
       setIsPasswordValid(false);
+      Alert.alert("", t("alert.codeOnMail"), [{ text: t("alert.close") }]);
     } catch (error) {
       console.log(error);
     }
@@ -79,6 +66,7 @@ export const ForgotPassword = () => {
     };
     try {
       const data = await restorePassword(formData.otp, newPassword);
+      Alert.alert("", t("alert.passwordChanged"), [{ text: t("alert.close") }]);
       navigation.navigate("Login");
     } catch (error) {
       console.log(error);
@@ -90,15 +78,11 @@ export const ForgotPassword = () => {
       ...formData,
       otp: "",
       password: "",
+      email: formData.email,
     });
     setIsOtpCode(false);
     setIsPasswordValid(false);
   };
-
-  //   const toggleShowPassword = () => {
-  //     setShowPassword(!showPassword);
-  //     console.log(formData);
-  //   };
 
   const handleOtpChange = handleChange(
     setFormData,
@@ -106,7 +90,7 @@ export const ForgotPassword = () => {
     Validate.validateOtp,
     setFormErrors,
     "otpError",
-    "Введіть код який прийшов вам на пошту"
+    t("validation.code")
   );
 
   const handleEmailChange = handleChange(
@@ -115,7 +99,7 @@ export const ForgotPassword = () => {
     Validate.validateEmail,
     setFormErrors,
     "emailError",
-    "Введіть коректну електронну пошту"
+    t("validation.email")
   );
 
   const handlePasswordChange = handleChange(
@@ -124,7 +108,7 @@ export const ForgotPassword = () => {
     Validate.validatePassword,
     setFormErrors,
     "passwordError",
-    "Пароль повинен містити щонайменше 6 символів"
+    t("validation.password")
   );
 
   const renderError = (error, errorMessage) => {
@@ -140,6 +124,14 @@ export const ForgotPassword = () => {
     setIsPasswordValid(isOtpValid && isPasswordValid);
   };
 
+  useEffect(() => {
+    validateForm();
+  }, [formData, formErrors]);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
+
   return (
     <TouchableOpacity
       style={{ flex: 1 }}
@@ -153,10 +145,8 @@ export const ForgotPassword = () => {
         <SafeAreaView
           style={{
             flex: 1,
-            // backgroundColor: isDarkTheme ? "#67104c" : "white",
           }}
         >
-          {/* <View style={{ flex: 1, marginHorizontal: 22 }}> */}
           {isOtpCode ? (
             <View style={{ flex: 1 }}>
               <View
@@ -168,22 +158,14 @@ export const ForgotPassword = () => {
                 }}
               >
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                  <AntDesign
-                    name="arrowleft"
-                    size={24}
-                    color={isDarkTheme ? "white" : "#67104c"}
-                  />
+                  <AntDesign name="arrowleft" size={24} color="#67104c" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
                     changeLanguage(i18n.language === "en" ? "ua" : "en")
                   }
                 >
-                  <MaterialIcons
-                    name="language"
-                    size={26}
-                    color={isDarkTheme ? "white" : "#67104c"}
-                  />
+                  <MaterialIcons name="language" size={26} color="#67104c" />
                 </TouchableOpacity>
               </View>
               <View style={{ marginBottom: 12 }}>
@@ -192,7 +174,7 @@ export const ForgotPassword = () => {
                     fontSize: 16,
                     fontWeight: 400,
                     marginVertical: 8,
-                    color: isDarkTheme ? "white" : "black",
+                    color: "black",
                   }}
                 >
                   {t("rg.code")}
@@ -201,7 +183,7 @@ export const ForgotPassword = () => {
                   style={{
                     width: "100%",
                     height: 48,
-                    borderColor: isDarkTheme ? "white" : "#67104c",
+                    borderColor: "#67104c",
                     borderWidth: 1,
                     borderRadius: 8,
                     alignItems: "center",
@@ -211,14 +193,17 @@ export const ForgotPassword = () => {
                 >
                   <TextInput
                     placeholder={t("rg.placeCode")}
-                    placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
                     keyboardType="default"
                     style={{
                       width: "100%",
-                      color: isDarkTheme ? "white" : "black",
+                      color: "black",
                     }}
                     onChangeText={handleOtpChange}
                   />
+                  {/* {renderError(formErrors.otpError, [
+                    styles.errorMessage,
+                    { top: 47 },
+                  ])} */}
                 </View>
               </View>
 
@@ -228,7 +213,7 @@ export const ForgotPassword = () => {
                     fontSize: 16,
                     fontWeight: 400,
                     marginVertical: 8,
-                    color: isDarkTheme ? "white" : "black",
+                    color: "black",
                   }}
                 >
                   {t("rg.newPassword")}
@@ -237,7 +222,7 @@ export const ForgotPassword = () => {
                   style={{
                     width: "100%",
                     height: 48,
-                    borderColor: isDarkTheme ? "white" : "#67104c",
+                    borderColor: "#67104c",
                     borderWidth: 1,
                     borderRadius: 8,
                     alignItems: "center",
@@ -247,40 +232,32 @@ export const ForgotPassword = () => {
                 >
                   <TextInput
                     placeholder={t("rg.placeNewPassword")}
-                    placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
                     secureTextEntry={!isPasswordVisible}
                     keyboardType="default"
                     value={formData.password}
                     style={{
                       width: "100%",
-                      color: isDarkTheme ? "white" : "black",
+                      color: "black",
                     }}
                     onChangeText={handlePasswordChange}
                   />
+                  {renderError(formErrors.passwordError, [
+                    styles.errorMessage,
+                    { top: -13 },
+                  ])}
                   <TouchableOpacity
                     onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                     style={{ position: "absolute", right: 12 }}
                   >
                     {isPasswordVisible === true ? (
-                      <Ionicons
-                        name="eye"
-                        size={24}
-                        color={isDarkTheme ? "white" : "#67104c"}
-                      />
+                      <Ionicons name="eye" size={24} color="#67104c" />
                     ) : (
-                      <Ionicons
-                        name="eye-off"
-                        size={24}
-                        color={isDarkTheme ? "white" : "#67104c"}
-                      />
+                      <Ionicons name="eye-off" size={24} color="#67104c" />
                     )}
                   </TouchableOpacity>
                 </View>
               </View>
-
               <Pressable
-                // title="Register"
-                // color="white"
                 style={{
                   marginTop: 18,
                   marginBottom: 4,
@@ -289,18 +266,41 @@ export const ForgotPassword = () => {
                   paddingHorizontal: 32,
                   width: 343,
                   height: 51,
-                  backgroundColor: isDarkTheme ? "white" : "#67104c",
+                  backgroundColor: "#67104c",
+                }}
+                onPress={handleBackToEmail}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  {t("rg.back")}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={{
+                  marginTop: 18,
+                  marginBottom: 4,
+                  borderRadius: 100,
+                  paddingVertical: 16,
+                  paddingHorizontal: 32,
+                  width: 343,
+                  height: 51,
+                  backgroundColor: "#67104c",
                 }}
                 onPress={handleChangePassword}
               >
                 <Text
                   style={{
-                    color: isDarkTheme ? "#67104c" : "white",
+                    color: "white",
                     fontWeight: "bold",
                     textAlign: "center",
                   }}
                 >
-                  {t("rg.send")}
+                  {t("rg.saveChanges")}
                 </Text>
               </Pressable>
             </View>
@@ -315,22 +315,14 @@ export const ForgotPassword = () => {
                 }}
               >
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                  <AntDesign
-                    name="arrowleft"
-                    size={24}
-                    color={isDarkTheme ? "white" : "#67104c"}
-                  />
+                  <AntDesign name="arrowleft" size={24} color="#67104c" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
                     changeLanguage(i18n.language === "en" ? "ua" : "en")
                   }
                 >
-                  <MaterialIcons
-                    name="language"
-                    size={26}
-                    color={isDarkTheme ? "white" : "#67104c"}
-                  />
+                  <MaterialIcons name="language" size={26} color="#67104c" />
                 </TouchableOpacity>
               </View>
               <View style={{ marginVertical: 22 }}>
@@ -338,7 +330,7 @@ export const ForgotPassword = () => {
                   style={{
                     fontSize: 16,
                     marginVertical: 12,
-                    color: isDarkTheme ? "white" : "black",
+                    color: "black",
                   }}
                 >
                   {t("rg.sendCode")}
@@ -351,7 +343,7 @@ export const ForgotPassword = () => {
                     fontSize: 16,
                     fontWeight: 400,
                     marginVertical: 8,
-                    color: isDarkTheme ? "white" : "black",
+                    color: "black",
                   }}
                 >
                   {t("rg.email")}
@@ -360,7 +352,7 @@ export const ForgotPassword = () => {
                   style={{
                     width: "100%",
                     height: 48,
-                    borderColor: isDarkTheme ? "white" : "#67104c",
+                    borderColor: "#67104c",
                     borderWidth: 1,
                     borderRadius: 8,
                     alignItems: "center",
@@ -370,19 +362,16 @@ export const ForgotPassword = () => {
                 >
                   <TextInput
                     placeholder={t("rg.placeEmail")}
-                    placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
                     keyboardType="email-address"
                     style={{
                       width: "100%",
-                      color: isDarkTheme ? "white" : "black",
+                      color: "black",
                     }}
                     onChangeText={handleEmailChange}
                   />
                 </View>
               </View>
               <Pressable
-                // title="Register"
-                // color="white"
                 style={{
                   marginTop: 18,
                   marginBottom: 4,
@@ -391,13 +380,13 @@ export const ForgotPassword = () => {
                   paddingHorizontal: 32,
                   width: 343,
                   height: 51,
-                  backgroundColor: isDarkTheme ? "white" : "#67104c",
+                  backgroundColor: "#67104c",
                 }}
                 onPress={handleSendOtpCode}
               >
                 <Text
                   style={{
-                    color: isDarkTheme ? "#67104c" : "white",
+                    color: "white",
                     fontWeight: "bold",
                     textAlign: "center",
                   }}
@@ -405,6 +394,34 @@ export const ForgotPassword = () => {
                   {t("rg.send")}
                 </Text>
               </Pressable>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  marginVertical: 22,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: "#67104c",
+                  }}
+                >
+                  {t("rg.techSupport")}
+                </Text>
+                <Pressable onPress={() => navigation.navigate("Support")}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#67104c",
+                      fontWeight: "bold",
+                      marginLeft: 6,
+                    }}
+                  >
+                    {t("rg.clickHere")}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           )}
         </SafeAreaView>
@@ -417,7 +434,7 @@ const styles = StyleSheet.create({
   errorMessage: {
     fontFamily: "Montserrat-Regular",
     position: "absolute",
-    fontSize: 12,
+    fontSize: 10,
     color: "red",
     left: 0,
     top: -30,

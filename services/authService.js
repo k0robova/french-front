@@ -59,15 +59,6 @@ export const verify = async () => {
   return data;
 };
 
-export const forgotPass = async (body) => {
-  const data = await instance.post("/users/forgotPassword", body);
-  return data;
-};
-
-export const restorePassword = async (otp, body) => {
-  const data = await instance.post(`/users//restorePassword/${otp}`, body);
-};
-
 export const updateTheme = async (body) => {
   const { data } = await instance.patch("/users/theme", body);
   return data;
@@ -75,5 +66,15 @@ export const updateTheme = async (body) => {
 
 export const updateLng = async (body) => {
   const { data } = await instance.patch("/users/lng".body);
+  return data;
+};
+
+export const forgotPass = async (body) => {
+  const data = await instance.post("/users/forgotPassword", body);
+  return data;
+};
+
+export const restorePassword = async (otp, body) => {
+  const data = await instance.post(`/users/restorePassword/${otp}`, body);
   return data;
 };

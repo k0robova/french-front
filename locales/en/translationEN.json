@@ -33,9 +33,27 @@
     "placeCode": "Enter your code",
     "save": "Save",
     "sendCode": "Please enter the email address you used to register your account",
-    "send": "Send"
+    "send": "Send",
+    "back": "Back",
+    "techSupport": "Contact support",
+    "clickHere": "Click Here",
+    "support": "You can email us at la.prof.p@ukr.net if you encounter any issues."
   },
   "hm": {
     "welcome": "Welcome! This is your Home Page"
+  },
+  "alert": {
+    "welcome": "Hello! Nice to meet you",
+    "close": "Close",
+    "codeOnMail": "We have sent password reset instructions to your email address",
+    "passwordChanged": "Your password has been successfully changed",
+    "dataChanged": "Your changes have been successfully saved"
+  },
+  "validation": {
+    "name": "Start with a capital letter and a minimum of 3 letters",
+    "birthDate": "User must be at least 14 years old",
+    "email": "Enter a valid email address",
+    "password": "The password must contain at least 6 characters",
+    "code": "Enter the code you received in the mail"
   }
 }

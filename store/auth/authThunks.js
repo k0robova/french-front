@@ -9,6 +9,8 @@ import {
   updatePassword,
   updateTheme,
   updateUser,
+  forgotPass,
+  restorePassword,
 } from "../../services/authService";
 
 export const loginThunk = createAsyncThunk(
@@ -66,19 +68,19 @@ export const getProfileThunk = createAsyncThunk(
   }
 );
 
-export const updaterPassword = createAsyncThunk(
+export const updaterPasswordThunk = createAsyncThunk(
   "/users/updatePassword",
   async (body, { rejectWithValue }) => {
     try {
       return await updatePassword(body);
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
 
-export const updaterUserTheme = createAsyncThunk(
+export const updaterUserThemeThunk = createAsyncThunk(
   "/users/theme",
   async (body, { rejectWithValue }) => {
     try {
@@ -90,7 +92,7 @@ export const updaterUserTheme = createAsyncThunk(
   }
 );
 
-export const updateUserLng = createAsyncThunk(
+export const updateUserLngThunk = createAsyncThunk(
   "/users/lng",
   async (body, { rejectWithValue }) => {
     try {
@@ -102,13 +104,35 @@ export const updateUserLng = createAsyncThunk(
   }
 );
 
-export const updaterUserData = createAsyncThunk(
+export const updaterUserDataThunk = createAsyncThunk(
   "/users/update",
   async (body, { rejectWithValue }) => {
     try {
       return await updateUser(body);
     } catch (error) {
       console.log(error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const forgotPassThunk = createAsyncThunk(
+  "/users/forgotPassword",
+  async (body, { rejectWithValue }) => {
+    try {
+      return await forgotPass(body);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const restorePasswordThunk = createAsyncThunk(
+  "/users/restorePassword",
+  async ({ body, otp }, { rejectWithValue }) => {
+    try {
+      return await restorePassword(otp, body);
+    } catch (error) {
       return rejectWithValue(error.message);
     }
   }

@@ -1,5 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import "../i18n";
@@ -13,19 +15,19 @@ import {
   Button,
   Alert,
 } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { loginThunk } from "../store/auth/authThunks";
-import { useDispatch } from "react-redux";
 
 export const Login = () => {
   const navigation = useNavigation();
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const dispatch = useDispatch();
+
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const { t, i18n } = useTranslation();
-  const dispatch = useDispatch();
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const validateForm = () => {
     setIsFormValid(email.trim().length > 0 && password.trim().length > 0);
@@ -107,7 +109,7 @@ export const Login = () => {
           {/* <Text
             style={{ fontSize: 16, color: isDarkTheme ? "white" : "black" }}
           >
-            {t("rg.letsAcq")}
+            Введіть ваші дані
           </Text> */}
         </View>
 
@@ -196,8 +198,6 @@ export const Login = () => {
         </View>
 
         <Pressable
-          title="Register"
-          color="white"
           style={{
             marginTop: 18,
             marginBottom: 4,

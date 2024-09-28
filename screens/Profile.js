@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
+import "../i18n";
 import {
   SafeAreaView,
   Text,
@@ -14,27 +19,22 @@ import {
   View,
   Button,
 } from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import PasswordForm from "../components/PasswordForm";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useTranslation } from "react-i18next";
-
-import "../i18n";
-import { updatePassword, updateUser } from "../services/authService";
+import { updateUser } from "../services/authService";
+import { updaterUserDataThunk } from "../store/auth/authThunks";
 
 export const Profile = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
   const [user, setUser] = useState({ name: "", email: "" });
   const [userInfo, setUserInfo] = useState({
     name: user.name || "",
     email: user.email || "",
   });
-  const navigation = useNavigation();
+
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const { t, i18n } = useTranslation();
-
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-  };
 
   const getUserInfo = async () => {
     const storedUser = await SecureStore.getItemAsync("user");
@@ -59,23 +59,49 @@ export const Profile = () => {
     setUser(updatedUser);
     setUserInfo(updatedUser);
     try {
-      const updateInfoUser = await updateUser(updatedUser);
-      await SecureStore.setItemAsync("user", JSON.stringify(updateInfoUser));
-      Alert.alert("", "Your changes have been successfully saved", [
-        { text: "Close" },
-      ]);
+      const resultAction = await dispatch(updaterUserDataThunk(updatedUser));
+      if (updaterUserDataThunk.fulfilled.match(resultAction)) {
+        await SecureStore.setItemAsync("user", JSON.stringify(updatedUser));
+        Alert.alert("", t("alert.dataChanged"), [{ text: t("alert.close") }]);
+      } else {
+        Alert.alert("Error", resultAction.error.message);
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Changes failed:", error);
+      Alert.alert("Error", error.message);
     }
+  };
+
+  // const handleSave = async () => {
+  //   const updatedUser = {
+  //     ...user,
+  //     name: userInfo.name,
+  //     email: userInfo.email,
+  //   };
+  //   setUser(updatedUser);
+  //   setUserInfo(updatedUser);
+  //   try {
+  //     const updateInfoUser = await updateUser(updatedUser);
+  //     await SecureStore.setItemAsync("user", JSON.stringify(updateInfoUser));
+  //     Alert.alert("", "Your changes have been successfully saved", [
+  //       { text: "Close" },
+  //     ]);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
   };
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   return (
     <TouchableOpacity

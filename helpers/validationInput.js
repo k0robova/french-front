@@ -1,5 +1,5 @@
 export const validateName = (name) => {
-  const regex = /^[A-Z][a-zA-Z]{2,}$/; // Перевірка першої великої букви і мінімум 3 букв
+  const regex = /^[A-ZА-Я][a-zа-яїєґіA-ZА-ЯЇЄҐІ'-]{2,}$/;
   return regex.test(name);
 };
 
