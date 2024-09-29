@@ -97,8 +97,9 @@ export const Profile = () => {
     const loadTheme = async () => {
       try {
         const storedTheme = await SecureStore.getItemAsync("theme");
-        if (storedTheme) {
-          dispatch(setTheme(storedTheme)); // Встановлюємо тему з SecureStore у Redux
+        if (storedTheme !== null) {
+          const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
+          dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
         }
       } catch (error) {
         console.error("Failed to load theme:", error);
