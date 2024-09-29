@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -16,17 +17,22 @@ import {
   Alert,
 } from "react-native";
 import { loginThunk } from "../store/auth/authThunks";
+import { selectUser } from "../store/auth/selector";
+import { setTheme } from "../store/auth/authSlice";
 
 export const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  // const userData = useSelector(selectUser);
+  const isDarkTheme = useSelector((state) => state.auth.theme);
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  // const [isDarkTheme, setIsDarkTheme] = useState(false);
+
   const { t, i18n } = useTranslation();
 
   const validateForm = () => {
@@ -68,14 +74,43 @@ export const Login = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
+  // const toggleTheme = () => {
+  //   setIsDarkTheme(!isDarkTheme);
+  // };
+
+  const toggleTheme = async () => {
+    const newTheme = !isDarkTheme; // Інвертуємо булеве значення теми
+
+    try {
+      // Зберігаємо нову тему як рядок (булеве значення) в SecureStore
+      await SecureStore.setItemAsync("theme", JSON.stringify(newTheme));
+      // Оновлюємо тему в Redux-стані
+      dispatch(setTheme(newTheme));
+    } catch (error) {
+      console.error("Failed to update theme:", error);
+    }
   };
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
 
+  // useEffect(() => {
+  //   console.log(userData, "Userdata");
+  // }, []);
+
+  // const getUserInfo = () => {
+  //   // console.log("====================================");
+  //   // console.log(userData);
+  //   // console.log("====================================");
+  //   setIsDarkTheme(userData.theme);
+  // };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getUserInfo();
+  //   }, [])
+  // );
   return (
     <SafeAreaView
       style={{

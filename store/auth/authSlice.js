@@ -3,8 +3,9 @@ import * as authThunks from "./authThunks";
 import * as HelpersReducer from "./helpersAuthReducer";
 
 const initialState = {
-  user: { name: null, email: null, birthDate: null, lng: null, theme: null },
+  user: { name: null, email: null, birthDate: null },
   token: null,
+  theme: false,
   isRefreshing: false,
   error: "",
   isLoggedIn: false,
@@ -13,6 +14,12 @@ const initialState = {
 export const authSlice = createSlice({
   name: "auth",
   initialState,
+  reducers: {
+    // Редюсер для зміни теми
+    setTheme: (state, action) => {
+      state.theme = action.payload; // Оновлюємо тему в стані Redux
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(
@@ -47,6 +54,7 @@ export const authSlice = createSlice({
         authThunks.updateUserLngThunk.fulfilled,
         HelpersReducer.handleFulfilledUpdateLng
       )
+
       .addMatcher(
         (action) => action.type.endsWith("pending"),
         HelpersReducer.handlePending
@@ -57,3 +65,4 @@ export const authSlice = createSlice({
       );
   },
 });
+export const { setTheme } = authSlice.actions;

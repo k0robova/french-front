@@ -10,18 +10,22 @@ import {
   Alert,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useDispatch } from "react-redux";
-import { logoutThunk } from "../store/auth/authThunks";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutThunk, updaterUserThemeThunk } from "../store/auth/authThunks";
+import { selectUser } from "../store/auth/selector";
+import { setTheme } from "../store/auth/authSlice";
 
 export const Home = () => {
   const { t, i18n } = useTranslation();
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const userData = useSelector(selectUser);
+  // const [isDarkTheme, setIsDarkTheme] = useState(true);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const isDarkTheme = useSelector((state) => state.auth.theme);
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -41,9 +45,40 @@ export const Home = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-  };
+  // useEffect(() => {
+  //   const loadTheme = async () => {
+  //     try {
+  //       const storedTheme = await SecureStore.getItemAsync("theme");
+  //       if (storedTheme) {
+  //         dispatch(setTheme(storedTheme)); // Встановлюємо тему з SecureStore у Redux
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to load theme:", error);
+  //     }
+  //   };
+
+  //   loadTheme();
+  // }, [dispatch]);
+
+  // const toggleTheme = async () => {
+  //   if (isDarkTheme) {
+  //     setIsDarkTheme(false);
+  //     await dispatch(updaterUserThemeThunk({ theme: isDarkTheme }));
+  //   } else {
+  //     setIsDarkTheme(true);
+  //     await dispatch(updaterUserThemeThunk({ theme: isDarkTheme }));
+  //   }
+  // };
+
+  // const getUserInfo = () => {
+  //   setIsDarkTheme(userData.theme);
+  // };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getUserInfo();
+  //   }, [])
+  // );
 
   return (
     <SafeAreaView
@@ -71,12 +106,12 @@ export const Home = () => {
         </Pressable>
       </View>
 
-      <View style={styles.themeButtonContainer}>
+      {/* <View style={styles.themeButtonContainer}>
         <Button
           title={isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"}
           onPress={toggleTheme}
         />
-      </View>
+      </View> */}
 
       <Text
         style={[styles.welcomeText, { color: isDarkTheme ? "white" : "black" }]}

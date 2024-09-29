@@ -84,7 +84,9 @@ export const updaterUserThemeThunk = createAsyncThunk(
   "/users/theme",
   async (body, { rejectWithValue }) => {
     try {
-      return await updateTheme(body);
+      const data = await updateTheme(body);
+      console.log(data, "DATA");
+      return data;
     } catch (error) {
       console.log(error);
       return rejectWithValue(error.message);
@@ -134,6 +136,21 @@ export const restorePasswordThunk = createAsyncThunk(
       return await restorePassword(otp, body);
     } catch (error) {
       return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const loadThemeFromSecureStore = createAsyncThunk(
+  async (_, thunkAPI) => {
+    try {
+      const storedTheme = await SecureStore.getItemAsync("theme");
+      if (storedTheme) {
+        return JSON.parse(storedTheme); // Повертаємо тему з SecureStore
+      } else {
+        return "light"; // Якщо теми немає, повертаємо стандартну (наприклад, 'light')
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );

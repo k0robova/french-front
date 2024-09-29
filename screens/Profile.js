@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
@@ -21,11 +21,17 @@ import {
 } from "react-native";
 import PasswordForm from "../components/PasswordForm";
 import { updateUser } from "../services/authService";
-import { updaterUserDataThunk } from "../store/auth/authThunks";
+import {
+  updaterUserDataThunk,
+  updaterUserThemeThunk,
+} from "../store/auth/authThunks";
+import { selectUser } from "../store/auth/selector";
+import { setTheme } from "../store/auth/authSlice";
 
 export const Profile = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const userData = useSelector(selectUser);
 
   const [user, setUser] = useState({ name: "", email: "" });
   const [userInfo, setUserInfo] = useState({
@@ -33,20 +39,22 @@ export const Profile = () => {
     email: user.email || "",
   });
 
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  // const [isDarkTheme, setIsDarkTheme] = useState(true);
   const { t, i18n } = useTranslation();
 
+  const isDarkTheme = useSelector((state) => state.auth.theme);
+
   const getUserInfo = async () => {
-    const storedUser = await SecureStore.getItemAsync("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
+    // const storedUser = await SecureStore.getItemAsync("user");
+    if (userData) {
+      // const parsedUser = JSON.parse(storedUser);
       // setUser(parsedUser);
       setUser((prevNote) => ({
         ...prevNote,
-        name: storedUser.name,
-        email: storedUser.email,
+        name: userData.name,
+        email: userData.email,
       }));
-      setUserInfo({ name: parsedUser.name, email: parsedUser.email });
+      setUserInfo({ name: userData.name, email: userData.email });
     }
   };
 
@@ -61,7 +69,7 @@ export const Profile = () => {
     try {
       const resultAction = await dispatch(updaterUserDataThunk(updatedUser));
       if (updaterUserDataThunk.fulfilled.match(resultAction)) {
-        await SecureStore.setItemAsync("user", JSON.stringify(updatedUser));
+        // await SecureStore.setItemAsync("user", JSON.stringify(updatedUser));
         Alert.alert("", t("alert.dataChanged"), [{ text: t("alert.close") }]);
       } else {
         Alert.alert("Error", resultAction.error.message);
@@ -71,6 +79,34 @@ export const Profile = () => {
       Alert.alert("Error", error.message);
     }
   };
+  const toggleTheme = async () => {
+    const newTheme = !isDarkTheme; // Інвертуємо булеве значення теми
+
+    try {
+      // Зберігаємо нову тему як рядок (булеве значення) в SecureStore
+      await SecureStore.setItemAsync("theme", JSON.stringify(newTheme));
+      // Оновлюємо тему в Redux-стані
+      dispatch(setTheme(newTheme));
+    } catch (error) {
+      console.error("Failed to update theme:", error);
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+    const loadTheme = async () => {
+      try {
+        const storedTheme = await SecureStore.getItemAsync("theme");
+        if (storedTheme) {
+          dispatch(setTheme(storedTheme)); // Встановлюємо тему з SecureStore у Redux
+        }
+      } catch (error) {
+        console.error("Failed to load theme:", error);
+      }
+    };
+
+    loadTheme();
+  }, [dispatch]);
 
   // const handleSave = async () => {
   //   const updatedUser = {
@@ -91,13 +127,39 @@ export const Profile = () => {
   //   }
   // };
 
-  useEffect(() => {
-    getUserInfo();
-  }, []);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getUserInfo();
+  //   }, [])
+  // );
 
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-  };
+  // const toggleTheme = async () => {
+  //   if (isDarkTheme) {
+
+  //     setIsDarkTheme(false);
+  //     await dispatch(updaterUserThemeThunk({ theme: false }));
+  //   } else {
+
+  //     setIsDarkTheme(true);
+  //     await dispatch(updaterUserThemeThunk({ theme: true }));
+  //   }
+  // };
+
+  // const toggleTheme = async () => {
+  //   const newTheme = !isDarkTheme;
+  //   try {
+  //     const resultAction = await dispatch(
+  //       updaterUserThemeThunk({ theme: newTheme })
+  //     );
+  //     if (updaterUserThemeThunk.fulfilled.match(resultAction)) {
+  //       setIsDarkTheme(newTheme);
+  //     } else {
+  //       console.log("Theme update failed", resultAction.error.message);
+  //     }
+  //   } catch (error) {
+  //     console.log("Error updating theme:", error.message);
+  //   }
+  // };
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -190,7 +252,7 @@ export const Profile = () => {
                 color={isDarkTheme ? "white" : "black"}
                 placeholderTextColor={isDarkTheme ? "white" : undefined}
                 keyboardType="default"
-                // value={userInfo.name}
+                value={userInfo.name}
                 style={{ width: "100%" }}
                 onChangeText={(text) =>
                   setUserInfo((prevInfo) => ({ ...prevInfo, name: text }))
@@ -226,7 +288,7 @@ export const Profile = () => {
                 placeholder={t("rg.placeNewEmail")}
                 color={isDarkTheme ? "white" : "black"}
                 placeholderTextColor={isDarkTheme ? "white" : undefined}
-                // value={userInfo.email}
+                value={userInfo.email}
                 keyboardType="email-address"
                 style={{ width: "100%" }}
                 onChangeText={(text) =>

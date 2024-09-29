@@ -134,6 +134,9 @@ export const Registration = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1, justifyContent: "flex-end" }}
+        // keyboardVerticalOffset={
+        //   Platform.OS === "android" ? 35 : Platform.OS === "ios" ? 95 : 0
+        // }
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
           <View style={{ flex: 1, marginHorizontal: 22 }}>

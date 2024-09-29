@@ -28,7 +28,6 @@ export const handleFulfilledProfile = (state, { payload }) => {
 export const handleFulfilledLogout = (state, _) => {
   state.isRefreshing = false;
   state.error = "";
-  state.user = null;
   state.token = null;
   state.isLoggedIn = false;
 };
