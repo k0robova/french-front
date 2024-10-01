@@ -12,6 +12,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authSlice } from "./auth/authSlice";
 import { vocabReducer } from "./vocab/vocabSlice";
+import { topicReducer } from "./topic/topicSlice";
 
 const persistConfig = {
   key: "root",
@@ -25,6 +26,8 @@ export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
     vocab: vocabReducer,
+    topic: topicReducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
