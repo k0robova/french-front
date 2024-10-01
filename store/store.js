@@ -27,6 +27,7 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     vocab: vocabReducer,
     topic: topicReducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
