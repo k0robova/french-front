@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import * as topicThunk from "./topicSlice.js";
+import * as topicThunk from "./topicThunk.js";
 import * as HelpresReducer from "./helpersTopicRefucer.js";
 
 const initialState = {
