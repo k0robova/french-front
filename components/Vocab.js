@@ -3,7 +3,7 @@ import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
-export const StudyAndTrain = () => {
+export const Vocab = () => {
   const { t } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
@@ -16,20 +16,6 @@ export const StudyAndTrain = () => {
       ]}
     >
       <View style={styles.linkContainer}>
-        <Pressable onPress={() => navigation.navigate("Vocab")}>
-          <Text
-            style={[
-              styles.linkText,
-              styles.boldText,
-              {
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-                color: isDarkTheme ? "#67104c" : "white",
-              },
-            ]}
-          >
-            {t("LAT.vocab")}
-          </Text>
-        </Pressable>
         <Pressable onPress={() => navigation.navigate("Home")}>
           <Text
             style={[
@@ -41,20 +27,7 @@ export const StudyAndTrain = () => {
               },
             ]}
           >
-            {t("LAT.phonetics")}
-          </Text>
-        </Pressable>
-        <Pressable onPress={() => navigation.navigate("Profile")}>
-          <Text
-            style={[
-              styles.linkText,
-              {
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-                color: isDarkTheme ? "#67104c" : "white",
-              },
-            ]}
-          >
-            {t("LAT.verbs")}
+            {t("LAT.vocab")}
           </Text>
         </Pressable>
       </View>

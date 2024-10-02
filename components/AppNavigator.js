@@ -1,6 +1,9 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { IntroScreen } from "../screens/IntroScreen";
+import Icon from "react-native-vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { Registration } from "./Registration";
 import { Login } from "./Login";
 import { Home } from "../screens/Home";
@@ -8,15 +11,16 @@ import { LessonsBySubscription } from "./LessonsBySubscription";
 import { StudyAndTrain } from "./StudyAndTrain";
 import { useEffect } from "react";
 import { getProfileThunk } from "../store/auth/authThunks";
-import { StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Profile } from "../screens/Profile";
 import { ForgotPassword } from "./ForgotPassword";
 import { Support } from "./Support";
+import { Vocab } from "./Vocab";
 
 const MainStack = createNativeStackNavigator();
 
 export const AppNavigator = () => {
+  const isDarkTheme = useSelector((state) => state.auth.theme);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -38,34 +42,11 @@ export const AppNavigator = () => {
 
   return (
     <MainStack.Navigator>
-      {/* <MainStack.Screen
-        name="IntroScreen"
-        component={IntroScreen}
-        options={{ headerShown: false }}
-      /> */}
       <MainStack.Screen
         name="Registration"
         component={Registration}
         options={{ headerShown: false }}
       />
-      {/* <MainStack.Screen
-            name="ResetPassword"
-            component={ResetPassword}
-            options={({ navigation }) => ({
-              title: "Reset password",
-              headerTitleAlign: "center",
-              headerLeft: () => (
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <Icon
-                    name="arrowleft"
-                    size={30}
-                    color="black"
-                    style={{ marginLeft: 10 }}
-                  />
-                </TouchableOpacity>
-              ),
-            })}
-          /> */}
       <MainStack.Screen
         name="Login"
         component={Login}
@@ -84,12 +65,53 @@ export const AppNavigator = () => {
       <MainStack.Screen
         name="StudyAndTrain"
         component={StudyAndTrain}
-        options={{ headerShown: false }}
+        options={({ navigation }) => ({
+          title: ` ${t("LAT.lat")}`,
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          },
+          headerShadowVisible: false,
+          headerTintColor: isDarkTheme ? "white" : "#67104c",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon
+                name="arrowleft"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginLeft: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+        })}
       />
       <MainStack.Screen
         name="LessonsBySubscription"
         component={LessonsBySubscription}
         options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="Vocab"
+        component={Vocab}
+        options={({ navigation }) => ({
+          title: ` ${t("LAT.vocab")}`,
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          },
+          headerShadowVisible: false,
+          headerTintColor: isDarkTheme ? "white" : "#67104c",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon
+                name="arrowleft"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginLeft: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+        })}
       />
       <MainStack.Screen
         name="ForgotPassword"
