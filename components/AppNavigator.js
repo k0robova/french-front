@@ -15,6 +15,12 @@ import { Profile } from "../screens/Profile";
 import { ForgotPassword } from "./ForgotPassword";
 import { Support } from "./Support";
 import { Vocab } from "./Vocab";
+import { Phonetic } from "./Phonetic";
+import { Verbs } from "./Verbs";
+import { LearnOrTrainTopic } from "./LearnOrTrainTopic";
+import { Learn } from "./Learn";
+import { Train } from "./Train";
+import { WordLearningScreen } from "./WordLearningScreen";
 
 const MainStack = createNativeStackNavigator();
 
@@ -121,6 +127,114 @@ export const AppNavigator = () => {
       <MainStack.Screen
         name="Support"
         component={Support}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="Phonetic"
+        component={Phonetic}
+        options={({ navigation }) => ({
+          title: ` ${t("LAT.phonetic")}`,
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          },
+          headerShadowVisible: false,
+          headerTintColor: isDarkTheme ? "white" : "#67104c",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon
+                name="arrowleft"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginLeft: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <MainStack.Screen
+        name="Verbs"
+        component={Verbs}
+        options={({ navigation }) => ({
+          title: ` ${t("LAT.verbs")}`,
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          },
+          headerShadowVisible: false,
+          headerTintColor: isDarkTheme ? "white" : "#67104c",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon
+                name="arrowleft"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginLeft: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <MainStack.Screen
+        name="LearnOrTrainTopic"
+        component={LearnOrTrainTopic}
+        options={({ navigation, route }) => {
+          const { topicName } = route.params;
+          return {
+            title: topicName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: isDarkTheme ? "#67104c" : "white",
+            },
+            headerShadowVisible: false,
+            headerTintColor: isDarkTheme ? "white" : "#67104c",
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Icon
+                  name="arrowleft"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          };
+        }}
+      />
+      <MainStack.Screen
+        name="Learn"
+        component={Learn}
+        options={({ navigation, route }) => {
+          const { topicName } = route.params;
+          return {
+            title: topicName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: isDarkTheme ? "#67104c" : "white",
+            },
+            headerShadowVisible: false,
+            headerTintColor: isDarkTheme ? "white" : "#67104c",
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Icon
+                  name="arrowleft"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          };
+        }}
+      />
+      <MainStack.Screen
+        name="Train"
+        component={Train}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="WordLearningScreen"
+        component={WordLearningScreen}
         options={{ headerShown: false }}
       />
     </MainStack.Navigator>

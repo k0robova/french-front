@@ -1,12 +1,33 @@
 import { useTranslation } from "react-i18next";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getTopic } from "../store/topic/topicThunk";
+import { selectTopic } from "../store/topic/selectors";
 
 export const StudyAndTrain = () => {
   const { t } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
+  const topicsData = useSelector(selectTopic);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const handleGetTheme = async () => {
+    try {
+      if (topicsData && topicsData.length > 0) {
+        navigation.navigate("Vocab");
+        return;
+      }
+
+      const resultAction = await dispatch(getTopic());
+      if (getTopic.fulfilled.match(resultAction)) {
+        navigation.navigate("Vocab");
+      }
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -16,7 +37,13 @@ export const StudyAndTrain = () => {
       ]}
     >
       <View style={styles.linkContainer}>
-        <Pressable onPress={() => navigation.navigate("Vocab")}>
+        <Pressable
+          style={[
+            styles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => handleGetTheme()}
+        >
           <Text
             style={[
               styles.linkText,
