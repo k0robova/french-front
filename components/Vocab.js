@@ -10,13 +10,71 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { fetchTopic } from "../services/themeService";
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectTopic } from "../store/topic/selectors";
+import { getVocab } from "../store/vocab/vocabThunks";
+import { selectVocab } from "../store/vocab/selectors";
+
 
 export const Vocab = () => {
   const { t } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
+  const vocabData = useSelector(selectVocab);
+  const topicsData = useSelector(selectTopic);
+  const dispatch = useDispatch();
+
+  const handleGetWorlds = async (id, name) => {
+    try {
+      if (vocabData && vocabData.length > 0) {
+        navigation.navigate("LearnOrTrainTopic", { topicName: name });
+        return;
+      }
+
+      const resultAction = await dispatch(getVocab(id));
+      if (getVocab.fulfilled.match(resultAction)) {
+        navigation.navigate("LearnOrTrainTopic", { topicName: name });
+      }
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const getTopics = async () => {
+  //   try {
+  //     const data = await fetchTopic();
+  //     setTopicsData(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getTopics();
+  // }, []);
+
+  const renderTopicsItem = ({ item }) => {
+    return (
+      <Pressable
+        style={[
+          styles.button,
+          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+        ]}
+        onPress={() => handleGetWorlds(item._id, item.name)}
+      >
+        <Text
+          style={{
+            color: isDarkTheme ? "#67104c" : "white",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          {item.name}
+        </Text>
+      </Pressable>
+    );
+  };
 
   const [topicsData, setTopicsData] = useState(null);
 
@@ -62,16 +120,6 @@ export const Vocab = () => {
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
-      {/* <Pressable onPress={() => navigation.navigate("StudyAndTrain")}>
-        <Text
-          style={{
-            backgroundColor: isDarkTheme ? "white" : "#67104c",
-            color: isDarkTheme ? "#67104c" : "white",
-          }}
-        >
-          {t("LAT.vocab")}
-        </Text>
-      </Pressable> */}
       <View style={{ padding: 20 }}>
         <FlatList
           style={{ width: "100%" }}
