@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -10,6 +10,8 @@ export const LearnOrTrainTopic = () => {
   const { t } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
+  const route = useRoute();
+  const { topicName } = route.params;
 
   return (
     <SafeAreaView
@@ -24,7 +26,7 @@ export const LearnOrTrainTopic = () => {
             styles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-          onPress={() => navigation.navigate("Learn")}
+          onPress={() => navigation.navigate("Learn", { topicName })}
         >
           <Text
             style={{

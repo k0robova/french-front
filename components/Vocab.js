@@ -9,12 +9,10 @@ import {
   FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTopic } from "../store/topic/selectors";
 import { getVocab } from "../store/vocab/vocabThunks";
 import { selectVocab } from "../store/vocab/selectors";
-
 
 export const Vocab = () => {
   const { t } = useTranslation();
@@ -62,43 +60,6 @@ export const Vocab = () => {
           { backgroundColor: isDarkTheme ? "white" : "#67104c" },
         ]}
         onPress={() => handleGetWorlds(item._id, item.name)}
-      >
-        <Text
-          style={{
-            color: isDarkTheme ? "#67104c" : "white",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          {item.name}
-        </Text>
-      </Pressable>
-    );
-  };
-
-  const [topicsData, setTopicsData] = useState(null);
-
-  const getTopics = async () => {
-    try {
-      const data = await fetchTopic();
-      setTopicsData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getTopics();
-  }, []);
-
-  const renderTopicsItem = ({ item }) => {
-    return (
-      <Pressable
-        style={[
-          styles.button,
-          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-        ]}
-        onPress={() => navigation.navigate("LearnOrTrainTopic")}
       >
         <Text
           style={{
