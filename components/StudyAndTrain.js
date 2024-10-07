@@ -42,44 +42,58 @@ export const StudyAndTrain = () => {
             styles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
+
           onPress={() => handleGetTheme()}
+
         >
           <Text
-            style={[
-              styles.linkText,
-              styles.boldText,
-              {
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-                color: isDarkTheme ? "#67104c" : "white",
-              },
-            ]}
+            // style={[
+            //   styles.linkText,
+            //   styles.boldText,
+            //   {
+            //     backgroundColor: isDarkTheme ? "white" : "#67104c",
+            //     color: isDarkTheme ? "#67104c" : "white",
+            //   },
+            // ]}
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
           >
             {t("LAT.vocab")}
           </Text>
         </Pressable>
-        <Pressable onPress={() => navigation.navigate("Home")}>
+        <Pressable
+          style={[
+            styles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => navigation.navigate("Phonetic")}
+        >
           <Text
-            style={[
-              styles.linkText,
-              styles.boldText,
-              {
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-                color: isDarkTheme ? "#67104c" : "white",
-              },
-            ]}
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
           >
-            {t("LAT.phonetics")}
+            {t("LAT.phonetic")}
           </Text>
         </Pressable>
-        <Pressable onPress={() => navigation.navigate("Profile")}>
+        <Pressable
+          style={[
+            styles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => navigation.navigate("Verbs")}
+        >
           <Text
-            style={[
-              styles.linkText,
-              {
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-                color: isDarkTheme ? "#67104c" : "white",
-              },
-            ]}
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
           >
             {t("LAT.verbs")}
           </Text>
@@ -118,5 +132,14 @@ const styles = StyleSheet.create({
   },
   boldText: {
     marginBottom: 10,
+  },
+  button: {
+    marginTop: 18,
+    marginBottom: 4,
+    borderRadius: 100,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    width: 343,
+    height: 51,
   },
 });

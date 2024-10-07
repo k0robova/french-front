@@ -1,11 +1,20 @@
 import { useTranslation } from "react-i18next";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTopic } from "../store/topic/selectors";
 import { getVocab } from "../store/vocab/vocabThunks";
 import { selectVocab } from "../store/vocab/selectors";
+
 
 export const Vocab = () => {
   const { t } = useTranslation();
@@ -67,6 +76,43 @@ export const Vocab = () => {
     );
   };
 
+  const [topicsData, setTopicsData] = useState(null);
+
+  const getTopics = async () => {
+    try {
+      const data = await fetchTopic();
+      setTopicsData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTopics();
+  }, []);
+
+  const renderTopicsItem = ({ item }) => {
+    return (
+      <Pressable
+        style={[
+          styles.button,
+          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+        ]}
+        onPress={() => navigation.navigate("LearnOrTrainTopic")}
+      >
+        <Text
+          style={{
+            color: isDarkTheme ? "#67104c" : "white",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          {item.name}
+        </Text>
+      </Pressable>
+    );
+  };
+
   return (
     <SafeAreaView
       style={[
@@ -89,24 +135,7 @@ export const Vocab = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  themeButtonContainer: {
-    padding: 20,
-  },
-  welcomeText: {
-    fontSize: 25,
-    textAlign: "center",
-  },
-  linkContainer: {
-    justifyContent: "center",
-    alignItems: "center",
   },
   linkText: {
     fontSize: 24,
@@ -116,5 +145,14 @@ const styles = StyleSheet.create({
   },
   boldText: {
     marginBottom: 10,
+  },
+  button: {
+    marginTop: 18,
+    marginBottom: 4,
+    borderRadius: 100,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    width: 343,
+    height: 51,
   },
 });

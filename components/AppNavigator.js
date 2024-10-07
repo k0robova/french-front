@@ -22,6 +22,7 @@ import { Learn } from "./Learn";
 import { Train } from "./Train";
 import { WordLearningScreen } from "./WordLearningScreen";
 
+
 const MainStack = createNativeStackNavigator();
 
 export const AppNavigator = () => {
@@ -200,6 +201,7 @@ export const AppNavigator = () => {
             ),
           };
         }}
+
       />
       <MainStack.Screen
         name="Learn"
@@ -226,6 +228,7 @@ export const AppNavigator = () => {
             ),
           };
         }}
+
       />
       <MainStack.Screen
         name="Train"
@@ -237,6 +240,7 @@ export const AppNavigator = () => {
         component={WordLearningScreen}
         options={{ headerShown: false }}
       />
+
     </MainStack.Navigator>
   );
 };
