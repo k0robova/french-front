@@ -1,12 +1,27 @@
-import { useTranslation } from "react-i18next";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import {
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+
 import { useSelector } from "react-redux";
 
-export const StudyAndTrain = () => {
+export const Learn = () => {
   const { t } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
+
+  const handlePress = () => {
+    console.log("Button  pressed");
+  };
 
   return (
     <SafeAreaView
@@ -15,38 +30,23 @@ export const StudyAndTrain = () => {
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
+      <TouchableOpacity
+        onPress={() => navigation.navigate("LearnOrTrainTopic")}
+      >
+        <AntDesign
+          name="arrowleft"
+          size={24}
+          color={isDarkTheme ? "white" : "#67104c"}
+        />
+      </TouchableOpacity>
+      <Text style={{ fontWeight: "bold", fontSize: 30 }}>Learn</Text>
       <View style={styles.linkContainer}>
-        <Pressable
+        <TouchableOpacity
           style={[
             styles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-          onPress={() => navigation.navigate("Vocab")}
-        >
-          <Text
-            // style={[
-            //   styles.linkText,
-            //   styles.boldText,
-            //   {
-            //     backgroundColor: isDarkTheme ? "white" : "#67104c",
-            //     color: isDarkTheme ? "#67104c" : "white",
-            //   },
-            // ]}
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {t("LAT.vocab")}
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => navigation.navigate("Phonetic")}
+          onPress={() => handlePress()}
         >
           <Text
             style={{
@@ -55,15 +55,15 @@ export const StudyAndTrain = () => {
               textAlign: "center",
             }}
           >
-            {t("LAT.phonetic")}
+            5 words
           </Text>
-        </Pressable>
-        <Pressable
+        </TouchableOpacity>
+        <TouchableOpacity
           style={[
             styles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-          onPress={() => navigation.navigate("Verbs")}
+          onPress={() => handlePress()}
         >
           <Text
             style={{
@@ -72,9 +72,43 @@ export const StudyAndTrain = () => {
               textAlign: "center",
             }}
           >
-            {t("LAT.verbs")}
+            10 words
           </Text>
-        </Pressable>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => handlePress()}
+        >
+          <Text
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            15 words
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => handlePress()}
+        >
+          <Text
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            20 words
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -85,30 +119,9 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  themeButtonContainer: {
-    padding: 20,
-  },
-  welcomeText: {
-    fontSize: 25,
-    textAlign: "center",
-  },
   linkContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  linkText: {
-    fontSize: 24,
-    padding: 15,
-    borderRadius: 35,
-    fontWeight: "bold",
-  },
-  boldText: {
-    marginBottom: 10,
+    justifyContent: "center", // Вирівнює кнопки по вертикалі по центру
+    alignItems: "center", // Вирівнює кнопки по горизонталі по центру
   },
   button: {
     marginTop: 18,

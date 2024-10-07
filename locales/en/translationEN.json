@@ -59,7 +59,9 @@
   "LAT": {
     "lat": "Learn and Train !",
     "vocab": "Vocabulary",
-    "phonetics": "Phonetics",
-    "verbs": "Conjugation of verbs"
+    "phonetic": "Phonetic",
+    "verbs": "Conjugation of verbs",
+    "learn": "Learn",
+    "train": "Train"
   }
 }

@@ -1,9 +1,12 @@
-import { useTranslation } from "react-i18next";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { useTranslation } from "react-i18next";
+
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+
 import { useSelector } from "react-redux";
 
-export const StudyAndTrain = () => {
+export const LearnOrTrainTopic = () => {
   const { t } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
@@ -21,24 +24,16 @@ export const StudyAndTrain = () => {
             styles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-          onPress={() => navigation.navigate("Vocab")}
+          onPress={() => navigation.navigate("Learn")}
         >
           <Text
-            // style={[
-            //   styles.linkText,
-            //   styles.boldText,
-            //   {
-            //     backgroundColor: isDarkTheme ? "white" : "#67104c",
-            //     color: isDarkTheme ? "#67104c" : "white",
-            //   },
-            // ]}
             style={{
               color: isDarkTheme ? "#67104c" : "white",
               fontWeight: "bold",
               textAlign: "center",
             }}
           >
-            {t("LAT.vocab")}
+            Learn
           </Text>
         </Pressable>
         <Pressable
@@ -46,7 +41,7 @@ export const StudyAndTrain = () => {
             styles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-          onPress={() => navigation.navigate("Phonetic")}
+          onPress={() => navigation.navigate("Train")}
         >
           <Text
             style={{
@@ -55,24 +50,7 @@ export const StudyAndTrain = () => {
               textAlign: "center",
             }}
           >
-            {t("LAT.phonetic")}
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => navigation.navigate("Verbs")}
-        >
-          <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {t("LAT.verbs")}
+            Train
           </Text>
         </Pressable>
       </View>
@@ -85,30 +63,9 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  themeButtonContainer: {
-    padding: 20,
-  },
-  welcomeText: {
-    fontSize: 25,
-    textAlign: "center",
-  },
   linkContainer: {
     justifyContent: "center",
     alignItems: "center",
-  },
-  linkText: {
-    fontSize: 24,
-    padding: 15,
-    borderRadius: 35,
-    fontWeight: "bold",
-  },
-  boldText: {
-    marginBottom: 10,
   },
   button: {
     marginTop: 18,
