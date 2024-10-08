@@ -18,15 +18,18 @@ export const WordLearningScreen = () => {
   const { count, topicName } = route.params; // Дістаємо кількість слів
   const [currentIndex, setCurrentIndex] = useState(0); // Поточний індекс слова
   const [totalShown, setTotalShown] = useState(0); // Для відстеження загальної кількості показаних слів
-  const [completedWords, setCompletedWords] = useState([]); // Для збереження індексів пройдених слів
   const { t, i18n } = useTranslation();
   const vocabData = useSelector(selectVocab); // Слова по темі
   const navigation = useNavigation();
   const [selectedWords, setSelectedWords] = useState([]); // Початкові слова
   const currentLanguage = i18n.language;
+  const id = useSelector((state) => state.vocab.themeId);
 
   // Стан для відстеження завершення сесії
   const [sessionComplete, setSessionComplete] = useState(false);
+
+  // Фільтрування слів за темою
+  const filteredWords = vocabData.filter((word) => word.themeId === id);
 
   // Завантаження прогресу з AsyncStorage при завантаженні компоненту
   useEffect(() => {
@@ -35,10 +38,10 @@ export const WordLearningScreen = () => {
       if (savedProgress) {
         setTotalShown(parseInt(savedProgress, 10));
       }
-      setSelectedWords(vocabData.slice(totalShown, totalShown + count)); // Вибираємо слова з урахуванням прогресу
+      setSelectedWords(filteredWords.slice(totalShown, totalShown + count)); // Вибираємо слова з урахуванням прогресу
     };
     loadProgress();
-  }, [vocabData, totalShown]);
+  }, [totalShown]);
 
   // Збереження прогресу в AsyncStorage
   const saveProgress = async (newTotalShown) => {
@@ -53,6 +56,7 @@ export const WordLearningScreen = () => {
     if (currentIndex < selectedWords.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     } else {
+      console.log(filteredWords);
       const newTotalShown = totalShown + selectedWords.length;
       setSessionComplete(true); // Встановлюємо стан завершення сесії
       setTotalShown(newTotalShown); // Оновлюємо загальну кількість показаних слів
@@ -63,10 +67,10 @@ export const WordLearningScreen = () => {
   // Обробники кнопок
   const handleRepeatSameCount = () => {
     const nextStartIndex = totalShown; // Початок для наступних слів
-    const nextEndIndex = Math.min(totalShown + count, vocabData.length); // Перевіряємо, чи не виходимо за межі масиву
+    const nextEndIndex = Math.min(totalShown + count, filteredWords.length); // Перевіряємо, чи не виходимо за межі масиву
 
     if (nextEndIndex > nextStartIndex) {
-      setSelectedWords(vocabData.slice(nextStartIndex, nextEndIndex)); // Вибираємо наступні слова
+      setSelectedWords(filteredWords.slice(nextStartIndex, nextEndIndex)); // Вибираємо наступні слова
       setCurrentIndex(0); // Скидаємо індекс
       setSessionComplete(false); // Повертаємо стан сесії
     } else {

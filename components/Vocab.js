@@ -4,7 +4,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   FlatList,
 } from "react-native";
@@ -13,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectTopic } from "../store/topic/selectors";
 import { getVocab } from "../store/vocab/vocabThunks";
 import { selectVocab } from "../store/vocab/selectors";
+import { setThemeId } from "../store/vocab/vocabSlice";
 
 export const Vocab = () => {
   const { t } = useTranslation();
@@ -24,13 +24,19 @@ export const Vocab = () => {
 
   const handleGetWorlds = async (id, name) => {
     try {
-      if (vocabData && vocabData.length > 0) {
-        navigation.navigate("LearnOrTrainTopic", { topicName: name });
+      const existingData = vocabData.find((item) => item.themeId === id);
+      dispatch(setThemeId(id));
+
+      if (existingData) {
+        navigation.navigate("LearnOrTrainTopic", {
+          topicName: name,
+        });
         return;
       }
 
       const resultAction = await dispatch(getVocab(id));
       if (getVocab.fulfilled.match(resultAction)) {
+        console.log("fulffiled");
         navigation.navigate("LearnOrTrainTopic", { topicName: name });
       }
       return;
@@ -38,19 +44,6 @@ export const Vocab = () => {
       console.log(error);
     }
   };
-
-  // const getTopics = async () => {
-  //   try {
-  //     const data = await fetchTopic();
-  //     setTopicsData(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getTopics();
-  // }, []);
 
   const renderTopicsItem = ({ item }) => {
     return (

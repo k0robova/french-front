@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import {
   SafeAreaView,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { selectVocab } from "../store/vocab/selectors";
 
 export const Learn = () => {
   const { t } = useTranslation();
@@ -21,6 +20,15 @@ export const Learn = () => {
   // Обробка вибору кількості слів
   const handlePress = (count) => {
     navigation.navigate("WordLearningScreen", { count, topicName });
+  };
+
+  const deleteStore = async () => {
+    try {
+      await AsyncStorage.removeItem(`progress_${topicName}`);
+      console.log(`Progress for topic ${topicName} has been deleted.`);
+    } catch (error) {
+      console.error("Error removing progress from storage:", error);
+    }
   };
 
   return (
@@ -97,6 +105,23 @@ export const Learn = () => {
             }}
           >
             20 words
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => deleteStore()}
+        >
+          <Text
+            style={{
+              color: isDarkTheme ? "#67104c" : "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            StoreDelete
           </Text>
         </TouchableOpacity>
       </View>

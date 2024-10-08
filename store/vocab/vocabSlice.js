@@ -4,6 +4,7 @@ import * as HelpresReducer from "./helpersVocabRefucer";
 
 const initialState = {
   vocab: [],
+  themeId: "",
   isloading: false,
   error: null,
 };
@@ -11,6 +12,11 @@ const initialState = {
 const vocabSlice = createSlice({
   name: "vocab",
   initialState,
+  reducers: {
+    setThemeId: (state, action) => {
+      state.themeId = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(
@@ -28,4 +34,5 @@ const vocabSlice = createSlice({
   },
 });
 
+export const { setThemeId } = vocabSlice.actions;
 export const vocabReducer = vocabSlice.reducer;
