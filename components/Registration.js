@@ -513,10 +513,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#ff6b6b", // Червоний колір для кнопки скасування
+    backgroundColor: "#555555", // Червоний колір для кнопки скасування
   },
   confirmButton: {
-    backgroundColor: "#4caf50", // Зелений колір для кнопки підтвердження
+    backgroundColor: "#67104c", // Зелений колір для кнопки підтвердження
   },
   buttonText: {
     fontSize: 16,
