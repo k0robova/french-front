@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CheckBox } from "react-native-btr";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "../i18n";
@@ -39,7 +40,9 @@ export const Registration = () => {
     emailError: "",
     passwordError: "",
   });
+  const [date, setDate] = useState(new Date());
 
+  const [showPicker, setShowPiker] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -125,6 +128,46 @@ export const Registration = () => {
     setIsChecked(!isChecked);
   };
 
+  const toggleDatePicker = () => {
+    setShowPiker(!showPicker);
+  };
+
+  const onChange = ({ type }, selectedDate) => {
+    if (type === "set") {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+      if (Platform.OS === "android") {
+        toggleDatePicker();
+        setFormData((prevState) => ({
+          ...prevState,
+          birthDate: formatDate(currentDate),
+        }));
+      }
+    } else {
+      toggleDatePicker();
+    }
+  };
+
+  const confirmIOSDate = () => {
+    setFormData((prevState) => ({
+      ...prevState,
+      birthDate: formatDate(date),
+    }));
+    toggleDatePicker();
+  };
+
+  const formatDate = (rawDate) => {
+    let date = new Date(rawDate);
+
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    month = month < 10 ? `0${month}` : month;
+    day = day < 10 ? `0${day}` : day;
+
+    return `${day}-${month}-${year}`;
+  };
   return (
     <TouchableOpacity
       style={{ flex: 1 }}
@@ -210,6 +253,36 @@ export const Registration = () => {
               >
                 {t("rg.dateOfBirth")}
               </Text>
+
+              {showPicker && (
+                <DateTimePicker
+                  mode="date"
+                  display="spinner"
+                  // display="calendar"
+                  value={date}
+                  onChange={onChange}
+                  style={styles.datePicker}
+                  maximumDate={new Date("2050-1-1")}
+                  minimumDate={new Date("1950-1-1")}
+                />
+              )}
+              {showPicker && Platform.OS === "ios" && (
+                <View style={styles.pickerButtonContainer}>
+                  <TouchableOpacity
+                    style={[styles.pickerButton, styles.cancelButton]}
+                    onPress={toggleDatePicker}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.pickerButton, styles.confirmButton]}
+                    onPress={confirmIOSDate}
+                  >
+                    <Text style={styles.buttonText}>Confirm</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              {/* 
               <View
                 style={{
                   width: "100 %",
@@ -217,21 +290,38 @@ export const Registration = () => {
                   borderColor: "#67104c",
                   borderWidth: 1,
                   borderRadius: 8,
-                  alignItems: "center",
+                  // alignItems: "center",
                   justifyContent: "center",
                   paddingLeft: 22,
                 }}
-              >
-                <TextInput
-                  placeholder={t("rg.placeDoB")}
-                  // placeholderTextColor="#f89fa1"
-                  keyboardType="numeric"
-                  value={formData.birthDate}
-                  style={{ width: "100%" }}
-                  onChangeText={handleBirthDateChange}
-                />
-                {renderError(formErrors.birthDateError, [styles.errorMessage])}
-              </View>
+              > */}
+              {!showPicker && (
+                <Pressable onPress={toggleDatePicker}>
+                  <TextInput
+                    placeholder={t("rg.placeDoB")}
+                    // placeholderTextColor="#f89fa1"
+                    // keyboardType="numeric"
+                    value={formData.birthDate}
+                    style={{
+                      // width: "100%",
+                      textAlign: "left",
+                      width: "100 %",
+                      height: 48,
+                      borderColor: "#67104c",
+                      borderWidth: 1,
+                      borderRadius: 8,
+                      // alignItems: "center",
+                      justifyContent: "center",
+                      paddingLeft: 22,
+                    }}
+                    onChangeText={handleBirthDateChange}
+                    editable={false}
+                    onPressIn={toggleDatePicker}
+                  />
+                </Pressable>
+              )}
+              {renderError(formErrors.birthDateError, [styles.errorMessage])}
+              {/* </View> */}
             </View>
 
             <View style={{ marginBottom: 12 }}>
@@ -393,4 +483,44 @@ export const styles = StyleSheet.create({
     backgroundColor: "#67104c",
   },
   buttonDisabled: { backgroundColor: "#CCCCCC", pointerEvents: "none" },
+  datePicker: {
+    height: 120,
+    marginTop: -10,
+  },
+  pickerButton: {
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 51,
+    width: 150,
+    backgroundColor: "gray",
+  },
+  pickerButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 10, // Відступ між кнопками і вибором дати
+    marginBottom: 10, // Відступ знизу
+  },
+  pickerButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    elevation: 2, // Тінь для Android
+    shadowColor: "#000", // Тінь для iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#ff6b6b", // Червоний колір для кнопки скасування
+  },
+  confirmButton: {
+    backgroundColor: "#4caf50", // Зелений колір для кнопки підтвердження
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontWeight: "bold",
+  },
 });
