@@ -23,6 +23,13 @@ import {
 import * as Validate from "../helpers/validationInput";
 import { handleChange } from "../helpers/handleChangeInput";
 import { getProfileThunk, registerThunk } from "../store/auth/authThunks";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import "dayjs/locale/uk"; // імпорт української локалі
+import "dayjs/locale/en"; // англійська локаль
+
+dayjs.extend(localizedFormat);
+dayjs.locale("en"); // встановлення локалі за замовчуванням
 
 export const Registration = () => {
   const navigation = useNavigation();
@@ -116,8 +123,11 @@ export const Registration = () => {
   }, [formData, formErrors]);
 
   const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    dispatch(getProfileThunk());
+    // i18n.changeLanguage(lang);
+    // dispatch(getProfileThunk());
+    i18n.changeLanguage(lang); // змінюємо мову для i18next
+    dayjs.locale(lang); // змінюємо локаль для dayjs
+    dispatch(getProfileThunk()); // при необхідності, повторно отримуємо дані проs
   };
 
   const renderError = (error, errorMessage) => {
@@ -167,7 +177,13 @@ export const Registration = () => {
     day = day < 10 ? `0${day}` : day;
 
     return `${day}-${month}-${year}`;
+    // return dayjs(rawDate).format("LL");
   };
+
+  useEffect(() => {
+    console.log("Current locale:", dayjs.locale());
+  }, [i18n.language]);
+
   return (
     <TouchableOpacity
       style={{ flex: 1 }}
@@ -178,7 +194,7 @@ export const Registration = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1, justifyContent: "flex-end" }}
         // keyboardVerticalOffset={
-        //   Platform.OS === "android" ? 35 : Platform.OS === "ios" ? 95 : 0
+        //   Platform.OS === "android" ? 35 : Platform.OS === "ios" ? 50 : 0
         // }
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -187,7 +203,7 @@ export const Registration = () => {
               <View>
                 <Pressable
                   onPress={() =>
-                    changeLanguage(i18n.language === "en" ? "ua" : "en")
+                    changeLanguage(i18n.language === "en" ? "uk" : "en")
                   }
                 >
                   <MaterialIcons name="language" size={26} color="#67104c" />
@@ -258,11 +274,11 @@ export const Registration = () => {
                 <DateTimePicker
                   mode="date"
                   display="spinner"
-                  // display="calendar"
                   value={date}
                   onChange={onChange}
+                  locale={i18n.language}
                   style={styles.datePicker}
-                  maximumDate={new Date("2050-1-1")}
+                  maximumDate={new Date()}
                   minimumDate={new Date("1950-1-1")}
                 />
               )}
@@ -272,13 +288,13 @@ export const Registration = () => {
                     style={[styles.pickerButton, styles.cancelButton]}
                     onPress={toggleDatePicker}
                   >
-                    <Text style={styles.buttonText}>Cancel</Text>
+                    <Text style={styles.buttonText}>{t("btn.cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.pickerButton, styles.confirmButton]}
                     onPress={confirmIOSDate}
                   >
-                    <Text style={styles.buttonText}>Confirm</Text>
+                    <Text style={styles.buttonText}>{t("btn.confirm")}</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -416,6 +432,7 @@ export const Registration = () => {
             <Pressable
               style={[
                 styles.button,
+                { alignSelf: "center" },
                 (!isFormValid || !isChecked) && styles.buttonDisabled,
               ]}
               title="Register"

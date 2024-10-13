@@ -63,5 +63,9 @@
     "verbs": "Conjugation of verbs",
     "learn": "Learn",
     "train": "Train"
+  },
+  "btn": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   }
 }
