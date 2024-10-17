@@ -22,7 +22,6 @@ import { Learn } from "./Learn";
 import { Train } from "./Train";
 import { WordLearningScreen } from "./WordLearningScreen";
 
-
 const MainStack = createNativeStackNavigator();
 
 export const AppNavigator = () => {
@@ -118,6 +117,16 @@ export const AppNavigator = () => {
               />
             </TouchableOpacity>
           ),
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+              <Icon
+                name="home"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginLeft: 5 }}
+              />
+            </TouchableOpacity>
+          ),
         })}
       />
       <MainStack.Screen
@@ -201,7 +210,6 @@ export const AppNavigator = () => {
             ),
           };
         }}
-
       />
       <MainStack.Screen
         name="Learn"
@@ -226,9 +234,18 @@ export const AppNavigator = () => {
                 />
               </TouchableOpacity>
             ),
+            headerRight: () => (
+              <TouchableOpacity onPress={() => navigation.navigate("Vocab")}>
+                <Icon
+                  name="home"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
           };
         }}
-
       />
       <MainStack.Screen
         name="Train"
@@ -240,7 +257,6 @@ export const AppNavigator = () => {
         component={WordLearningScreen}
         options={{ headerShown: false }}
       />
-
     </MainStack.Navigator>
   );
 };

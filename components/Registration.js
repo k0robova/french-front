@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CheckBox } from "react-native-btr";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "../i18n";
 import {
@@ -27,6 +28,7 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import "dayjs/locale/uk"; // імпорт української локалі
 import "dayjs/locale/en"; // англійська локаль
+import { setTheme } from "../store/auth/authSlice";
 
 dayjs.extend(localizedFormat);
 dayjs.locale("en"); // встановлення локалі за замовчуванням
@@ -53,8 +55,9 @@ export const Registration = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const { t, i18n } = useTranslation();
 
+  const { t, i18n } = useTranslation();
+  const isDarkTheme = useSelector((state) => state.auth.theme);
   const handleRegister = async () => {
     try {
       const resultAction = await dispatch(registerThunk(formData));
@@ -180,9 +183,24 @@ export const Registration = () => {
     // return dayjs(rawDate).format("LL");
   };
 
+  // useEffect(() => {
+  //   console.log("Current locale:", dayjs.locale());
+  // }, [i18n.language]);
+
   useEffect(() => {
-    console.log("Current locale:", dayjs.locale());
-  }, [i18n.language]);
+    const loadTheme = async () => {
+      try {
+        const storedTheme = await SecureStore.getItemAsync("theme");
+        if (storedTheme !== null) {
+          const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
+          dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
+        }
+      } catch (error) {
+        console.error("Failed to load theme:", error);
+      }
+    };
+    loadTheme();
+  });
 
   return (
     <TouchableOpacity
@@ -198,6 +216,7 @@ export const Registration = () => {
         // }
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+          {/*  backgroundColor: isDarkTheme ? "#67104c" : "white", */}
           <View style={{ flex: 1, marginHorizontal: 22 }}>
             <View style={{ marginVertical: 22 }}>
               <View>

@@ -6,7 +6,9 @@ import {
   Button,
   Image,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
+import Icon from "react-native-vector-icons/AntDesign";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { selectVocab } from "../store/vocab/selectors";
@@ -27,6 +29,9 @@ export const WordLearningScreen = () => {
 
   // Стан для відстеження завершення сесії
   const [sessionComplete, setSessionComplete] = useState(false);
+
+  // Стан для відстеження, чи всі слова пройдені
+  const [allWordsCompleted, setAllWordsCompleted] = useState(false);
 
   // Фільтрування слів за темою
   const filteredWords = vocabData.filter((word) => word.themeId === id);
@@ -51,16 +56,27 @@ export const WordLearningScreen = () => {
     );
   };
 
+  // Перевірка, чи всі слова пройдені
+  useEffect(() => {
+    if (totalShown >= filteredWords.length) {
+      setAllWordsCompleted(true);
+    }
+  }, [totalShown, filteredWords.length]);
+
   // Переходимо до наступного слова або завершення
   const handleNextWord = () => {
     if (currentIndex < selectedWords.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     } else {
-      console.log(filteredWords);
       const newTotalShown = totalShown + selectedWords.length;
       setSessionComplete(true); // Встановлюємо стан завершення сесії
       setTotalShown(newTotalShown); // Оновлюємо загальну кількість показаних слів
       saveProgress(newTotalShown); // Зберігаємо прогрес
+
+      // Перевіряємо, чи всі слова за темою вже пройдені
+      if (newTotalShown >= filteredWords.length) {
+        setAllWordsCompleted(true); // Якщо всі слова пройдені, встановлюємо цей стан
+      }
     }
   };
 
@@ -83,7 +99,22 @@ export const WordLearningScreen = () => {
   };
 
   const handleChooseDifferentCount = () => {
+    setTotalShown(0); // Обнуляємо загальну кількість показаних слів
     navigation.navigate("Learn", { topicName }); // Повернення на екран вибору кількості слів
+  };
+
+  const onRepeat = async () => {
+    // Скидаємо прогрес для поточної теми в AsyncStorage
+    await AsyncStorage.removeItem(`progress_${topicName}`);
+
+    // Скидаємо поточні стани
+    setCurrentIndex(0); // Повертаємось до першого слова
+    // setTotalShown(0); // Обнуляємо загальну кількість показаних слів
+    setSessionComplete(false); // Відміняємо стан завершення сесії
+    setAllWordsCompleted(false); // Відміняємо стан, що всі слова пройдені
+
+    // Вибираємо слова спочатку
+    setSelectedWords(filteredWords.slice(0, count));
   };
 
   return (
@@ -92,21 +123,48 @@ export const WordLearningScreen = () => {
     >
       {!sessionComplete ? (
         <>
-          <Image
-            source={{ uri: selectedWords[currentIndex]?.image }} // Припускаємо, що у вас є поле `image` в об'єкті слова
-            style={styles.image}
-          />
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-            {selectedWords[currentIndex]?.world}{" "}
-            {/* Відображаємо поточне слово */}
-          </Text>
-          <Text style={{ fontSize: 20, marginTop: 20 }}>
-            {currentLanguage === "uk"
-              ? selectedWords[currentIndex]?.translationUK
-              : selectedWords[currentIndex]?.translationEN}{" "}
-            {/* Відображаємо переклад */}
-          </Text>
-          <Button title="Next" onPress={handleNextWord} />
+          {!allWordsCompleted ? (
+            <>
+              <Image
+                source={{ uri: selectedWords[currentIndex]?.image }} // Припускаємо, що у вас є поле `image` в об'єкті слова
+                style={styles.image}
+              />
+              <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+                {selectedWords[currentIndex]?.world}{" "}
+                {/* Відображаємо поточне слово */}
+              </Text>
+              <Text style={{ fontSize: 20, marginTop: 20 }}>
+                {currentLanguage === "uk"
+                  ? selectedWords[currentIndex]?.translationUK
+                  : selectedWords[currentIndex]?.translationEN}{" "}
+                {/* Відображаємо переклад */}
+              </Text>
+              <Text>Слово: {currentIndex + 1}</Text>
+              <Button title="Next" onPress={handleNextWord} />
+            </>
+          ) : (
+            <View>
+              <Text style={{ fontSize: 24, marginBottom: 20 }}>
+                All words have been completed for this topic!
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Vocab")}>
+                <Icon
+                  name="home"
+                  size={30}
+                  // color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onRepeat}>
+                <Icon
+                  name="retweet"
+                  size={30}
+                  // color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
         </>
       ) : (
         <View style={{ alignItems: "center" }}>

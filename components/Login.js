@@ -74,10 +74,6 @@ export const Login = () => {
     }
   };
 
-  // const toggleTheme = () => {
-  //   setIsDarkTheme(!isDarkTheme);
-  // };
-
   const toggleTheme = async () => {
     const newTheme = !isDarkTheme; // Інвертуємо булеве значення теми
 
@@ -91,26 +87,25 @@ export const Login = () => {
     }
   };
 
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const storedTheme = await SecureStore.getItemAsync("theme");
+        if (storedTheme !== null) {
+          const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
+          dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
+        }
+      } catch (error) {
+        console.error("Failed to load theme:", error);
+      }
+    };
+    loadTheme();
+  });
+
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
 
-  // useEffect(() => {
-  //   console.log(userData, "Userdata");
-  // }, []);
-
-  // const getUserInfo = () => {
-  //   // console.log("====================================");
-  //   // console.log(userData);
-  //   // console.log("====================================");
-  //   setIsDarkTheme(userData.theme);
-  // };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getUserInfo();
-  //   }, [])
-  // );
   return (
     <SafeAreaView
       style={{
@@ -173,6 +168,7 @@ export const Login = () => {
           >
             <TextInput
               placeholder={t("rg.placeEmail")}
+              value={email}
               placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
               keyboardType="email-address"
               style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
@@ -206,6 +202,7 @@ export const Login = () => {
           >
             <TextInput
               placeholder={t("rg.placePass")}
+              value={password}
               placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
               secureTextEntry={!isPasswordVisible}
               style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}

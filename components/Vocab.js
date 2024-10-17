@@ -25,6 +25,7 @@ export const Vocab = () => {
   const handleGetWorlds = async (id, name) => {
     try {
       const existingData = vocabData.find((item) => item.themeId === id);
+
       dispatch(setThemeId(id));
 
       if (existingData) {

@@ -109,59 +109,6 @@ export const Profile = () => {
     loadTheme();
   }, [dispatch]);
 
-  // const handleSave = async () => {
-  //   const updatedUser = {
-  //     ...user,
-  //     name: userInfo.name,
-  //     email: userInfo.email,
-  //   };
-  //   setUser(updatedUser);
-  //   setUserInfo(updatedUser);
-  //   try {
-  //     const updateInfoUser = await updateUser(updatedUser);
-  //     await SecureStore.setItemAsync("user", JSON.stringify(updateInfoUser));
-  //     Alert.alert("", "Your changes have been successfully saved", [
-  //       { text: "Close" },
-  //     ]);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getUserInfo();
-  //   }, [])
-  // );
-
-  // const toggleTheme = async () => {
-  //   if (isDarkTheme) {
-
-  //     setIsDarkTheme(false);
-  //     await dispatch(updaterUserThemeThunk({ theme: false }));
-  //   } else {
-
-  //     setIsDarkTheme(true);
-  //     await dispatch(updaterUserThemeThunk({ theme: true }));
-  //   }
-  // };
-
-  // const toggleTheme = async () => {
-  //   const newTheme = !isDarkTheme;
-  //   try {
-  //     const resultAction = await dispatch(
-  //       updaterUserThemeThunk({ theme: newTheme })
-  //     );
-  //     if (updaterUserThemeThunk.fulfilled.match(resultAction)) {
-  //       setIsDarkTheme(newTheme);
-  //     } else {
-  //       console.log("Theme update failed", resultAction.error.message);
-  //     }
-  //   } catch (error) {
-  //     console.log("Error updating theme:", error.message);
-  //   }
-  // };
-
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
