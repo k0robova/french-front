@@ -151,7 +151,7 @@ export const Profile = () => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                changeLanguage(i18n.language === "en" ? "ua" : "en")
+                changeLanguage(i18n.language === "en" ? "uk" : "en")
               }
             >
               <MaterialIcons

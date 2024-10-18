@@ -47,7 +47,7 @@ export const Home = () => {
     >
       <View style={styles.header}>
         <Pressable
-          onPress={() => changeLanguage(i18n.language === "en" ? "ua" : "en")}
+          onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
         >
           <MaterialIcons
             name="language"

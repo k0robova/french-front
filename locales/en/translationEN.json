@@ -62,7 +62,9 @@
     "phonetic": "Phonetic",
     "verbs": "Conjugation of verbs",
     "learn": "Learn",
-    "train": "Train"
+    "train": "Train",
+    "completedWords": "words completed",
+    "words": "words"
   },
   "btn": {
     "cancel": "Cancel",
