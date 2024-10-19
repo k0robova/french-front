@@ -37,7 +37,6 @@ export const Vocab = () => {
 
       const resultAction = await dispatch(getVocab(id));
       if (getVocab.fulfilled.match(resultAction)) {
-        console.log("fulffiled");
         navigation.navigate("LearnOrTrainTopic", { topicName: name });
       }
       return;

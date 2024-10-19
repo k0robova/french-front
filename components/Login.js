@@ -116,7 +116,7 @@ export const Login = () => {
       <View style={{ flex: 1, marginHorizontal: 22 }}>
         <View style={{ paddingTop: 20 }}>
           <Pressable
-            onPress={() => changeLanguage(i18n.language === "en" ? "ua" : "en")}
+            onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
           >
             <MaterialIcons
               name="language"

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { Audio } from "expo-av";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,8 @@ export const WordLearningScreen = () => {
   const [selectedWords, setSelectedWords] = useState([]); // Початкові слова
   const currentLanguage = i18n.language;
   const id = useSelector((state) => state.vocab.themeId);
+  const [sound, setSound] = useState(); // Стейт для зберігання звуку
+  const [isPlaying, setIsPlaying] = useState(false); // Стейт для відстеження, чи грає аудіо
 
   // Стан для відстеження завершення сесії
   const [sessionComplete, setSessionComplete] = useState(false);
@@ -117,6 +120,50 @@ export const WordLearningScreen = () => {
     setSelectedWords(filteredWords.slice(0, count));
   };
 
+  const playSound = async () => {
+    if (isPlaying) {
+      return; // Якщо звук вже грає, не дозволяємо повторно запускати
+    }
+
+    try {
+      const audioUri = selectedWords[currentIndex]?.audio; // Отримуємо аудіо для поточного слова
+      console.log("Audio URI:", audioUri);
+      if (!audioUri) {
+        console.log("No audio available for this word."); // Якщо аудіо немає, виводимо попередження
+        return;
+      }
+
+      setIsPlaying(true); // Встановлюємо стан, що звук грає
+
+      // Завантажуємо звук
+      const { sound: newSound } = await Audio.Sound.createAsync({
+        uri: audioUri, // Використовуємо аудіо для поточного слова
+      });
+
+      setSound(newSound); // Зберігаємо новий звук
+
+      // Програємо звук
+      await newSound.playAsync();
+
+      newSound.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) {
+          setIsPlaying(false); // Звук завершився
+        }
+      });
+    } catch (error) {
+      console.error("Error playing sound:", error);
+      setIsPlaying(false); // У разі помилки дозволяємо натискати знову
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.unloadAsync(); // Вивільняємо звук при розмонтуванні компонента
+      }
+    };
+  }, [sound]);
+
   return (
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -129,6 +176,13 @@ export const WordLearningScreen = () => {
                 source={{ uri: selectedWords[currentIndex]?.image }} // Припускаємо, що у вас є поле `image` в об'єкті слова
                 style={styles.image}
               />
+              <TouchableOpacity onPress={playSound} disabled={isPlaying}>
+                <Icon
+                  name="sound"
+                  size={30}
+                  color={isPlaying ? "gray" : "black"}
+                />
+              </TouchableOpacity>
               <Text style={{ fontSize: 30, fontWeight: "bold" }}>
                 {selectedWords[currentIndex]?.world}{" "}
                 {/* Відображаємо поточне слово */}
