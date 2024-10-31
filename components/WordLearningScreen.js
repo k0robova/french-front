@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   Text,
@@ -12,46 +12,39 @@ import { Audio } from "expo-av";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { selectVocab } from "../store/vocab/selectors";
-import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
+import { selectVocab } from "../store/vocab/selectors";
 
 export const WordLearningScreen = () => {
-  const route = useRoute(); // Отримуємо параметри з попереднього екрану
-  const { count, topicName } = route.params; // Дістаємо кількість слів
-  const [currentIndex, setCurrentIndex] = useState(0); // Поточний індекс слова
-  const [totalShown, setTotalShown] = useState(0); // Для відстеження загальної кількості показаних слів
-  const { t, i18n } = useTranslation();
-  const vocabData = useSelector(selectVocab); // Слова по темі
-  const navigation = useNavigation();
-  const [selectedWords, setSelectedWords] = useState([]); // Початкові слова
-  const currentLanguage = i18n.language;
-  const id = useSelector((state) => state.vocab.themeId);
-  const [sound, setSound] = useState(); // Стейт для зберігання звуку
-  const [isPlaying, setIsPlaying] = useState(false); // Стейт для відстеження, чи грає аудіо
-
-  // Стан для відстеження завершення сесії
-  const [sessionComplete, setSessionComplete] = useState(false);
-
-  // Стан для відстеження, чи всі слова пройдені
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [allWordsCompleted, setAllWordsCompleted] = useState(false);
+  const [totalShown, setTotalShown] = useState(0);
+  const [sound, setSound] = useState();
+  const [sessionComplete, setSessionComplete] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [selectedWords, setSelectedWords] = useState([]);
+  const isDarkTheme = useSelector((state) => state.auth.theme);
+  const id = useSelector((state) => state.vocab.themeId);
+  const vocabData = useSelector(selectVocab);
+  const navigation = useNavigation();
+  const { t, i18n } = useTranslation();
 
-  // Фільтрування слів за темою
+  const route = useRoute();
+  const { count, topicName } = route.params;
+
+  const currentLanguage = i18n.language;
+
   const filteredWords = vocabData.filter((word) => word.themeId === id);
 
-  // Завантаження прогресу з AsyncStorage при завантаженні компоненту
-  useEffect(() => {
-    const loadProgress = async () => {
-      const savedProgress = await AsyncStorage.getItem(`progress_${topicName}`);
-      if (savedProgress) {
-        setTotalShown(parseInt(savedProgress, 10));
-      }
-      setSelectedWords(filteredWords.slice(totalShown, totalShown + count)); // Вибираємо слова з урахуванням прогресу
-    };
-    loadProgress();
-  }, [totalShown]);
+  const loadProgress = async () => {
+    const savedProgress = await AsyncStorage.getItem(`progress_${topicName}`);
+    if (savedProgress) {
+      setTotalShown(parseInt(savedProgress, 10));
+    }
+    setSelectedWords(filteredWords.slice(totalShown, totalShown + count));
+  };
 
-  // Збереження прогресу в AsyncStorage
   const saveProgress = async (newTotalShown) => {
     await AsyncStorage.setItem(
       `progress_${topicName}`,
@@ -59,41 +52,78 @@ export const WordLearningScreen = () => {
     );
   };
 
-  // Перевірка, чи всі слова пройдені
-  useEffect(() => {
+  const checkCompletion = (totalShown) => {
     if (totalShown >= filteredWords.length) {
       setAllWordsCompleted(true);
     }
+  };
+
+  useEffect(() => {
+    loadProgress();
+    checkCompletion(totalShown);
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
   }, [totalShown, filteredWords.length]);
 
-  // Переходимо до наступного слова або завершення
   const handleNextWord = () => {
     if (currentIndex < selectedWords.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     } else {
       const newTotalShown = totalShown + selectedWords.length;
-      setSessionComplete(true); // Встановлюємо стан завершення сесії
-      setTotalShown(newTotalShown); // Оновлюємо загальну кількість показаних слів
-      saveProgress(newTotalShown); // Зберігаємо прогрес
-
-      // Перевіряємо, чи всі слова за темою вже пройдені
-      if (newTotalShown >= filteredWords.length) {
-        setAllWordsCompleted(true); // Якщо всі слова пройдені, встановлюємо цей стан
-      }
+      setSessionComplete(true);
+      setTotalShown(newTotalShown);
+      saveProgress(newTotalShown);
+      checkCompletion(newTotalShown);
     }
   };
 
-  // Обробники кнопок
   const handleRepeatSameCount = () => {
-    const nextStartIndex = totalShown; // Початок для наступних слів
-    const nextEndIndex = Math.min(totalShown + count, filteredWords.length); // Перевіряємо, чи не виходимо за межі масиву
-
+    const nextStartIndex = totalShown;
+    const nextEndIndex = Math.min(totalShown + count, filteredWords.length);
     if (nextEndIndex > nextStartIndex) {
-      setSelectedWords(filteredWords.slice(nextStartIndex, nextEndIndex)); // Вибираємо наступні слова
-      setCurrentIndex(0); // Скидаємо індекс
-      setSessionComplete(false); // Повертаємо стан сесії
+      setSelectedWords(filteredWords.slice(nextStartIndex, nextEndIndex));
+      setCurrentIndex(0);
+      setSessionComplete(false);
     } else {
-      alert("No more new words to show!"); // Якщо немає нових слів
+      alert("No more new words to show!");
+    }
+  };
+
+  const onRepeat = async () => {
+    await AsyncStorage.removeItem(`progress_${topicName}`);
+    setCurrentIndex(0);
+    setSessionComplete(false);
+    setAllWordsCompleted(false);
+    setSelectedWords(filteredWords.slice(0, count));
+  };
+
+  const playSound = async () => {
+    try {
+      const audioUri = selectedWords[currentIndex]?.audio;
+      if (!audioUri) {
+        console.log("No audio available for this word.");
+        return;
+      }
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: audioUri },
+        {},
+        onPlaybackStatusUpdate
+      );
+      setSound(sound);
+      await sound.playAsync();
+      setIsPlaying(true);
+    } catch (error) {
+      console.error("Error playing sound:", error);
+      setIsPlaying(false);
+    }
+  };
+
+  const onPlaybackStatusUpdate = (status) => {
+    if (status.didJustFinish) {
+      setIsPlaying(false);
     }
   };
 
@@ -102,67 +132,9 @@ export const WordLearningScreen = () => {
   };
 
   const handleChooseDifferentCount = () => {
-    setTotalShown(0); // Обнуляємо загальну кількість показаних слів
-    navigation.navigate("Learn", { topicName }); // Повернення на екран вибору кількості слів
+    setTotalShown(0);
+    navigation.navigate("Learn", { topicName, allWordsCompleted }); // передаємо стан
   };
-
-  const onRepeat = async () => {
-    // Скидаємо прогрес для поточної теми в AsyncStorage
-    await AsyncStorage.removeItem(`progress_${topicName}`);
-
-    // Скидаємо поточні стани
-    setCurrentIndex(0); // Повертаємось до першого слова
-    // setTotalShown(0); // Обнуляємо загальну кількість показаних слів
-    setSessionComplete(false); // Відміняємо стан завершення сесії
-    setAllWordsCompleted(false); // Відміняємо стан, що всі слова пройдені
-
-    // Вибираємо слова спочатку
-    setSelectedWords(filteredWords.slice(0, count));
-  };
-
-  const playSound = async () => {
-    if (isPlaying) {
-      return; // Якщо звук вже грає, не дозволяємо повторно запускати
-    }
-
-    try {
-      const audioUri = selectedWords[currentIndex]?.audio; // Отримуємо аудіо для поточного слова
-      console.log("Audio URI:", audioUri);
-      if (!audioUri) {
-        console.log("No audio available for this word."); // Якщо аудіо немає, виводимо попередження
-        return;
-      }
-
-      setIsPlaying(true); // Встановлюємо стан, що звук грає
-
-      // Завантажуємо звук
-      const { sound: newSound } = await Audio.Sound.createAsync({
-        uri: audioUri, // Використовуємо аудіо для поточного слова
-      });
-
-      setSound(newSound); // Зберігаємо новий звук
-
-      // Програємо звук
-      await newSound.playAsync();
-
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
-          setIsPlaying(false); // Звук завершився
-        }
-      });
-    } catch (error) {
-      console.error("Error playing sound:", error);
-      setIsPlaying(false); // У разі помилки дозволяємо натискати знову
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (sound) {
-        sound.unloadAsync(); // Вивільняємо звук при розмонтуванні компонента
-      }
-    };
-  }, [sound]);
 
   return (
     <SafeAreaView
@@ -170,78 +142,105 @@ export const WordLearningScreen = () => {
     >
       {!sessionComplete ? (
         <>
-          {!allWordsCompleted ? (
-            <>
-              <Image
-                source={{ uri: selectedWords[currentIndex]?.image }} // Припускаємо, що у вас є поле `image` в об'єкті слова
-                style={styles.image}
-              />
-              <TouchableOpacity onPress={playSound} disabled={isPlaying}>
-                <Icon
-                  name="sound"
-                  size={30}
-                  color={isPlaying ? "gray" : "black"}
-                />
-              </TouchableOpacity>
-              <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-                {selectedWords[currentIndex]?.world}{" "}
-                {/* Відображаємо поточне слово */}
-              </Text>
-              <Text style={{ fontSize: 20, marginTop: 20 }}>
-                {currentLanguage === "uk"
-                  ? selectedWords[currentIndex]?.translationUK
-                  : selectedWords[currentIndex]?.translationEN}{" "}
-                {/* Відображаємо переклад */}
-              </Text>
-              <Text>Слово: {currentIndex + 1}</Text>
-              <Button title="Next" onPress={handleNextWord} />
-            </>
-          ) : (
-            <View>
-              <Text style={{ fontSize: 24, marginBottom: 20 }}>
-                All words have been completed for this topic!
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Vocab")}>
-                <Icon
-                  name="home"
-                  size={30}
-                  // color={isDarkTheme ? "white" : "#67104c"}
-                  style={{ marginLeft: 5 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onRepeat}>
-                <Icon
-                  name="retweet"
-                  size={30}
-                  // color={isDarkTheme ? "white" : "#67104c"}
-                  style={{ marginLeft: 5 }}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
+          <Image
+            source={{ uri: selectedWords[currentIndex]?.image }}
+            style={styles.image}
+          />
+          <TouchableOpacity onPress={playSound} disabled={isPlaying}>
+            <Icon name="sound" size={30} color={isPlaying ? "gray" : "black"} />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+            {selectedWords[currentIndex]?.world}{" "}
+          </Text>
+          <Text style={{ fontSize: 20, marginTop: 20 }}>
+            {currentLanguage === "uk"
+              ? selectedWords[currentIndex]?.translationUK
+              : selectedWords[currentIndex]?.translationEN}{" "}
+          </Text>
+          <Text>
+            {t("LAT.word")}: {currentIndex + 1}
+          </Text>
+          <Button title="Next" onPress={handleNextWord} />
         </>
       ) : (
         <View style={{ alignItems: "center" }}>
           <Text style={{ fontSize: 24, marginBottom: 20 }}>
-            You have completed the session!
+            {t("LAT.sessionCompleted")}
           </Text>
-          <Button title="Repeat Same Count" onPress={handleRepeatSameCount} />
-          <Button title="Train Words" onPress={handleTrainWords} />
-          <Button
-            title="Choose Different Count"
+          {!allWordsCompleted && (
+            <TouchableOpacity
+              style={[
+                styles.buttonMarg,
+                { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+              ]}
+              onPress={handleRepeatSameCount}
+            >
+              <Text
+                style={[
+                  styles.buttonsText,
+                  {
+                    color: isDarkTheme ? "#67104c" : "white",
+                  },
+                ]}
+              >
+                {t("btn.repeat")}
+              </Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={[
+              styles.buttonMarg,
+              { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+            ]}
+            onPress={handleTrainWords}
+          >
+            <Text
+              style={[
+                styles.buttonsText,
+                {
+                  color: isDarkTheme ? "#67104c" : "white",
+                },
+              ]}
+            >
+              {t("btn.train")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ backgroundColor: isDarkTheme ? "white" : "#67104c" }}
             onPress={handleChooseDifferentCount}
-          />
+          >
+            <Text
+              style={[
+                styles.buttonsText,
+                {
+                  color: isDarkTheme ? "#67104c" : "white",
+                },
+              ]}
+            >
+              {allWordsCompleted ? t("btn.goBack") : t("btn.chooseCount")}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
   );
 };
 
+// Стили для компонентов
 const styles = StyleSheet.create({
   image: {
-    width: 200, // Ширина зображення
-    height: 200, // Висота зображення
-    marginBottom: 20, // Відстань між зображенням та текстом
-    borderRadius: 10, // Закруглення країв зображення (за бажанням)
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  buttonMarg: {
+    marginBottom: 20,
+  },
+  buttonsText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    padding: 10,
   },
 });
