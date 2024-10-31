@@ -114,12 +114,26 @@ export const Login = () => {
       }}
     >
       <View style={{ flex: 1, marginHorizontal: 22 }}>
-        <View style={{ paddingTop: 20 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingTop: 20,
+          }}
+        >
           <Pressable
             onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
           >
             <MaterialIcons
               name="language"
+              size={26}
+              color={isDarkTheme ? "white" : "#67104c"}
+            />
+          </Pressable>
+
+          <Pressable onPress={toggleTheme}>
+            <MaterialIcons
+              name="light-mode"
               size={26}
               color={isDarkTheme ? "white" : "#67104c"}
             />
@@ -239,6 +253,7 @@ export const Login = () => {
             width: 343,
             height: 51,
             backgroundColor: isDarkTheme ? "white" : "#67104c",
+            alignSelf: "center",
           }}
           onPress={handleRegister}
         >
@@ -305,10 +320,10 @@ export const Login = () => {
             </Text>
           </Pressable>
         </View>
-        <Button
+        {/* <Button
           title={isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"}
           onPress={toggleTheme}
-        />
+        /> */}
       </View>
     </SafeAreaView>
   );

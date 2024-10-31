@@ -10,9 +10,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
+// import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutThunk } from "../store/auth/authThunks";
 
 export const Home = () => {
   const { t, i18n } = useTranslation();
@@ -22,20 +22,6 @@ export const Home = () => {
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
-  };
-
-  const handleLogout = async () => {
-    try {
-      const resultAction = await dispatch(logoutThunk());
-      if (logoutThunk.fulfilled.match(resultAction)) {
-        navigation.navigate("Login");
-      } else {
-        Alert.alert("Error", resultAction.error.message);
-      }
-    } catch (error) {
-      console.log("Registration failed:", error);
-      Alert.alert("Error", error.message);
-    }
   };
 
   return (
@@ -51,15 +37,16 @@ export const Home = () => {
         >
           <MaterialIcons
             name="language"
-            size={28}
+            size={26}
             color={isDarkTheme ? "white" : "#67104c"}
           />
         </Pressable>
-        <Pressable onPress={handleLogout}>
-          <Ionicons
-            name="log-out"
-            size={28}
+        <Pressable onPress={() => navigation.navigate("Profile")}>
+          <FontAwesome6
+            name="user"
+            size={22}
             color={isDarkTheme ? "white" : "#67104c"}
+            fontWeight="normal"
           />
         </Pressable>
       </View>
@@ -78,11 +65,11 @@ export const Home = () => {
       </Text>
 
       <View style={styles.linkContainer}>
-        <Text
+        {/* <Text
           style={[styles.linkText, { color: isDarkTheme ? "white" : "black" }]}
         >
           {t("rg.try")}
-        </Text>
+        </Text> */}
         <Pressable onPress={() => navigation.navigate("StudyAndTrain")}>
           <Text
             style={[
@@ -97,11 +84,11 @@ export const Home = () => {
       </View>
 
       <View style={styles.linkContainer}>
-        <Text
+        {/* <Text
           style={[styles.linkText, { color: isDarkTheme ? "white" : "black" }]}
         >
           {t("rg.try")}
-        </Text>
+        </Text> */}
         <Pressable onPress={() => navigation.navigate("LessonsBySubscription")}>
           <Text
             style={[
@@ -114,7 +101,7 @@ export const Home = () => {
           </Text>
         </Pressable>
       </View>
-
+      {/* 
       <View style={styles.linkContainer}>
         <Text
           style={[styles.linkText, { color: isDarkTheme ? "white" : "black" }]}
@@ -132,7 +119,7 @@ export const Home = () => {
             {t("rg.profile")}
           </Text>
         </Pressable>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
@@ -144,7 +131,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     padding: 20,
   },
   themeButtonContainer: {

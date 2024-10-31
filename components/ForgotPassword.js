@@ -140,7 +140,7 @@ export const ForgotPassword = () => {
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        style={{ flex: 1 }}
       >
         <SafeAreaView
           style={{
@@ -148,11 +148,11 @@ export const ForgotPassword = () => {
           }}
         >
           {isOtpCode ? (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, marginHorizontal: 22 }}>
               <View
                 style={{
-                  paddingTop: 10,
-                  paddingRight: 18,
+                  paddingTop: 20,
+                  // paddingRight: 18,
                   flexDirection: "row",
                   justifyContent: "space-between",
                 }}
@@ -162,18 +162,18 @@ export const ForgotPassword = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
-                    changeLanguage(i18n.language === "en" ? "ua" : "en")
+                    changeLanguage(i18n.language === "en" ? "uk" : "en")
                   }
                 >
                   <MaterialIcons name="language" size={26} color="#67104c" />
                 </TouchableOpacity>
               </View>
-              <View style={{ marginBottom: 12 }}>
+              <View style={{ marginVertical: 22 }}>
                 <Text
                   style={{
                     fontSize: 16,
                     fontWeight: 400,
-                    marginVertical: 8,
+                    marginVertical: 12,
                     color: "black",
                   }}
                 >
@@ -267,6 +267,7 @@ export const ForgotPassword = () => {
                   width: 343,
                   height: 51,
                   backgroundColor: "#67104c",
+                  alignSelf: "center",
                 }}
                 onPress={handleBackToEmail}
               >
@@ -290,6 +291,7 @@ export const ForgotPassword = () => {
                   width: 343,
                   height: 51,
                   backgroundColor: "#67104c",
+                  alignSelf: "center",
                 }}
                 onPress={handleChangePassword}
               >
@@ -309,7 +311,7 @@ export const ForgotPassword = () => {
               <View
                 style={{
                   paddingTop: 10,
-                  paddingRight: 18,
+                  // paddingRight: 18,
                   flexDirection: "row",
                   justifyContent: "space-between",
                 }}
@@ -319,7 +321,7 @@ export const ForgotPassword = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
-                    changeLanguage(i18n.language === "en" ? "ua" : "en")
+                    changeLanguage(i18n.language === "en" ? "uk" : "en")
                   }
                 >
                   <MaterialIcons name="language" size={26} color="#67104c" />
@@ -381,6 +383,7 @@ export const ForgotPassword = () => {
                   width: 343,
                   height: 51,
                   backgroundColor: "#67104c",
+                  alignSelf: "center",
                 }}
                 onPress={handleSendOtpCode}
               >

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,7 @@ import {
 import PasswordForm from "../components/PasswordForm";
 import { updateUser } from "../services/authService";
 import {
+  logoutThunk,
   updaterUserDataThunk,
   updaterUserThemeThunk,
 } from "../store/auth/authThunks";
@@ -113,6 +115,20 @@ export const Profile = () => {
     i18n.changeLanguage(lang);
   };
 
+  const handleLogout = async () => {
+    try {
+      const resultAction = await dispatch(logoutThunk());
+      if (logoutThunk.fulfilled.match(resultAction)) {
+        navigation.navigate("Login");
+      } else {
+        Alert.alert("Error", resultAction.error.message);
+      }
+    } catch (error) {
+      console.log("Registration failed:", error);
+      Alert.alert("Error", error.message);
+    }
+  };
+
   return (
     <TouchableOpacity
       style={{ flex: 1 }}
@@ -130,7 +146,7 @@ export const Profile = () => {
           style={{
             flex: 1,
             padding: 10,
-            justifyContent: "center",
+            // justifyContent: "center",
             backgroundColor: isDarkTheme ? "#67104c" : "white",
           }}
         >
@@ -156,10 +172,25 @@ export const Profile = () => {
             >
               <MaterialIcons
                 name="language"
-                size={26}
+                size={24}
                 color={isDarkTheme ? "white" : "#67104c"}
               />
             </TouchableOpacity>
+
+            <Pressable onPress={toggleTheme}>
+              <MaterialIcons
+                name="light-mode"
+                size={26}
+                color={isDarkTheme ? "white" : "#67104c"}
+              />
+            </Pressable>
+            <Pressable onPress={handleLogout}>
+              <Ionicons
+                name="log-out"
+                size={24}
+                color={isDarkTheme ? "white" : "#67104c"}
+              />
+            </Pressable>
           </View>
           <Text
             style={{
@@ -274,12 +305,12 @@ export const Profile = () => {
             </Text>
           </Pressable>
           <PasswordForm theme={isDarkTheme ? "dark" : "light"} />
-          <Button
+          {/* <Button
             title={
               isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"
             }
             onPress={toggleTheme}
-          />
+          /> */}
         </SafeAreaView>
       </KeyboardAvoidingView>
     </TouchableOpacity>
