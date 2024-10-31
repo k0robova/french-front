@@ -16,11 +16,15 @@ import { useFocusEffect } from "@react-navigation/native";
 export const Learn = () => {
   const { t } = useTranslation();
   const route = useRoute();
-  const { topicName } = route.params;
+  const { topicName, allWordsCompleted: initialAllWordsCompleted } =
+    route.params;
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
-  const vocabData = useSelector(selectVocab); // Загальні слова
-  const [progress, setProgress] = useState(0); // Пройдені слова
+  const vocabData = useSelector(selectVocab);
+  const [progress, setProgress] = useState(0);
+  const [allWordsCompleted, setAllWordsCompleted] = useState(
+    initialAllWordsCompleted
+  );
 
   // Функція для отримання кількості пройдених слів з AsyncStorage
   const fetchProgress = async () => {
@@ -29,7 +33,7 @@ export const Learn = () => {
         `progress_${topicName}`
       );
       if (storedProgress) {
-        setProgress(parseInt(storedProgress, 10)); // Приймаємо як масив пройдених слів
+        setProgress(parseInt(storedProgress, 10));
       }
     } catch (error) {
       console.error("Error fetching progress from storage:", error);
@@ -51,7 +55,8 @@ export const Learn = () => {
   const deleteStore = async () => {
     try {
       await AsyncStorage.removeItem(`progress_${topicName}`);
-      setProgress(0); // Скидаємо прогрес після видалення
+      setProgress(0);
+      setAllWordsCompleted(false); // Оновлюємо стан, щоб повернутися до вибору слів
       console.log(`Progress for topic ${topicName} has been deleted.`);
     } catch (error) {
       console.error("Error removing progress from storage:", error);
@@ -65,97 +70,57 @@ export const Learn = () => {
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
-      <View style={styles.linkContainer}>
-        <Text style={{ fontSize: 18, marginBottom: 20 }}>
-          {progress}/{vocabData.length} {t("LAT.completedWords")}
-        </Text>
+      {progress >= vocabData.length ? (
+        <View>
+          <Text style={{ fontSize: 18, marginBottom: 20 }}>
+            {progress}/{vocabData.length} {t("LAT.completedWords")}
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+            ]}
+            onPress={deleteStore}
+          >
+            <Text
+              style={{
+                color: isDarkTheme ? "#67104c" : "white",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              StoreDelete
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.linkContainer}>
+          <Text style={{ fontSize: 18, marginBottom: 20 }}>
+            {progress}/{vocabData.length} {t("LAT.completedWords")}
+          </Text>
 
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => handlePress(5)}
-        >
-          <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            5 {t("LAT.words")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => handlePress(10)}
-        >
-          <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            10 {t("LAT.words")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => handlePress(15)}
-        >
-          <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            15 {t("LAT.words")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => handlePress(20)}
-        >
-          <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            20 {t("LAT.words")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => deleteStore()}
-        >
-          <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            StoreDelete
-          </Text>
-        </TouchableOpacity>
-      </View>
+          {[5, 10, 15, 20].map((count) => (
+            <TouchableOpacity
+              key={count}
+              style={[
+                styles.button,
+                { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+              ]}
+              onPress={() => handlePress(count)}
+            >
+              <Text
+                style={{
+                  color: isDarkTheme ? "#67104c" : "white",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                {count} {t("LAT.words")}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
     </SafeAreaView>
   );
 };

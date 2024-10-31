@@ -64,10 +64,16 @@
     "learn": "Learn",
     "train": "Train",
     "completedWords": "words completed",
-    "words": "words"
+    "words": "words",
+    "word": "Word",
+    "sessionCompleted": "You have completed the session!"
   },
   "btn": {
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "repeat": "Repeat Same Count",
+    "train": "Train Words",
+    "chooseCount": "Choose Different Count",
+    "goBack": "Go Back"
   }
 }
