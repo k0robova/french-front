@@ -71,7 +71,7 @@ export const Learn = () => {
       ]}
     >
       {progress >= vocabData.length ? (
-        <View>
+        <View style={styles.linkContainer}>
           <Text style={{ fontSize: 18, marginBottom: 20 }}>
             {progress}/{vocabData.length} {t("LAT.completedWords")}
           </Text>

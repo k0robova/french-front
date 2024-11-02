@@ -11,7 +11,8 @@ export const LearnOrTrainTopic = () => {
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
   const route = useRoute();
-  const { topicName } = route.params;
+  // const { topicName } = route.params;
+  const topicName = route.params?.topicName ?? "";
 
   return (
     <SafeAreaView

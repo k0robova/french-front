@@ -15,14 +15,15 @@ import { selectVocab } from "../store/vocab/selectors";
 import { setThemeId } from "../store/vocab/vocabSlice";
 
 export const Vocab = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
   const vocabData = useSelector(selectVocab);
   const topicsData = useSelector(selectTopic);
   const dispatch = useDispatch();
+  const currentLanguage = i18n.language;
 
-  const handleGetWorlds = async (id, name) => {
+  const handleGetWorlds = async (id, name, translationEN, translationUK) => {
     try {
       const existingData = vocabData.find((item) => item.themeId === id);
 
@@ -61,7 +62,8 @@ export const Vocab = () => {
             textAlign: "center",
           }}
         >
-          {item.name}
+          {item.name} /
+          {currentLanguage === "uk" ? item.translationUK : item.translationEN}
         </Text>
       </Pressable>
     );

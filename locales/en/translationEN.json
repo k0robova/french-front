@@ -74,6 +74,7 @@
     "repeat": "Repeat Same Count",
     "train": "Train Words",
     "chooseCount": "Choose Different Count",
-    "goBack": "Go Back"
+    "goBack": "Go Back",
+    "next": "Next"
   }
 }

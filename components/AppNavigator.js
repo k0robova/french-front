@@ -189,7 +189,8 @@ export const AppNavigator = () => {
         name="LearnOrTrainTopic"
         component={LearnOrTrainTopic}
         options={({ navigation, route }) => {
-          const { topicName } = route.params;
+          // const { topicName } = route.params;
+          const topicName = route.params?.topicName ?? "";
           return {
             title: topicName,
             headerTitleAlign: "center",

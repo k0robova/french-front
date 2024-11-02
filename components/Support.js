@@ -26,7 +26,7 @@ export const Support = () => {
           <AntDesign name="arrowleft" size={24} color="#67104c" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => changeLanguage(i18n.language === "en" ? "ua" : "en")}
+          onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
         >
           <MaterialIcons name="language" size={26} color="#67104c" />
         </TouchableOpacity>

@@ -11,7 +11,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 // import Ionicons from "@expo/vector-icons/Ionicons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+// import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
 
 export const Home = () => {
@@ -42,11 +43,16 @@ export const Home = () => {
           />
         </Pressable>
         <Pressable onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome6
+          {/* <FontAwesome6
             name="user"
             size={22}
             color={isDarkTheme ? "white" : "#67104c"}
             fontWeight="normal"
+          /> */}
+          <AntDesign
+            name="setting"
+            size={26}
+            color={isDarkTheme ? "white" : "#67104c"}
           />
         </Pressable>
       </View>
