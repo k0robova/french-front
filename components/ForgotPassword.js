@@ -143,151 +143,155 @@ export const ForgotPassword = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <SafeAreaView style={defaultStyles.container}>
-          <View style={defaultStyles.headerBox}>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <AntDesign name="arrowleft" size={24} color="#67104c" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                changeLanguage(i18n.language === "en" ? "uk" : "en")
-              }
-            >
-              <MaterialIcons name="language" size={26} color="#67104c" />
-            </TouchableOpacity>
-          </View>
-          {isOtpCode ? (
-            <>
-              <View style={defaultStyles.boxForm}>
-                <Text style={defaultStyles.labelText}>{t("rg.code")}</Text>
-                <View
-                  style={[
-                    defaultStyles.boxInput,
-                    {
-                      borderColor: "#67104c",
-                    },
-                  ]}
-                >
-                  <TextInput
-                    placeholder={t("rg.placeCode")}
-                    keyboardType="default"
-                    style={styles.inputText}
-                    onChangeText={handleOtpChange}
-                  />
-                </View>
-              </View>
-
-              <View style={defaultStyles.boxForm}>
-                <Text style={defaultStyles.labelText}>
-                  {t("rg.newPassword")}
-                </Text>
-                <View
-                  style={[
-                    defaultStyles.boxInput,
-                    {
-                      borderColor: "#67104c",
-                    },
-                  ]}
-                >
-                  <TextInput
-                    placeholder={t("rg.placeNewPassword")}
-                    secureTextEntry={!isPasswordVisible}
-                    keyboardType="default"
-                    value={formData.password}
-                    style={styles.inputText}
-                    onChangeText={handlePasswordChange}
-                  />
-                  {renderError(formErrors.passwordError, [
-                    styles.errorMessage,
-                    { top: -13 },
-                  ])}
-                  <TouchableOpacity
-                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                    style={{ position: "absolute", right: 12 }}
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={defaultStyles.container}>
+            <View style={defaultStyles.headerBox}>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <AntDesign name="arrowleft" size={24} color="#67104c" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  changeLanguage(i18n.language === "en" ? "uk" : "en")
+                }
+              >
+                <MaterialIcons name="language" size={26} color="#67104c" />
+              </TouchableOpacity>
+            </View>
+            {isOtpCode ? (
+              <>
+                <View style={defaultStyles.boxForm}>
+                  <Text style={defaultStyles.labelText}>{t("rg.code")}</Text>
+                  <View
+                    style={[
+                      defaultStyles.boxInput,
+                      {
+                        borderColor: "#67104c",
+                      },
+                    ]}
                   >
-                    {isPasswordVisible === true ? (
-                      <Ionicons name="eye" size={24} color="#67104c" />
-                    ) : (
-                      <Ionicons name="eye-off" size={24} color="#67104c" />
-                    )}
-                  </TouchableOpacity>
+                    <TextInput
+                      placeholder={t("rg.placeCode")}
+                      keyboardType="default"
+                      style={styles.inputText}
+                      onChangeText={handleOtpChange}
+                    />
+                  </View>
                 </View>
-              </View>
-              <Pressable
-                style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
-                onPress={handleBackToEmail}
-              >
-                <Text style={[defaultStyles.btnText, { color: "white" }]}>
-                  {t("rg.back")}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
-                onPress={handleChangePassword}
-              >
-                <Text style={[defaultStyles.btnText, { color: "white" }]}>
-                  {t("rg.saveChanges")}
-                </Text>
-              </Pressable>
-            </>
-          ) : (
-            <>
-              <View style={[defaultStyles.boxForm, { padding: 0 }]}>
-                <Text
-                  style={[
-                    defaultStyles.headerText,
-                    {
-                      color: "black",
-                    },
-                  ]}
-                >
-                  {t("rg.sendCode")}
-                </Text>
-              </View>
 
-              <View style={[defaultStyles.boxForm, { padding: 0 }]}>
-                <Text style={defaultStyles.labelText}>{t("rg.email")}</Text>
-                <View
-                  style={[
-                    defaultStyles.boxInput,
-                    {
-                      borderColor: "#67104c",
-                    },
-                  ]}
-                >
-                  <TextInput
-                    placeholder={t("rg.placeEmail")}
-                    keyboardType="email-address"
-                    style={styles.inputText}
-                    onChangeText={handleEmailChange}
-                  />
+                <View style={defaultStyles.boxForm}>
+                  <Text style={defaultStyles.labelText}>
+                    {t("rg.newPassword")}
+                  </Text>
+                  <View
+                    style={[
+                      defaultStyles.boxInput,
+                      {
+                        borderColor: "#67104c",
+                      },
+                    ]}
+                  >
+                    <TextInput
+                      placeholder={t("rg.placeNewPassword")}
+                      secureTextEntry={!isPasswordVisible}
+                      keyboardType="default"
+                      value={formData.password}
+                      style={styles.inputText}
+                      onChangeText={handlePasswordChange}
+                    />
+                    {renderError(formErrors.passwordError, [
+                      styles.errorMessage,
+                      { top: -13 },
+                    ])}
+                    <TouchableOpacity
+                      onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                      style={{ position: "absolute", right: 12 }}
+                    >
+                      {isPasswordVisible === true ? (
+                        <Ionicons name="eye" size={24} color="#67104c" />
+                      ) : (
+                        <Ionicons name="eye-off" size={24} color="#67104c" />
+                      )}
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-              <Pressable
-                style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
-                onPress={handleSendOtpCode}
-              >
-                <Text style={[defaultStyles.btnText, { color: "white" }]}>
-                  {t("rg.send")}
-                </Text>
-              </Pressable>
-              <View style={[defaultStyles.linkBox, { marginTop: 22 }]}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: "#67104c",
-                  }}
+                <Pressable
+                  style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
+                  onPress={handleBackToEmail}
                 >
-                  {t("rg.techSupport")}
-                </Text>
-                <Pressable onPress={() => navigation.navigate("Support")}>
-                  <Text style={[defaultStyles.linkText, { color: "#67104c" }]}>
-                    {t("rg.clickHere")}
+                  <Text style={[defaultStyles.btnText, { color: "white" }]}>
+                    {t("rg.back")}
                   </Text>
                 </Pressable>
-              </View>
-            </>
-          )}
+                <Pressable
+                  style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
+                  onPress={handleChangePassword}
+                >
+                  <Text style={[defaultStyles.btnText, { color: "white" }]}>
+                    {t("rg.saveChanges")}
+                  </Text>
+                </Pressable>
+              </>
+            ) : (
+              <>
+                <View style={[defaultStyles.boxForm, { padding: 0 }]}>
+                  <Text
+                    style={[
+                      defaultStyles.headerText,
+                      {
+                        color: "black",
+                      },
+                    ]}
+                  >
+                    {t("rg.sendCode")}
+                  </Text>
+                </View>
+
+                <View style={[defaultStyles.boxForm, { padding: 0 }]}>
+                  <Text style={defaultStyles.labelText}>{t("rg.email")}</Text>
+                  <View
+                    style={[
+                      defaultStyles.boxInput,
+                      {
+                        borderColor: "#67104c",
+                      },
+                    ]}
+                  >
+                    <TextInput
+                      placeholder={t("rg.placeEmail")}
+                      keyboardType="email-address"
+                      style={styles.inputText}
+                      onChangeText={handleEmailChange}
+                    />
+                  </View>
+                </View>
+                <Pressable
+                  style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
+                  onPress={handleSendOtpCode}
+                >
+                  <Text style={[defaultStyles.btnText, { color: "white" }]}>
+                    {t("rg.send")}
+                  </Text>
+                </Pressable>
+                <View style={[defaultStyles.linkBox, { marginTop: 22 }]}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#67104c",
+                    }}
+                  >
+                    {t("rg.techSupport")}
+                  </Text>
+                  <Pressable onPress={() => navigation.navigate("Support")}>
+                    <Text
+                      style={[defaultStyles.linkText, { color: "#67104c" }]}
+                    >
+                      {t("rg.clickHere")}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
         </SafeAreaView>
       </KeyboardAvoidingView>
     </TouchableOpacity>

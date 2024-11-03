@@ -135,146 +135,149 @@ export const Profile = () => {
         style={{ flex: 1 }}
       >
         <SafeAreaView
-          style={[
-            defaultStyles.container,
-            { backgroundColor: isDarkTheme ? "#67104c" : "white" },
-          ]}
+          style={{
+            flex: 1,
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          }}
         >
-          <View style={styles.headerContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-              <AntDesign
-                name="arrowleft"
-                size={24}
-                color={isDarkTheme ? "white" : "#67104c"}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                changeLanguage(i18n.language === "en" ? "uk" : "en")
-              }
-            >
-              <MaterialIcons
-                name="language"
-                size={24}
-                color={isDarkTheme ? "white" : "#67104c"}
-              />
-            </TouchableOpacity>
+          <View style={defaultStyles.container}>
+            <View style={styles.headerContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  changeLanguage(i18n.language === "en" ? "uk" : "en")
+                }
+              >
+                <MaterialIcons
+                  name="language"
+                  size={24}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </TouchableOpacity>
 
-            <Pressable onPress={toggleTheme}>
-              <MaterialIcons
-                name="light-mode"
-                size={26}
-                color={isDarkTheme ? "white" : "#67104c"}
-              />
-            </Pressable>
-            <Pressable onPress={handleLogout}>
-              <Ionicons
-                name="log-out"
-                size={24}
-                color={isDarkTheme ? "white" : "#67104c"}
-              />
-            </Pressable>
-          </View>
-          <Text
-            style={[
-              styles.textName,
-              {
-                color: isDarkTheme ? "white" : "black",
-              },
-            ]}
-          >
-            {t("rg.hello")} {userInfo.name ? userInfo.name : "Guest !"}
-          </Text>
-
-          <View style={defaultStyles.boxForm}>
+              <Pressable onPress={toggleTheme}>
+                <MaterialIcons
+                  name="light-mode"
+                  size={26}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </Pressable>
+              <Pressable onPress={handleLogout}>
+                <Ionicons
+                  name="log-out"
+                  size={24}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </Pressable>
+            </View>
             <Text
               style={[
-                defaultStyles.labelText,
+                styles.textName,
                 {
                   color: isDarkTheme ? "white" : "black",
                 },
               ]}
             >
-              {t("rg.name")}
+              {t("rg.hello")}, {userInfo.name ? userInfo.name : "Guest"} !
             </Text>
-            <View
-              style={[
-                defaultStyles.boxInput,
-                {
-                  borderColor: isDarkTheme ? "white" : "#67104c",
-                },
-              ]}
-            >
-              <TextInput
-                placeholder={t("rg.name")}
-                color={isDarkTheme ? "white" : "black"}
-                placeholderTextColor={isDarkTheme ? "white" : undefined}
-                keyboardType="default"
-                value={userInfo.name}
-                style={{ width: "100%" }}
-                onChangeText={(text) =>
-                  setUserInfo((prevInfo) => ({ ...prevInfo, name: text }))
-                }
-              />
-            </View>
-          </View>
 
-          <View style={defaultStyles.boxForm}>
-            <Text
-              style={[
-                defaultStyles.labelText,
-                {
-                  color: isDarkTheme ? "white" : "black",
-                },
-              ]}
-            >
-              {t("rg.email")}
-            </Text>
-            <View
-              style={[
-                defaultStyles.boxInput,
-                {
-                  borderColor: isDarkTheme ? "white" : "#67104c",
-                },
-              ]}
-            >
-              <TextInput
-                placeholder={t("rg.placeNewEmail")}
-                color={isDarkTheme ? "white" : "black"}
-                placeholderTextColor={isDarkTheme ? "white" : undefined}
-                value={userInfo.email}
-                keyboardType="email-address"
-                style={{ width: "100%" }}
-                onChangeText={(text) =>
-                  setUserInfo((prevInfo) => ({ ...prevInfo, email: text }))
-                }
-              />
+            <View style={defaultStyles.boxForm}>
+              <Text
+                style={[
+                  defaultStyles.labelText,
+                  {
+                    color: isDarkTheme ? "white" : "black",
+                  },
+                ]}
+              >
+                {t("rg.name")}
+              </Text>
+              <View
+                style={[
+                  defaultStyles.boxInput,
+                  {
+                    borderColor: isDarkTheme ? "white" : "#67104c",
+                  },
+                ]}
+              >
+                <TextInput
+                  placeholder={t("rg.name")}
+                  color={isDarkTheme ? "white" : "black"}
+                  placeholderTextColor={isDarkTheme ? "white" : undefined}
+                  keyboardType="default"
+                  value={userInfo.name}
+                  style={{ width: "100%" }}
+                  onChangeText={(text) =>
+                    setUserInfo((prevInfo) => ({ ...prevInfo, name: text }))
+                  }
+                />
+              </View>
             </View>
-          </View>
 
-          <Pressable
-            title="Save Changes"
-            color={isDarkTheme ? "black" : "white"}
-            onPress={handleSave}
-            style={[
-              defaultStyles.button,
-              {
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-              },
-            ]}
-          >
-            <Text
+            <View style={defaultStyles.boxForm}>
+              <Text
+                style={[
+                  defaultStyles.labelText,
+                  {
+                    color: isDarkTheme ? "white" : "black",
+                  },
+                ]}
+              >
+                {t("rg.email")}
+              </Text>
+              <View
+                style={[
+                  defaultStyles.boxInput,
+                  {
+                    borderColor: isDarkTheme ? "white" : "#67104c",
+                  },
+                ]}
+              >
+                <TextInput
+                  placeholder={t("rg.placeNewEmail")}
+                  color={isDarkTheme ? "white" : "black"}
+                  placeholderTextColor={isDarkTheme ? "white" : undefined}
+                  value={userInfo.email}
+                  keyboardType="email-address"
+                  style={{ width: "100%" }}
+                  onChangeText={(text) =>
+                    setUserInfo((prevInfo) => ({ ...prevInfo, email: text }))
+                  }
+                />
+              </View>
+            </View>
+
+            <Pressable
+              title="Save Changes"
+              // color={isDarkTheme ? "black" : "white"}
+              onPress={handleSave}
               style={[
-                defaultStyles.btnText,
+                defaultStyles.button,
                 {
-                  color: isDarkTheme ? "black" : "white",
+                  backgroundColor: isDarkTheme ? "white" : "#67104c",
+                  marginBottom: 30,
                 },
               ]}
             >
-              {t("rg.saveChanges")}
-            </Text>
-          </Pressable>
-          <PasswordForm theme={isDarkTheme ? "dark" : "light"} />
+              <Text
+                style={[
+                  defaultStyles.btnText,
+                  {
+                    color: isDarkTheme ? "#67104c" : "white",
+                  },
+                ]}
+              >
+                {t("rg.saveChanges")}
+              </Text>
+            </Pressable>
+            <PasswordForm theme={isDarkTheme ? "dark" : "light"} />
+          </View>
         </SafeAreaView>
       </KeyboardAvoidingView>
     </TouchableOpacity>
@@ -285,6 +288,7 @@ export const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 20,
   },
   textName: {
     fontSize: 24,

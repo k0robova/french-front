@@ -8,7 +8,6 @@ export const defaultStyles = StyleSheet.create({
   headerBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 20,
   },
   headerText: {
     fontSize: 22,

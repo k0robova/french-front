@@ -67,7 +67,7 @@ export const Vocab = () => {
   return (
     <SafeAreaView
       style={[
-        defaultStyles.btnText,
+        defaultStyles.container,
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >

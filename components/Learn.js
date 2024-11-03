@@ -67,7 +67,13 @@ export const Learn = () => {
     >
       {progress >= vocabData.length ? (
         <View style={defaultStyles.btnContainer}>
-          <Text style={{ fontSize: 18, marginBottom: 20 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              marginBottom: 20,
+              color: isDarkTheme ? "white" : "#67104c",
+            }}
+          >
             {progress}/{vocabData.length} {t("LAT.completedWords")}
           </Text>
           <TouchableOpacity
@@ -91,7 +97,13 @@ export const Learn = () => {
         </View>
       ) : (
         <View style={defaultStyles.btnContainer}>
-          <Text style={{ fontSize: 18, marginBottom: 20 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              marginBottom: 20,
+              color: isDarkTheme ? "white" : "#67104c",
+            }}
+          >
             {progress}/{vocabData.length} {t("LAT.completedWords")}
           </Text>
 

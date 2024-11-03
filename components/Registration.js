@@ -237,8 +237,8 @@ export const Registration = () => {
               </Text>
             </View>
             <View style={{ marginBottom: 12 }}>
-              <Text style={styles.labelText}>{t("rg.name")}</Text>
-              <View style={[styles.boxInput, { borderColor: "#67104c" }]}>
+              <Text style={defaultStyles.labelText}>{t("rg.name")}</Text>
+              <View style={defaultStyles.boxInput}>
                 <TextInput
                   placeholder={t("rg.placeName")}
                   // placeholderTextColor="#f89fa1"
@@ -252,7 +252,7 @@ export const Registration = () => {
             </View>
 
             <View style={{ marginBottom: 12 }}>
-              <Text style={styles.labelText}>{t("rg.dateOfBirth")}</Text>
+              <Text style={defaultStyles.labelText}>{t("rg.dateOfBirth")}</Text>
 
               {showPicker && (
                 <DateTimePicker
@@ -272,13 +272,15 @@ export const Registration = () => {
                     style={[styles.pickerButton, styles.cancelButton]}
                     onPress={toggleDatePicker}
                   >
-                    <Text style={defaultStyles.btnText}>{t("btn.cancel")}</Text>
+                    <Text style={[defaultStyles.btnText, { color: "white" }]}>
+                      {t("btn.cancel")}
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.pickerButton, styles.confirmButton]}
                     onPress={confirmIOSDate}
                   >
-                    <Text style={defaultStyles.btnText}>
+                    <Text style={[defaultStyles.btnText, { color: "white" }]}>
                       {t("btn.confirm")}
                     </Text>
                   </TouchableOpacity>

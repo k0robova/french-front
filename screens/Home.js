@@ -17,68 +17,73 @@ export const Home = () => {
 
   return (
     <SafeAreaView
-      style={[
-        defaultStyles.container,
-        { backgroundColor: isDarkTheme ? "#67104c" : "white" },
-      ]}
+      style={{
+        flex: 1,
+        backgroundColor: isDarkTheme ? "#67104c" : "white",
+      }}
     >
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
+      <View style={defaultStyles.container}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
+          >
+            <MaterialIcons
+              name="language"
+              size={26}
+              color={isDarkTheme ? "white" : "#67104c"}
+            />
+          </Pressable>
+          <Pressable onPress={() => navigation.navigate("Profile")}>
+            <AntDesign
+              name="setting"
+              size={26}
+              color={isDarkTheme ? "white" : "#67104c"}
+            />
+          </Pressable>
+        </View>
+        <Text
+          style={[
+            styles.welcomeText,
+            { color: isDarkTheme ? "white" : "black" },
+          ]}
         >
-          <MaterialIcons
-            name="language"
-            size={26}
-            color={isDarkTheme ? "white" : "#67104c"}
-          />
+          {t("hm.welcome")}
+        </Text>
+
+        <Pressable
+          style={[
+            defaultStyles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => navigation.navigate("StudyAndTrain")}
+        >
+          <Text
+            style={[
+              defaultStyles.btnText,
+              { color: isDarkTheme ? "#67104c" : "white" },
+            ]}
+          >
+            {t("rg.studyAndTrain")}
+          </Text>
         </Pressable>
-        <Pressable onPress={() => navigation.navigate("Profile")}>
-          <AntDesign
-            name="setting"
-            size={26}
-            color={isDarkTheme ? "white" : "#67104c"}
-          />
+
+        <Pressable
+          style={[
+            defaultStyles.button,
+            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+          ]}
+          onPress={() => navigation.navigate("LessonsBySubscription")}
+        >
+          <Text
+            style={[
+              defaultStyles.btnText,
+              { color: isDarkTheme ? "#67104c" : "white" },
+            ]}
+          >
+            {t("rg.lessonsBySubscr")}
+          </Text>
         </Pressable>
       </View>
-      <Text
-        style={[styles.welcomeText, { color: isDarkTheme ? "white" : "black" }]}
-      >
-        {t("hm.welcome")}
-      </Text>
-
-      <Pressable
-        style={[
-          defaultStyles.button,
-          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-        ]}
-        onPress={() => navigation.navigate("StudyAndTrain")}
-      >
-        <Text
-          style={[
-            defaultStyles.btnText,
-            { color: isDarkTheme ? "#67104c" : "white" },
-          ]}
-        >
-          {t("rg.studyAndTrain")}
-        </Text>
-      </Pressable>
-
-      <Pressable
-        style={[
-          defaultStyles.button,
-          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-        ]}
-        onPress={() => navigation.navigate("LessonsBySubscription")}
-      >
-        <Text
-          style={[
-            defaultStyles.btnText,
-            { color: isDarkTheme ? "#67104c" : "white" },
-          ]}
-        >
-          {t("rg.lessonsBySubscr")}
-        </Text>
-      </Pressable>
     </SafeAreaView>
   );
 };

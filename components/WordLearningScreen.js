@@ -133,7 +133,11 @@ export const WordLearningScreen = () => {
     <SafeAreaView
       style={[
         defaultStyles.container,
-        { justifyContent: "center", alignItems: "center" },
+        {
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: isDarkTheme ? "#67104c" : "white",
+        },
       ]}
     >
       {!sessionComplete ? (
@@ -145,15 +149,27 @@ export const WordLearningScreen = () => {
           <TouchableOpacity onPress={playSound} disabled={isPlaying}>
             <Icon name="sound" size={30} color={isPlaying ? "gray" : "black"} />
           </TouchableOpacity>
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+          <Text
+            style={{
+              fontSize: 30,
+              fontWeight: "bold",
+              color: isDarkTheme ? "white" : "#67104c",
+            }}
+          >
             {selectedWords[currentIndex]?.world}
           </Text>
-          <Text style={{ fontSize: 20, marginTop: 20 }}>
+          <Text
+            style={{
+              fontSize: 20,
+              marginTop: 20,
+              color: isDarkTheme ? "white" : "#67104c",
+            }}
+          >
             {currentLanguage === "uk"
               ? selectedWords[currentIndex]?.translationUK
               : selectedWords[currentIndex]?.translationEN}
           </Text>
-          <Text>
+          <Text style={{ color: isDarkTheme ? "white" : "#67104c" }}>
             {t("LAT.word")}: {currentIndex + 1}
           </Text>
           <Pressable
@@ -180,7 +196,13 @@ export const WordLearningScreen = () => {
         </>
       ) : (
         <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 24, marginBottom: 20 }}>
+          <Text
+            style={{
+              fontSize: 24,
+              marginBottom: 20,
+              color: isDarkTheme ? "white" : "#67104c",
+            }}
+          >
             {t("LAT.sessionCompleted")}
           </Text>
           {!allWordsCompleted && (

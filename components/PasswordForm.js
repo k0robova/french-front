@@ -148,7 +148,7 @@ const PasswordForm = ({ theme }) => {
       </View>
       <Pressable
         title="Save Changes"
-        color={theme ? "black" : "white"}
+        // color={theme ? "black" : "white"}
         onPress={updateUserPass}
         style={[
           defaultStyles.button,
@@ -161,7 +161,7 @@ const PasswordForm = ({ theme }) => {
           style={[
             defaultStyles.btnText,
             {
-              color: theme === "dark" ? "black" : "white",
+              color: theme === "dark" ? "#67104c" : "white",
             },
           ]}
         >

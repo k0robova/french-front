@@ -41,6 +41,8 @@ export const Login = () => {
       const resultAction = await dispatch(loginThunk({ email, password }));
       // Якщо реєстрація була успішною, `resultAction` не буде помилкою
       if (loginThunk.fulfilled.match(resultAction)) {
+        setEmail("");
+        setPassword("");
         navigation.navigate("Home");
       } else {
         // Тут можна обробити помилку, якщо потрібно
@@ -105,187 +107,188 @@ export const Login = () => {
 
   return (
     <SafeAreaView
-      style={[
-        defaultStyles.container,
-        { backgroundColor: isDarkTheme ? "#67104c" : "white" },
-      ]}
+      style={{ flex: 1, backgroundColor: isDarkTheme ? "#67104c" : "white" }}
     >
-      <View style={defaultStyles.headerBox}>
+      <View style={defaultStyles.container}>
+        <View style={defaultStyles.headerBox}>
+          <Pressable
+            onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
+          >
+            <MaterialIcons
+              name="language"
+              size={26}
+              color={isDarkTheme ? "white" : "#67104c"}
+            />
+          </Pressable>
+
+          <Pressable onPress={toggleTheme}>
+            <MaterialIcons
+              name="light-mode"
+              size={26}
+              color={isDarkTheme ? "white" : "#67104c"}
+            />
+          </Pressable>
+        </View>
+        <View style={{ marginVertical: 22 }}>
+          <Text
+            style={[
+              defaultStyles.headerText,
+              {
+                color: isDarkTheme ? "white" : "black",
+              },
+            ]}
+          >
+            {t("rg.welcomeBack")}
+          </Text>
+        </View>
+
+        <View style={{ marginBottom: 12 }}>
+          <Text
+            style={[
+              defaultStyles.labelText,
+              {
+                color: isDarkTheme ? "white" : "black",
+              },
+            ]}
+          >
+            {t("rg.email")}
+          </Text>
+          <View
+            style={[
+              defaultStyles.boxInput,
+              {
+                borderColor: isDarkTheme ? "white" : "#67104c",
+              },
+            ]}
+          >
+            <TextInput
+              placeholder={t("rg.placeEmail")}
+              value={email}
+              placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
+              keyboardType="email-address"
+              style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
+              onChangeText={handleEmailChange}
+            />
+          </View>
+        </View>
+
+        <View style={{ marginBottom: 12 }}>
+          <Text
+            style={[
+              defaultStyles.labelText,
+              {
+                color: isDarkTheme ? "white" : "black",
+              },
+            ]}
+          >
+            {t("rg.password")}
+          </Text>
+          <View
+            style={[
+              defaultStyles.boxInput,
+              {
+                borderColor: isDarkTheme ? "white" : "#67104c",
+              },
+            ]}
+          >
+            <TextInput
+              placeholder={t("rg.placePass")}
+              value={password}
+              placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
+              secureTextEntry={!isPasswordVisible}
+              style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
+              onChangeText={handlePasswordChange}
+            />
+            <TouchableOpacity
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={{ position: "absolute", right: 12 }}
+            >
+              {isPasswordVisible === true ? (
+                <Ionicons
+                  name="eye"
+                  size={24}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              ) : (
+                <Ionicons
+                  name="eye-off"
+                  size={24}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <Pressable
-          onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
-        >
-          <MaterialIcons
-            name="language"
-            size={26}
-            color={isDarkTheme ? "white" : "#67104c"}
-          />
-        </Pressable>
-
-        <Pressable onPress={toggleTheme}>
-          <MaterialIcons
-            name="light-mode"
-            size={26}
-            color={isDarkTheme ? "white" : "#67104c"}
-          />
-        </Pressable>
-      </View>
-      <View style={{ marginVertical: 22 }}>
-        <Text
           style={[
-            defaultStyles.headerText,
+            defaultStyles.button,
             {
-              color: isDarkTheme ? "white" : "black",
+              backgroundColor: isDarkTheme ? "white" : "#67104c",
             },
           ]}
+          onPress={handleRegister}
         >
-          {t("rg.welcomeBack")}
-        </Text>
-      </View>
-
-      <View style={{ marginBottom: 12 }}>
-        <Text
-          style={[
-            defaultStyles.labelText,
-            {
-              color: isDarkTheme ? "white" : "black",
-            },
-          ]}
-        >
-          {t("rg.email")}
-        </Text>
-        <View
-          style={[
-            defaultStyles.boxInput,
-            {
-              borderColor: isDarkTheme ? "white" : "#67104c",
-            },
-          ]}
-        >
-          <TextInput
-            placeholder={t("rg.placeEmail")}
-            value={email}
-            placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
-            keyboardType="email-address"
-            style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
-            onChangeText={handleEmailChange}
-          />
-        </View>
-      </View>
-
-      <View style={{ marginBottom: 12 }}>
-        <Text
-          style={[
-            defaultStyles.labelText,
-            {
-              color: isDarkTheme ? "white" : "black",
-            },
-          ]}
-        >
-          {t("rg.password")}
-        </Text>
-        <View
-          style={[
-            defaultStyles.boxInput,
-            {
-              borderColor: isDarkTheme ? "white" : "#67104c",
-            },
-          ]}
-        >
-          <TextInput
-            placeholder={t("rg.placePass")}
-            value={password}
-            placeholderTextColor={isDarkTheme ? "lightgray" : undefined}
-            secureTextEntry={!isPasswordVisible}
-            style={{ width: "100%", color: isDarkTheme ? "white" : "black" }}
-            onChangeText={handlePasswordChange}
-          />
-          <TouchableOpacity
-            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            style={{ position: "absolute", right: 12 }}
-          >
-            {isPasswordVisible === true ? (
-              <Ionicons
-                name="eye"
-                size={24}
-                color={isDarkTheme ? "white" : "#67104c"}
-              />
-            ) : (
-              <Ionicons
-                name="eye-off"
-                size={24}
-                color={isDarkTheme ? "white" : "#67104c"}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <Pressable
-        style={[
-          defaultStyles.button,
-          {
-            backgroundColor: isDarkTheme ? "white" : "#67104c",
-          },
-        ]}
-        onPress={handleRegister}
-      >
-        <Text
-          style={[
-            defaultStyles.btnText,
-            {
-              color: isDarkTheme ? "#67104c" : "white",
-            },
-          ]}
-        >
-          {t("rg.login")}
-        </Text>
-      </Pressable>
-
-      <View
-        style={[
-          defaultStyles.linkBox,
-          {
-            marginVertical: 22,
-          },
-        ]}
-      >
-        <Text style={{ fontSize: 16, color: isDarkTheme ? "white" : "black" }}>
-          {t("rg.dontHaveAcc")}
-        </Text>
-        <Pressable onPress={() => navigation.navigate("Registration")}>
           <Text
             style={[
-              defaultStyles.linkText,
+              defaultStyles.btnText,
               {
-                color: isDarkTheme ? "white" : "#67104c",
+                color: isDarkTheme ? "#67104c" : "white",
               },
             ]}
           >
-            {t("rg.register")}
+            {t("rg.login")}
           </Text>
         </Pressable>
-      </View>
-      <View style={defaultStyles.linkBox}>
-        <Text
-          style={{
-            fontSize: 16,
-            color: isDarkTheme ? "white" : "black",
-          }}
+
+        <View
+          style={[
+            defaultStyles.linkBox,
+            {
+              marginVertical: 22,
+            },
+          ]}
         >
-          {t("rg.haveAccButForgotPass")}
-        </Text>
-        <Pressable onPress={() => navigation.navigate("ForgotPassword")}>
           <Text
-            style={[
-              defaultStyles.linkText,
-              {
-                color: isDarkTheme ? "white" : "#67104c",
-              },
-            ]}
+            style={{ fontSize: 16, color: isDarkTheme ? "white" : "black" }}
           >
-            {t("rg.resetPassHere")}
+            {t("rg.dontHaveAcc")}
           </Text>
-        </Pressable>
+          <Pressable onPress={() => navigation.navigate("Registration")}>
+            <Text
+              style={[
+                defaultStyles.linkText,
+                {
+                  color: isDarkTheme ? "white" : "#67104c",
+                },
+              ]}
+            >
+              {t("rg.register")}
+            </Text>
+          </Pressable>
+        </View>
+        <View style={defaultStyles.linkBox}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: isDarkTheme ? "white" : "black",
+            }}
+          >
+            {t("rg.haveAccButForgotPass")}
+          </Text>
+          <Pressable onPress={() => navigation.navigate("ForgotPassword")}>
+            <Text
+              style={[
+                defaultStyles.linkText,
+                {
+                  color: isDarkTheme ? "white" : "#67104c",
+                },
+              ]}
+            >
+              {t("rg.resetPassHere")}
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
