@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getTopic } from "../store/topic/topicThunk";
 import { selectTopic } from "../store/topic/selectors";
+import { defaultStyles } from "./defaultStyles";
 
 export const StudyAndTrain = () => {
   const { t } = useTranslation();
@@ -32,68 +33,61 @@ export const StudyAndTrain = () => {
   return (
     <SafeAreaView
       style={[
-        styles.container,
+        defaultStyles.container,
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
-      <View style={styles.linkContainer}>
+      <View style={defaultStyles.btnContainer}>
         <Pressable
           style={[
-            styles.button,
+            defaultStyles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-
           onPress={() => handleGetTheme()}
-
         >
           <Text
-            // style={[
-            //   styles.linkText,
-            //   styles.boldText,
-            //   {
-            //     backgroundColor: isDarkTheme ? "white" : "#67104c",
-            //     color: isDarkTheme ? "#67104c" : "white",
-            //   },
-            // ]}
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
+            style={[
+              defaultStyles.btnText,
+              {
+                color: isDarkTheme ? "#67104c" : "white",
+              },
+            ]}
           >
             {t("LAT.vocab")}
           </Text>
         </Pressable>
         <Pressable
           style={[
-            styles.button,
+            defaultStyles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
           onPress={() => navigation.navigate("Phonetic")}
         >
           <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
+            style={[
+              defaultStyles.btnText,
+              {
+                color: isDarkTheme ? "#67104c" : "white",
+              },
+            ]}
           >
             {t("LAT.phonetic")}
           </Text>
         </Pressable>
         <Pressable
           style={[
-            styles.button,
+            defaultStyles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
           onPress={() => navigation.navigate("Verbs")}
         >
           <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
+            style={[
+              defaultStyles.btnText,
+              {
+                color: isDarkTheme ? "#67104c" : "white",
+              },
+            ]}
           >
             {t("LAT.verbs")}
           </Text>
@@ -102,44 +96,3 @@ export const StudyAndTrain = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  themeButtonContainer: {
-    padding: 20,
-  },
-  welcomeText: {
-    fontSize: 25,
-    textAlign: "center",
-  },
-  linkContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  linkText: {
-    fontSize: 24,
-    padding: 15,
-    borderRadius: 35,
-    fontWeight: "bold",
-  },
-  boldText: {
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 18,
-    marginBottom: 4,
-    borderRadius: 100,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    width: 343,
-    height: 51,
-  },
-});

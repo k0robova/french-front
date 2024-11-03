@@ -4,7 +4,6 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import "../i18n";
 import {
   Alert,
   Keyboard,
@@ -18,9 +17,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import "../i18n";
 import { handleChange } from "../helpers/handleChangeInput";
 import { forgotPass, restorePassword } from "../services/authService";
 import * as Validate from "../helpers/validationInput";
+import { defaultStyles } from "./defaultStyles";
 
 export const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -35,9 +36,9 @@ export const ForgotPassword = () => {
     emailError: "",
     passwordError: "",
   });
-  const [isOtpCode, setIsOtpCode] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isOtpCode, setIsOtpCode] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const { t, i18n } = useTranslation();
@@ -65,7 +66,7 @@ export const ForgotPassword = () => {
       password: formData.password,
     };
     try {
-      const data = await restorePassword(formData.otp, newPassword);
+      await restorePassword(formData.otp, newPassword);
       Alert.alert("", t("alert.passwordChanged"), [{ text: t("alert.close") }]);
       navigation.navigate("Login");
     } catch (error) {
@@ -142,103 +143,58 @@ export const ForgotPassword = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <SafeAreaView
-          style={{
-            flex: 1,
-          }}
-        >
+        <SafeAreaView style={defaultStyles.container}>
+          <View style={defaultStyles.headerBox}>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <AntDesign name="arrowleft" size={24} color="#67104c" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                changeLanguage(i18n.language === "en" ? "uk" : "en")
+              }
+            >
+              <MaterialIcons name="language" size={26} color="#67104c" />
+            </TouchableOpacity>
+          </View>
           {isOtpCode ? (
-            <View style={{ flex: 1, marginHorizontal: 22 }}>
-              <View
-                style={{
-                  paddingTop: 20,
-                  // paddingRight: 18,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                  <AntDesign name="arrowleft" size={24} color="#67104c" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() =>
-                    changeLanguage(i18n.language === "en" ? "uk" : "en")
-                  }
-                >
-                  <MaterialIcons name="language" size={26} color="#67104c" />
-                </TouchableOpacity>
-              </View>
-              <View style={{ marginVertical: 22 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 400,
-                    marginVertical: 12,
-                    color: "black",
-                  }}
-                >
-                  {t("rg.code")}
-                </Text>
+            <>
+              <View style={defaultStyles.boxForm}>
+                <Text style={defaultStyles.labelText}>{t("rg.code")}</Text>
                 <View
-                  style={{
-                    width: "100%",
-                    height: 48,
-                    borderColor: "#67104c",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingLeft: 22,
-                  }}
+                  style={[
+                    defaultStyles.boxInput,
+                    {
+                      borderColor: "#67104c",
+                    },
+                  ]}
                 >
                   <TextInput
                     placeholder={t("rg.placeCode")}
                     keyboardType="default"
-                    style={{
-                      width: "100%",
-                      color: "black",
-                    }}
+                    style={styles.inputText}
                     onChangeText={handleOtpChange}
                   />
-                  {/* {renderError(formErrors.otpError, [
-                    styles.errorMessage,
-                    { top: 47 },
-                  ])} */}
                 </View>
               </View>
 
-              <View style={{ marginBottom: 12 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 400,
-                    marginVertical: 8,
-                    color: "black",
-                  }}
-                >
+              <View style={defaultStyles.boxForm}>
+                <Text style={defaultStyles.labelText}>
                   {t("rg.newPassword")}
                 </Text>
                 <View
-                  style={{
-                    width: "100%",
-                    height: 48,
-                    borderColor: "#67104c",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingLeft: 22,
-                  }}
+                  style={[
+                    defaultStyles.boxInput,
+                    {
+                      borderColor: "#67104c",
+                    },
+                  ]}
                 >
                   <TextInput
                     placeholder={t("rg.placeNewPassword")}
                     secureTextEntry={!isPasswordVisible}
                     keyboardType="default"
                     value={formData.password}
-                    style={{
-                      width: "100%",
-                      color: "black",
-                    }}
+                    style={styles.inputText}
                     onChangeText={handlePasswordChange}
                   />
                   {renderError(formErrors.passwordError, [
@@ -258,152 +214,64 @@ export const ForgotPassword = () => {
                 </View>
               </View>
               <Pressable
-                style={{
-                  marginTop: 18,
-                  marginBottom: 4,
-                  borderRadius: 100,
-                  paddingVertical: 16,
-                  paddingHorizontal: 32,
-                  width: 343,
-                  height: 51,
-                  backgroundColor: "#67104c",
-                  alignSelf: "center",
-                }}
+                style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
                 onPress={handleBackToEmail}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
+                <Text style={[defaultStyles.btnText, { color: "white" }]}>
                   {t("rg.back")}
                 </Text>
               </Pressable>
               <Pressable
-                style={{
-                  marginTop: 18,
-                  marginBottom: 4,
-                  borderRadius: 100,
-                  paddingVertical: 16,
-                  paddingHorizontal: 32,
-                  width: 343,
-                  height: 51,
-                  backgroundColor: "#67104c",
-                  alignSelf: "center",
-                }}
+                style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
                 onPress={handleChangePassword}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
+                <Text style={[defaultStyles.btnText, { color: "white" }]}>
                   {t("rg.saveChanges")}
                 </Text>
               </Pressable>
-            </View>
+            </>
           ) : (
-            <View style={{ flex: 1, marginHorizontal: 22 }}>
-              <View
-                style={{
-                  paddingTop: 10,
-                  // paddingRight: 18,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                  <AntDesign name="arrowleft" size={24} color="#67104c" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() =>
-                    changeLanguage(i18n.language === "en" ? "uk" : "en")
-                  }
-                >
-                  <MaterialIcons name="language" size={26} color="#67104c" />
-                </TouchableOpacity>
-              </View>
-              <View style={{ marginVertical: 22 }}>
+            <>
+              <View style={[defaultStyles.boxForm, { padding: 0 }]}>
                 <Text
-                  style={{
-                    fontSize: 16,
-                    marginVertical: 12,
-                    color: "black",
-                  }}
+                  style={[
+                    defaultStyles.headerText,
+                    {
+                      color: "black",
+                    },
+                  ]}
                 >
                   {t("rg.sendCode")}
                 </Text>
               </View>
 
-              <View style={{ marginBottom: 12 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 400,
-                    marginVertical: 8,
-                    color: "black",
-                  }}
-                >
-                  {t("rg.email")}
-                </Text>
+              <View style={[defaultStyles.boxForm, { padding: 0 }]}>
+                <Text style={defaultStyles.labelText}>{t("rg.email")}</Text>
                 <View
-                  style={{
-                    width: "100%",
-                    height: 48,
-                    borderColor: "#67104c",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingLeft: 22,
-                  }}
+                  style={[
+                    defaultStyles.boxInput,
+                    {
+                      borderColor: "#67104c",
+                    },
+                  ]}
                 >
                   <TextInput
                     placeholder={t("rg.placeEmail")}
                     keyboardType="email-address"
-                    style={{
-                      width: "100%",
-                      color: "black",
-                    }}
+                    style={styles.inputText}
                     onChangeText={handleEmailChange}
                   />
                 </View>
               </View>
               <Pressable
-                style={{
-                  marginTop: 18,
-                  marginBottom: 4,
-                  borderRadius: 100,
-                  paddingVertical: 16,
-                  paddingHorizontal: 32,
-                  width: 343,
-                  height: 51,
-                  backgroundColor: "#67104c",
-                  alignSelf: "center",
-                }}
+                style={[defaultStyles.button, { backgroundColor: "#67104c" }]}
                 onPress={handleSendOtpCode}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
+                <Text style={[defaultStyles.btnText, { color: "white" }]}>
                   {t("rg.send")}
                 </Text>
               </Pressable>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  marginVertical: 22,
-                }}
-              >
+              <View style={[defaultStyles.linkBox, { marginTop: 22 }]}>
                 <Text
                   style={{
                     fontSize: 16,
@@ -413,19 +281,12 @@ export const ForgotPassword = () => {
                   {t("rg.techSupport")}
                 </Text>
                 <Pressable onPress={() => navigation.navigate("Support")}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: "#67104c",
-                      fontWeight: "bold",
-                      marginLeft: 6,
-                    }}
-                  >
+                  <Text style={[defaultStyles.linkText, { color: "#67104c" }]}>
                     {t("rg.clickHere")}
                   </Text>
                 </Pressable>
               </View>
-            </View>
+            </>
           )}
         </SafeAreaView>
       </KeyboardAvoidingView>
@@ -441,5 +302,9 @@ const styles = StyleSheet.create({
     color: "red",
     left: 0,
     top: -30,
+  },
+  inputText: {
+    width: "100%",
+    color: "black",
   },
 });

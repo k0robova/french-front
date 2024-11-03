@@ -29,6 +29,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import "dayjs/locale/uk"; // імпорт української локалі
 import "dayjs/locale/en"; // англійська локаль
 import { setTheme } from "../store/auth/authSlice";
+import { defaultStyles } from "./defaultStyles";
 
 dayjs.extend(localizedFormat);
 dayjs.locale("en"); // встановлення локалі за замовчуванням
@@ -228,14 +229,7 @@ export const Registration = () => {
                   <MaterialIcons name="language" size={26} color="#67104c" />
                 </Pressable>
               </View>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: "bold",
-                  marginVertical: 12,
-                  color: "black",
-                }}
-              >
+              <Text style={[defaultStyles.headerText, { color: "black" }]}>
                 {t("rg.register")}
               </Text>
               <Text style={{ fontSize: 16, color: "black" }}>
@@ -243,28 +237,8 @@ export const Registration = () => {
               </Text>
             </View>
             <View style={{ marginBottom: 12 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                  marginBottom: 10,
-                }}
-              >
-                {t("rg.name")}
-              </Text>
-              <View
-                style={{
-                  width: "100 %",
-                  height: 48,
-                  borderColor: "#67104c",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingLeft: 22,
-                }}
-              >
+              <Text style={styles.labelText}>{t("rg.name")}</Text>
+              <View style={[styles.boxInput, { borderColor: "#67104c" }]}>
                 <TextInput
                   placeholder={t("rg.placeName")}
                   // placeholderTextColor="#f89fa1"
@@ -278,16 +252,7 @@ export const Registration = () => {
             </View>
 
             <View style={{ marginBottom: 12 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                  marginBottom: 10,
-                }}
-              >
-                {t("rg.dateOfBirth")}
-              </Text>
+              <Text style={styles.labelText}>{t("rg.dateOfBirth")}</Text>
 
               {showPicker && (
                 <DateTimePicker
@@ -307,29 +272,18 @@ export const Registration = () => {
                     style={[styles.pickerButton, styles.cancelButton]}
                     onPress={toggleDatePicker}
                   >
-                    <Text style={styles.buttonText}>{t("btn.cancel")}</Text>
+                    <Text style={defaultStyles.btnText}>{t("btn.cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.pickerButton, styles.confirmButton]}
                     onPress={confirmIOSDate}
                   >
-                    <Text style={styles.buttonText}>{t("btn.confirm")}</Text>
+                    <Text style={defaultStyles.btnText}>
+                      {t("btn.confirm")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
-              {/* 
-              <View
-                style={{
-                  width: "100 %",
-                  height: 48,
-                  borderColor: "#67104c",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  // alignItems: "center",
-                  justifyContent: "center",
-                  paddingLeft: 22,
-                }}
-              > */}
               {!showPicker && (
                 <Pressable onPress={toggleDatePicker}>
                   <TextInput
@@ -337,18 +291,7 @@ export const Registration = () => {
                     // placeholderTextColor="#f89fa1"
                     // keyboardType="numeric"
                     value={formData.birthDate}
-                    style={{
-                      // width: "100%",
-                      textAlign: "left",
-                      width: "100 %",
-                      height: 48,
-                      borderColor: "#67104c",
-                      borderWidth: 1,
-                      borderRadius: 8,
-                      // alignItems: "center",
-                      justifyContent: "center",
-                      paddingLeft: 22,
-                    }}
+                    style={styles.textInut}
                     onChangeText={handleBirthDateChange}
                     editable={false}
                     onPressIn={toggleDatePicker}
@@ -356,32 +299,11 @@ export const Registration = () => {
                 </Pressable>
               )}
               {renderError(formErrors.birthDateError, [styles.errorMessage])}
-              {/* </View> */}
             </View>
 
             <View style={{ marginBottom: 12 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                  marginBottom: 10,
-                }}
-              >
-                {t("rg.email")}
-              </Text>
-              <View
-                style={{
-                  width: "100 %",
-                  height: 48,
-                  borderColor: "#67104c",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingLeft: 22,
-                }}
-              >
+              <Text style={defaultStyles.labelText}>{t("rg.email")}</Text>
+              <View style={defaultStyles.boxInput}>
                 <TextInput
                   placeholder={t("rg.placeEmail")}
                   // placeholderTextColor="#f89fa1"
@@ -395,28 +317,8 @@ export const Registration = () => {
             </View>
 
             <View style={{ marginBottom: 12 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                  marginBottom: 10,
-                }}
-              >
-                {t("rg.password")}
-              </Text>
-              <View
-                style={{
-                  width: "100 %",
-                  height: 48,
-                  borderColor: "#67104c",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingLeft: 22,
-                }}
-              >
+              <Text style={defaultStyles.labelText}>{t("rg.password")}</Text>
+              <View style={defaultStyles.boxInput}>
                 <TextInput
                   placeholder={t("rg.placePass")}
                   // placeholderTextColor="#f89fa1"
@@ -450,8 +352,8 @@ export const Registration = () => {
             </View>
             <Pressable
               style={[
-                styles.button,
-                { alignSelf: "center" },
+                defaultStyles.button,
+                { backgroundColor: "#67104c" },
                 (!isFormValid || !isChecked) && styles.buttonDisabled,
               ]}
               title="Register"
@@ -469,25 +371,12 @@ export const Registration = () => {
               </Text>
             </Pressable>
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                marginVertical: 22,
-              }}
-            >
+            <View style={[defaultStyles.linkBox, { marginVertical: 22 }]}>
               <Text style={{ fontSize: 16, color: "black" }}>
                 {t("rg.alreadyAccount")}
               </Text>
               <Pressable onPress={() => navigation.navigate("Login")}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: "#67104c",
-                    fontWeight: "bold",
-                    marginLeft: 6,
-                  }}
-                >
+                <Text style={[defaultStyles.linkText, { color: "#67104c" }]}>
                   {t("rg.login")}
                 </Text>
               </Pressable>
@@ -500,6 +389,16 @@ export const Registration = () => {
 };
 
 export const styles = StyleSheet.create({
+  textInut: {
+    textAlign: "left",
+    width: "100 %",
+    height: 48,
+    borderColor: "#67104c",
+    borderWidth: 1,
+    borderRadius: 8,
+    justifyContent: "center",
+    paddingLeft: 22,
+  },
   errorMessage: {
     fontFamily: "Montserrat-Regular",
     position: "absolute",
@@ -507,16 +406,6 @@ export const styles = StyleSheet.create({
     color: "red",
     left: 0,
     top: -13,
-  },
-  button: {
-    marginTop: 18,
-    marginBottom: 4,
-    borderRadius: 100,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    width: 343,
-    height: 51,
-    backgroundColor: "#67104c",
   },
   buttonDisabled: { backgroundColor: "#CCCCCC", pointerEvents: "none" },
   datePicker: {
@@ -553,10 +442,5 @@ export const styles = StyleSheet.create({
   },
   confirmButton: {
     backgroundColor: "#67104c", // Зелений колір для кнопки підтвердження
-  },
-  buttonText: {
-    fontSize: 16,
-    color: "white",
-    fontWeight: "bold",
   },
 });

@@ -1,21 +1,15 @@
 import { useTranslation } from "react-i18next";
-import {
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-} from "react-native";
+import { Pressable, SafeAreaView, Text, View, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTopic } from "../store/topic/selectors";
 import { getVocab } from "../store/vocab/vocabThunks";
 import { selectVocab } from "../store/vocab/selectors";
 import { setThemeId } from "../store/vocab/vocabSlice";
+import { defaultStyles } from "./defaultStyles";
 
 export const Vocab = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
   const vocabData = useSelector(selectVocab);
@@ -50,17 +44,18 @@ export const Vocab = () => {
     return (
       <Pressable
         style={[
-          styles.button,
+          defaultStyles.button,
           { backgroundColor: isDarkTheme ? "white" : "#67104c" },
         ]}
         onPress={() => handleGetWorlds(item._id, item.name)}
       >
         <Text
-          style={{
-            color: isDarkTheme ? "#67104c" : "white",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
+          style={[
+            defaultStyles.btnText,
+            {
+              color: isDarkTheme ? "#67104c" : "white",
+            },
+          ]}
         >
           {item.name} /
           {currentLanguage === "uk" ? item.translationUK : item.translationEN}
@@ -72,11 +67,11 @@ export const Vocab = () => {
   return (
     <SafeAreaView
       style={[
-        styles.container,
+        defaultStyles.btnText,
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
-      <View style={{ padding: 20 }}>
+      <View>
         <FlatList
           style={{ width: "100%" }}
           data={topicsData}
@@ -88,27 +83,3 @@ export const Vocab = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  linkText: {
-    fontSize: 24,
-    padding: 15,
-    borderRadius: 35,
-    fontWeight: "bold",
-  },
-  boldText: {
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 18,
-    marginBottom: 4,
-    borderRadius: 100,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    width: 343,
-    height: 51,
-  },
-});
