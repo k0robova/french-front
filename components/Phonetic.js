@@ -2,9 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Pressable, SafeAreaView, Text, View } from "react-native";
 
 import { useSelector } from "react-redux";
+import { defaultStyles } from "./defaultStyles";
 
 export const Phonetic = () => {
   const { t } = useTranslation();
@@ -14,24 +15,25 @@ export const Phonetic = () => {
   return (
     <SafeAreaView
       style={[
-        styles.container,
+        defaultStyles.container,
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
-      <View style={styles.linkContainer}>
+      <View style={defaultStyles.btnContainer}>
         <Pressable
           style={[
-            styles.button,
+            defaultStyles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
           onPress={() => navigation.navigate("StudyAndTrain")}
         >
           <Text
-            style={{
-              color: isDarkTheme ? "#67104c" : "white",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
+            style={[
+              defaultStyles.btnText,
+              {
+                color: isDarkTheme ? "#67104c" : "white",
+              },
+            ]}
           >
             {t("LAT.phonetic")}
           </Text>
@@ -40,25 +42,3 @@ export const Phonetic = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-
-  linkContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  button: {
-    marginTop: 18,
-    marginBottom: 4,
-    borderRadius: 100,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    width: 343,
-    height: 51,
-  },
-});

@@ -6,17 +6,16 @@ import "../i18n";
 import {
   Pressable,
   SafeAreaView,
-  StyleSheet,
   TextInput,
   View,
   Text,
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { updatePassword } from "../services/authService";
 import { updaterPasswordThunk } from "../store/auth/authThunks";
+import { defaultStyles } from "./defaultStyles";
 
-const PasswordForm = ({ theme, buttonSave }) => {
+const PasswordForm = ({ theme }) => {
   const dispatch = useDispatch();
 
   const [userPass, setUserPass] = useState({
@@ -24,7 +23,7 @@ const PasswordForm = ({ theme, buttonSave }) => {
     newPassword: "",
   });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const updateUserPass = async () => {
     try {
@@ -44,40 +43,26 @@ const PasswordForm = ({ theme, buttonSave }) => {
     }
   };
 
-  // const updateUserPass = async () => {
-  //   try {
-  //     await updatePassword(userPass);
-  //     setUserPass({ password: "", newPassword: "" });
-  //     console.log("Пароль успішно змінено");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   return (
     <SafeAreaView>
-      <View style={{ marginBottom: 12, padding: 10 }}>
+      <View style={defaultStyles.boxForm}>
         <Text
-          style={{
-            fontSize: 16,
-            fontWeight: 400,
-            marginVertical: 8,
-            color: theme === "dark" ? "white" : "black",
-          }}
+          style={[
+            defaultStyles.labelText,
+            {
+              color: theme === "dark" ? "white" : "black",
+            },
+          ]}
         >
           {t("rg.password")}
         </Text>
         <View
-          style={{
-            width: "100 %",
-            height: 48,
-            borderColor: theme === "dark" ? "white" : "#67104c",
-            borderWidth: 1,
-            borderRadius: 8,
-            alignItems: "center",
-            justifyContent: "center",
-            paddingLeft: 22,
-          }}
+          style={[
+            defaultStyles.boxInput,
+            {
+              borderColor: theme === "dark" ? "white" : "#67104c",
+            },
+          ]}
         >
           <TextInput
             placeholder={t("rg.placePass")}
@@ -111,28 +96,24 @@ const PasswordForm = ({ theme, buttonSave }) => {
         </View>
       </View>
 
-      <View style={{ marginBottom: 12, padding: 10 }}>
+      <View style={defaultStyles.boxForm}>
         <Text
-          style={{
-            fontSize: 16,
-            fontWeight: 400,
-            marginVertical: 8,
-            color: theme === "dark" ? "white" : "black",
-          }}
+          style={[
+            defaultStyles.labelText,
+            {
+              color: theme === "dark" ? "white" : "black",
+            },
+          ]}
         >
           {t("rg.newPassword")}
         </Text>
         <View
-          style={{
-            width: "100 %",
-            height: 48,
-            borderColor: theme === "dark" ? "white" : "#67104c",
-            borderWidth: 1,
-            borderRadius: 8,
-            alignItems: "center",
-            justifyContent: "center",
-            paddingLeft: 22,
-          }}
+          style={[
+            defaultStyles.boxInput,
+            {
+              borderColor: theme === "dark" ? "white" : "#67104c",
+            },
+          ]}
         >
           <TextInput
             placeholder={t("rg.placeNewPassword")}
@@ -169,25 +150,20 @@ const PasswordForm = ({ theme, buttonSave }) => {
         title="Save Changes"
         color={theme ? "black" : "white"}
         onPress={updateUserPass}
-        style={{
-          marginTop: 18,
-          marginBottom: 4,
-          borderRadius: 100,
-          marginLeft: "auto",
-          marginRight: "auto",
-          paddingVertical: 16,
-          paddingHorizontal: 32,
-          width: 343,
-          height: 51,
-          backgroundColor: theme === "dark" ? "white" : "#67104c",
-        }}
+        style={[
+          defaultStyles.button,
+          {
+            backgroundColor: theme === "dark" ? "white" : "#67104c",
+          },
+        ]}
       >
         <Text
-          style={{
-            color: theme === "dark" ? "black" : "white",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
+          style={[
+            defaultStyles.btnText,
+            {
+              color: theme === "dark" ? "black" : "white",
+            },
+          ]}
         >
           {t("rg.saveChanges")}
         </Text>
@@ -195,30 +171,5 @@ const PasswordForm = ({ theme, buttonSave }) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    alignContent: "center",
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  passInput: {
-    fontFamily: "Montserrat-Regular",
-    width: "60%",
-    backgroundColor: "#F6F6F6",
-    borderColor: "#E8E8E8",
-    borderWidth: 1,
-    borderRadius: 20,
-    marginBottom: 5,
-    padding: 7,
-  },
-  submitBtn: {
-    position: "absolute",
-    right: 25,
-    top: 22,
-  },
-});
 
 export default PasswordForm;

@@ -3,7 +3,6 @@ import {
   SafeAreaView,
   Text,
   View,
-  Button,
   Image,
   StyleSheet,
   TouchableOpacity,
@@ -16,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import { selectVocab } from "../store/vocab/selectors";
+import { defaultStyles } from "./defaultStyles";
 
 export const WordLearningScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -93,14 +93,6 @@ export const WordLearningScreen = () => {
     }
   };
 
-  // const onRepeat = async () => {
-  //   await AsyncStorage.removeItem(`progress_${topicName}`);
-  //   setCurrentIndex(0);
-  //   setSessionComplete(false);
-  //   setAllWordsCompleted(false);
-  //   setSelectedWords(filteredWords.slice(0, count));
-  // };
-
   const playSound = async () => {
     try {
       const audioUri = selectedWords[currentIndex]?.audio;
@@ -129,7 +121,6 @@ export const WordLearningScreen = () => {
   };
 
   const handleTrainWords = () => {
-    // alert("Training words...");
     navigation.navigate("Train");
   };
 
@@ -140,51 +131,48 @@ export const WordLearningScreen = () => {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      style={[
+        defaultStyles.container,
+        { justifyContent: "center", alignItems: "center" },
+      ]}
     >
       {!sessionComplete ? (
         <>
           <Image
             source={{ uri: selectedWords[currentIndex]?.image }}
-            style={styles.image}
+            style={defaultStyles.image}
           />
           <TouchableOpacity onPress={playSound} disabled={isPlaying}>
             <Icon name="sound" size={30} color={isPlaying ? "gray" : "black"} />
           </TouchableOpacity>
           <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-            {selectedWords[currentIndex]?.world}{" "}
+            {selectedWords[currentIndex]?.world}
           </Text>
           <Text style={{ fontSize: 20, marginTop: 20 }}>
             {currentLanguage === "uk"
               ? selectedWords[currentIndex]?.translationUK
-              : selectedWords[currentIndex]?.translationEN}{" "}
+              : selectedWords[currentIndex]?.translationEN}
           </Text>
           <Text>
             {t("LAT.word")}: {currentIndex + 1}
           </Text>
-          {/* <Button title="Next" onPress={handleNextWord} /> */}
           <Pressable
-            style={{
-              marginTop: 18,
-              marginBottom: 4,
-              borderRadius: 100,
-              paddingVertical: 16,
-              paddingHorizontal: 32,
-              width: 200,
-              height: 51,
-              // backgroundColor: isDarkTheme ? "white" : "#67104c",
-              backgroundColor: "#67104c",
-              alignSelf: "center",
-            }}
+            style={[
+              defaultStyles.button,
+              {
+                width: 200,
+                backgroundColor: isDarkTheme ? "white" : "#67104c",
+              },
+            ]}
             onPress={handleNextWord}
           >
             <Text
-              style={{
-                // color: isDarkTheme ? "#67104c" : "white",
-                color: "white",
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
+              style={[
+                defaultStyles.btnText,
+                {
+                  color: isDarkTheme ? "#67104c" : "white",
+                },
+              ]}
             >
               {t("btn.next")}
             </Text>
@@ -197,107 +185,62 @@ export const WordLearningScreen = () => {
           </Text>
           {!allWordsCompleted && (
             <TouchableOpacity
-              // style={[
-              //   styles.buttonMarg,
-              //   { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-              // ]}
-              style={{
-                marginTop: 18,
-                marginBottom: 4,
-                borderRadius: 100,
-                paddingVertical: 16,
-                paddingHorizontal: 32,
-                width: "100%",
-                height: 51,
-                // backgroundColor: isDarkTheme ? "white" : "#67104c",
-                backgroundColor: "#67104c",
-                alignSelf: "center",
-              }}
+              style={[
+                defaultStyles.button,
+                {
+                  backgroundColor: isDarkTheme ? "white" : "#67104c",
+                },
+              ]}
               onPress={handleRepeatSameCount}
             >
               <Text
-                // style={[
-                //   styles.buttonsText,
-                //   {
-                //     color: isDarkTheme ? "#67104c" : "white",
-                //   },
-                // ]}
-                style={{
-                  // color: isDarkTheme ? "#67104c" : "white",
-                  color: "white",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
+                style={[
+                  defaultStyles.btnText,
+                  {
+                    color: isDarkTheme ? "#67104c" : "white",
+                  },
+                ]}
               >
                 {t("btn.repeat")}
               </Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            // style={[
-            //   styles.buttonMarg,
-            //   { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-            // ]}
-            style={{
-              marginTop: 18,
-              marginBottom: 4,
-              borderRadius: 100,
-              paddingVertical: 16,
-              paddingHorizontal: 32,
-              width: "100%",
-              height: 51,
-              // backgroundColor: isDarkTheme ? "white" : "#67104c",
-              backgroundColor: "#67104c",
-              alignSelf: "center",
-            }}
+            style={[
+              defaultStyles.button,
+              {
+                backgroundColor: isDarkTheme ? "white" : "#67104c",
+              },
+            ]}
             onPress={handleTrainWords}
           >
             <Text
-              // style={[
-              //   styles.buttonsText,
-              //   {
-              //     color: isDarkTheme ? "#67104c" : "white",
-              //   },
-              // ]}
-              style={{
-                // color: isDarkTheme ? "#67104c" : "white",
-                color: "white",
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
+              style={[
+                defaultStyles.btnText,
+                {
+                  color: isDarkTheme ? "#67104c" : "white",
+                },
+              ]}
             >
               {t("btn.train")}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            // style={{ backgroundColor: isDarkTheme ? "white" : "#67104c" }}
-            style={{
-              marginTop: 18,
-              marginBottom: 4,
-              borderRadius: 100,
-              paddingVertical: 16,
-              paddingHorizontal: 32,
-              width: "100%",
-              height: 51,
-              // backgroundColor: isDarkTheme ? "white" : "#67104c",
-              backgroundColor: "#67104c",
-              alignSelf: "center",
-            }}
+            style={[
+              defaultStyles.button,
+              {
+                backgroundColor: isDarkTheme ? "white" : "#67104c",
+              },
+            ]}
             onPress={handleChooseDifferentCount}
           >
             <Text
-              // style={[
-              //   styles.buttonsText,
-              //   {
-              //     color: isDarkTheme ? "#67104c" : "white",
-              //   },
-              // ]}
-              style={{
-                color: isDarkTheme ? "#67104c" : "white",
-                color: "white",
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
+              style={[
+                defaultStyles.btnText,
+                {
+                  color: isDarkTheme ? "#67104c" : "white",
+                },
+              ]}
             >
               {allWordsCompleted ? t("btn.goBack") : t("btn.chooseCount")}
             </Text>
@@ -307,22 +250,3 @@ export const WordLearningScreen = () => {
     </SafeAreaView>
   );
 };
-
-// Стили для компонентов
-const styles = StyleSheet.create({
-  image: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
-    borderRadius: 10,
-  },
-  buttonMarg: {
-    marginBottom: 20,
-  },
-  buttonsText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    padding: 10,
-  },
-});

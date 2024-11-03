@@ -1,23 +1,13 @@
-import {
-  SafeAreaView,
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  Pressable,
-  Alert,
-} from "react-native";
+import { SafeAreaView, Text, View, StyleSheet, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-// import Ionicons from "@expo/vector-icons/Ionicons";
-// import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { defaultStyles } from "../components/defaultStyles";
 
 export const Home = () => {
   const { t, i18n } = useTranslation();
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
 
@@ -28,7 +18,7 @@ export const Home = () => {
   return (
     <SafeAreaView
       style={[
-        styles.container,
+        defaultStyles.container,
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
@@ -43,12 +33,6 @@ export const Home = () => {
           />
         </Pressable>
         <Pressable onPress={() => navigation.navigate("Profile")}>
-          {/* <FontAwesome6
-            name="user"
-            size={22}
-            color={isDarkTheme ? "white" : "#67104c"}
-            fontWeight="normal"
-          /> */}
           <AntDesign
             name="setting"
             size={26}
@@ -56,108 +40,58 @@ export const Home = () => {
           />
         </Pressable>
       </View>
-
-      {/* <View style={styles.themeButtonContainer}>
-        <Button
-          title={isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"}
-          onPress={toggleTheme}
-        />
-      </View> */}
-
       <Text
         style={[styles.welcomeText, { color: isDarkTheme ? "white" : "black" }]}
       >
         {t("hm.welcome")}
       </Text>
 
-      <View style={styles.linkContainer}>
-        {/* <Text
-          style={[styles.linkText, { color: isDarkTheme ? "white" : "black" }]}
-        >
-          {t("rg.try")}
-        </Text> */}
-        <Pressable onPress={() => navigation.navigate("StudyAndTrain")}>
-          <Text
-            style={[
-              styles.linkText,
-              styles.boldText,
-              { color: isDarkTheme ? "white" : "#67104c" },
-            ]}
-          >
-            {t("rg.studyAndTrain")}
-          </Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.linkContainer}>
-        {/* <Text
-          style={[styles.linkText, { color: isDarkTheme ? "white" : "black" }]}
-        >
-          {t("rg.try")}
-        </Text> */}
-        <Pressable onPress={() => navigation.navigate("LessonsBySubscription")}>
-          <Text
-            style={[
-              styles.linkText,
-              styles.boldText,
-              { color: isDarkTheme ? "white" : "#67104c" },
-            ]}
-          >
-            {t("rg.lessonsBySubscr")}
-          </Text>
-        </Pressable>
-      </View>
-      {/* 
-      <View style={styles.linkContainer}>
+      <Pressable
+        style={[
+          defaultStyles.button,
+          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+        ]}
+        onPress={() => navigation.navigate("StudyAndTrain")}
+      >
         <Text
-          style={[styles.linkText, { color: isDarkTheme ? "white" : "black" }]}
+          style={[
+            defaultStyles.btnText,
+            { color: isDarkTheme ? "#67104c" : "white" },
+          ]}
         >
-          {t("rg.changeInfo")}
+          {t("rg.studyAndTrain")}
         </Text>
-        <Pressable onPress={() => navigation.navigate("Profile")}>
-          <Text
-            style={[
-              styles.linkText,
-              styles.boldText,
-              { color: isDarkTheme ? "white" : "#67104c" },
-            ]}
-          >
-            {t("rg.profile")}
-          </Text>
-        </Pressable>
-      </View> */}
+      </Pressable>
+
+      <Pressable
+        style={[
+          defaultStyles.button,
+          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+        ]}
+        onPress={() => navigation.navigate("LessonsBySubscription")}
+      >
+        <Text
+          style={[
+            defaultStyles.btnText,
+            { color: isDarkTheme ? "#67104c" : "white" },
+          ]}
+        >
+          {t("rg.lessonsBySubscr")}
+        </Text>
+      </Pressable>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
-  },
-  themeButtonContainer: {
-    padding: 20,
   },
   welcomeText: {
+    marginTop: 20,
     fontSize: 25,
     textAlign: "center", // Центруємо текст
-  },
-  linkContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 22,
-  },
-  linkText: {
-    fontSize: 16,
-    color: "black", // Колір тексту буде переоприділено в залежності від теми
-  },
-  boldText: {
-    fontWeight: "bold",
-    marginLeft: 6,
   },
 });

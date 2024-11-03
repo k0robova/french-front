@@ -1,17 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { selectVocab } from "../store/vocab/selectors";
 import { useFocusEffect } from "@react-navigation/native";
+import { defaultStyles } from "./defaultStyles";
 
 export const Learn = () => {
   const { t } = useTranslation();
@@ -66,35 +61,36 @@ export const Learn = () => {
   return (
     <SafeAreaView
       style={[
-        styles.container,
+        defaultStyles.container,
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
       {progress >= vocabData.length ? (
-        <View style={styles.linkContainer}>
+        <View style={defaultStyles.btnContainer}>
           <Text style={{ fontSize: 18, marginBottom: 20 }}>
             {progress}/{vocabData.length} {t("LAT.completedWords")}
           </Text>
           <TouchableOpacity
             style={[
-              styles.button,
+              defaultStyles.button,
               { backgroundColor: isDarkTheme ? "white" : "#67104c" },
             ]}
             onPress={deleteStore}
           >
             <Text
-              style={{
-                color: isDarkTheme ? "#67104c" : "white",
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
+              style={[
+                defaultStyles.btnText,
+                {
+                  color: isDarkTheme ? "#67104c" : "white",
+                },
+              ]}
             >
               StoreDelete
             </Text>
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.linkContainer}>
+        <View style={defaultStyles.btnContainer}>
           <Text style={{ fontSize: 18, marginBottom: 20 }}>
             {progress}/{vocabData.length} {t("LAT.completedWords")}
           </Text>
@@ -103,17 +99,18 @@ export const Learn = () => {
             <TouchableOpacity
               key={count}
               style={[
-                styles.button,
+                defaultStyles.button,
                 { backgroundColor: isDarkTheme ? "white" : "#67104c" },
               ]}
               onPress={() => handlePress(count)}
             >
               <Text
-                style={{
-                  color: isDarkTheme ? "#67104c" : "white",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
+                style={[
+                  defaultStyles.btnText,
+                  {
+                    color: isDarkTheme ? "#67104c" : "white",
+                  },
+                ]}
               >
                 {count} {t("LAT.words")}
               </Text>
@@ -124,23 +121,3 @@ export const Learn = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  linkContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    marginTop: 18,
-    marginBottom: 4,
-    borderRadius: 100,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    width: 343,
-    height: 51,
-  },
-});

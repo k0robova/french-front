@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -18,17 +18,13 @@ import {
   Platform,
   Keyboard,
   View,
-  Button,
+  StyleSheet,
 } from "react-native";
 import PasswordForm from "../components/PasswordForm";
-import { updateUser } from "../services/authService";
-import {
-  logoutThunk,
-  updaterUserDataThunk,
-  updaterUserThemeThunk,
-} from "../store/auth/authThunks";
+import { logoutThunk, updaterUserDataThunk } from "../store/auth/authThunks";
 import { selectUser } from "../store/auth/selector";
 import { setTheme } from "../store/auth/authSlice";
+import { defaultStyles } from "../components/defaultStyles";
 
 export const Profile = () => {
   const navigation = useNavigation();
@@ -41,16 +37,12 @@ export const Profile = () => {
     email: user.email || "",
   });
 
-  // const [isDarkTheme, setIsDarkTheme] = useState(true);
   const { t, i18n } = useTranslation();
 
   const isDarkTheme = useSelector((state) => state.auth.theme);
 
   const getUserInfo = async () => {
-    // const storedUser = await SecureStore.getItemAsync("user");
     if (userData) {
-      // const parsedUser = JSON.parse(storedUser);
-      // setUser(parsedUser);
       setUser((prevNote) => ({
         ...prevNote,
         name: userData.name,
@@ -143,21 +135,12 @@ export const Profile = () => {
         style={{ flex: 1 }}
       >
         <SafeAreaView
-          style={{
-            flex: 1,
-            padding: 10,
-            // justifyContent: "center",
-            backgroundColor: isDarkTheme ? "#67104c" : "white",
-          }}
+          style={[
+            defaultStyles.container,
+            { backgroundColor: isDarkTheme ? "#67104c" : "white" },
+          ]}
         >
-          <View
-            style={{
-              paddingTop: 10,
-              paddingRight: 18,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
+          <View style={styles.headerContainer}>
             <TouchableOpacity onPress={() => navigation.navigate("Home")}>
               <AntDesign
                 name="arrowleft"
@@ -193,38 +176,34 @@ export const Profile = () => {
             </Pressable>
           </View>
           <Text
-            style={{
-              fontSize: 24,
-              marginBottom: 20,
-              padding: 10,
-              color: isDarkTheme ? "white" : "black",
-            }}
+            style={[
+              styles.textName,
+              {
+                color: isDarkTheme ? "white" : "black",
+              },
+            ]}
           >
             {t("rg.hello")} {userInfo.name ? userInfo.name : "Guest !"}
           </Text>
 
-          <View style={{ marginBottom: 12, padding: 10 }}>
+          <View style={defaultStyles.boxForm}>
             <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 400,
-                marginVertical: 8,
-                color: isDarkTheme ? "white" : "black",
-              }}
+              style={[
+                defaultStyles.labelText,
+                {
+                  color: isDarkTheme ? "white" : "black",
+                },
+              ]}
             >
               {t("rg.name")}
             </Text>
             <View
-              style={{
-                width: "100 %",
-                height: 48,
-                borderColor: isDarkTheme ? "white" : "#67104c",
-                borderWidth: 1,
-                borderRadius: 8,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingLeft: 22,
-              }}
+              style={[
+                defaultStyles.boxInput,
+                {
+                  borderColor: isDarkTheme ? "white" : "#67104c",
+                },
+              ]}
             >
               <TextInput
                 placeholder={t("rg.name")}
@@ -240,28 +219,24 @@ export const Profile = () => {
             </View>
           </View>
 
-          <View style={{ marginBottom: 12, padding: 10 }}>
+          <View style={defaultStyles.boxForm}>
             <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 400,
-                marginVertical: 8,
-                color: isDarkTheme ? "white" : "black",
-              }}
+              style={[
+                defaultStyles.labelText,
+                {
+                  color: isDarkTheme ? "white" : "black",
+                },
+              ]}
             >
               {t("rg.email")}
             </Text>
             <View
-              style={{
-                width: "100 %",
-                height: 48,
-                borderColor: isDarkTheme ? "white" : "#67104c",
-                borderWidth: 1,
-                borderRadius: 8,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingLeft: 22,
-              }}
+              style={[
+                defaultStyles.boxInput,
+                {
+                  borderColor: isDarkTheme ? "white" : "#67104c",
+                },
+              ]}
             >
               <TextInput
                 placeholder={t("rg.placeNewEmail")}
@@ -281,38 +256,39 @@ export const Profile = () => {
             title="Save Changes"
             color={isDarkTheme ? "black" : "white"}
             onPress={handleSave}
-            style={{
-              marginTop: 18,
-              marginBottom: 4,
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 100,
-              paddingVertical: 16,
-              paddingHorizontal: 32,
-              width: 343,
-              height: 51,
-              backgroundColor: isDarkTheme ? "white" : "#67104c",
-            }}
+            style={[
+              defaultStyles.button,
+              {
+                backgroundColor: isDarkTheme ? "white" : "#67104c",
+              },
+            ]}
           >
             <Text
-              style={{
-                color: isDarkTheme ? "black" : "white",
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
+              style={[
+                defaultStyles.btnText,
+                {
+                  color: isDarkTheme ? "black" : "white",
+                },
+              ]}
             >
               {t("rg.saveChanges")}
             </Text>
           </Pressable>
           <PasswordForm theme={isDarkTheme ? "dark" : "light"} />
-          {/* <Button
-            title={
-              isDarkTheme ? "Switch to Light Theme" : "Switch to Dark Theme"
-            }
-            onPress={toggleTheme}
-          /> */}
         </SafeAreaView>
       </KeyboardAvoidingView>
     </TouchableOpacity>
   );
 };
+
+export const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  textName: {
+    fontSize: 24,
+    marginBottom: 20,
+    padding: 10,
+  },
+});
