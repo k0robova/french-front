@@ -37,7 +37,16 @@ export const StudyAndTrain = () => {
         { backgroundColor: isDarkTheme ? "#67104c" : "white" },
       ]}
     >
-      <View style={defaultStyles.btnContainer}>
+      <View
+        style={[
+          defaultStyles.btnContainer,
+          {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
         <Pressable
           style={[
             defaultStyles.button,

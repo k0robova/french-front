@@ -20,6 +20,7 @@ import {
   Keyboard,
   Platform,
   SafeAreaView,
+  Image,
 } from "react-native";
 import * as Validate from "../helpers/validationInput";
 import { handleChange } from "../helpers/handleChangeInput";
@@ -59,6 +60,7 @@ export const Registration = () => {
 
   const { t, i18n } = useTranslation();
   const isDarkTheme = useSelector((state) => state.auth.theme);
+
   const handleRegister = async () => {
     try {
       const resultAction = await dispatch(registerThunk(formData));
@@ -67,7 +69,8 @@ export const Registration = () => {
         navigation.navigate("Home");
         Alert.alert("", t("alert.welcome"), [{ text: t("alert.close") }]);
       } else {
-        Alert.alert("Error", resultAction.error.message);
+        // Alert.alert("Error", resultAction.error.message);
+        Alert.alert("", t("alert.registerError"), [{ text: t("alert.close") }]);
       }
     } catch (error) {
       console.log("Registration failed:", error);
@@ -383,6 +386,25 @@ export const Registration = () => {
                 </Text>
               </Pressable>
             </View>
+          </View>
+
+          <View
+            style={{
+              position: "absolute",
+              bottom: 20,
+              left: "50%",
+              transform: [{ translateX: -70 }],
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={require("../images/logo.jpg")}
+              style={{
+                width: 140,
+                height: 60,
+                resizeMode: "contain",
+              }}
+            />
           </View>
         </SafeAreaView>
       </KeyboardAvoidingView>

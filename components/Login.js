@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  Image,
 } from "react-native";
 import { loginThunk } from "../store/auth/authThunks";
 import { setTheme } from "../store/auth/authSlice";
@@ -36,7 +37,7 @@ export const Login = () => {
     setIsFormValid(email.trim().length > 0 && password.trim().length > 0);
   };
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
     try {
       const resultAction = await dispatch(loginThunk({ email, password }));
       // Якщо реєстрація була успішною, `resultAction` не буде помилкою
@@ -46,10 +47,10 @@ export const Login = () => {
         navigation.navigate("Home");
       } else {
         // Тут можна обробити помилку, якщо потрібно
-        Alert.alert("Error", resultAction.error.message);
+        Alert.alert("", t("alert.loginError"), [{ text: t("alert.close") }]);
       }
     } catch (error) {
-      console.log("Registration failed:", error);
+      console.log("Login failed:", error);
       Alert.alert("Error", error.message);
     }
     return;
@@ -227,7 +228,7 @@ export const Login = () => {
               backgroundColor: isDarkTheme ? "white" : "#67104c",
             },
           ]}
-          onPress={handleRegister}
+          onPress={handleLogin}
         >
           <Text
             style={[
@@ -288,6 +289,29 @@ export const Login = () => {
               {t("rg.resetPassHere")}
             </Text>
           </Pressable>
+        </View>
+
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: "50%",
+            transform: [{ translateX: -70 }],
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={
+              isDarkTheme
+                ? require("../images/whiteLogo.jpg")
+                : require("../images/logo.jpg")
+            } //
+            style={{
+              width: 140,
+              height: 60,
+              resizeMode: "contain",
+            }}
+          />
         </View>
       </View>
     </SafeAreaView>

@@ -96,7 +96,16 @@ export const Learn = () => {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={defaultStyles.btnContainer}>
+        <View
+          style={[
+            defaultStyles.btnContainer,
+            {
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
+        >
           <Text
             style={{
               fontSize: 18,

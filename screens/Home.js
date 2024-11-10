@@ -1,4 +1,11 @@
-import { SafeAreaView, Text, View, StyleSheet, Pressable } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+  Image,
+} from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -50,39 +57,71 @@ export const Home = () => {
           {t("hm.welcome")}
         </Text>
 
-        <Pressable
-          style={[
-            defaultStyles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => navigation.navigate("StudyAndTrain")}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center", // Центруємо по вертикалі
+            alignItems: "center", // Центруємо по горизонталі
+            marginTop: 20,
+          }}
         >
-          <Text
+          <Pressable
             style={[
-              defaultStyles.btnText,
-              { color: isDarkTheme ? "#67104c" : "white" },
+              defaultStyles.button,
+              { backgroundColor: isDarkTheme ? "white" : "#67104c" },
             ]}
+            onPress={() => navigation.navigate("StudyAndTrain")}
           >
-            {t("rg.studyAndTrain")}
-          </Text>
-        </Pressable>
+            <Text
+              style={[
+                defaultStyles.btnText,
+                { color: isDarkTheme ? "#67104c" : "white" },
+              ]}
+            >
+              {t("rg.studyAndTrain")}
+            </Text>
+          </Pressable>
 
-        <Pressable
-          style={[
-            defaultStyles.button,
-            { backgroundColor: isDarkTheme ? "white" : "#67104c" },
-          ]}
-          onPress={() => navigation.navigate("LessonsBySubscription")}
-        >
-          <Text
+          <Pressable
             style={[
-              defaultStyles.btnText,
-              { color: isDarkTheme ? "#67104c" : "white" },
+              defaultStyles.button,
+              { backgroundColor: isDarkTheme ? "white" : "#67104c" },
             ]}
+            onPress={() => navigation.navigate("LessonsBySubscription")}
           >
-            {t("rg.lessonsBySubscr")}
-          </Text>
-        </Pressable>
+            <Text
+              style={[
+                defaultStyles.btnText,
+                { color: isDarkTheme ? "#67104c" : "white" },
+              ]}
+            >
+              {t("rg.lessonsBySubscr")}
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+
+      <View
+        style={{
+          position: "absolute",
+          bottom: 20,
+          left: "50%",
+          transform: [{ translateX: -70 }],
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={
+            isDarkTheme
+              ? require("../images/whiteLogo.jpg")
+              : require("../images/logo.jpg")
+          } //
+          style={{
+            width: 140,
+            height: 60,
+            resizeMode: "contain",
+          }}
+        />
       </View>
     </SafeAreaView>
   );

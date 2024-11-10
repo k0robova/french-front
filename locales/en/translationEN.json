@@ -47,7 +47,9 @@
     "close": "Close",
     "codeOnMail": "We have sent password reset instructions to your email address",
     "passwordChanged": "Your password has been successfully changed",
-    "dataChanged": "Your changes have been successfully saved"
+    "dataChanged": "Your changes have been successfully saved",
+    "loginError": "Invalid email or password. Please check the data and try again",
+    "registerError": "Unfortunately, an error happened during registration. Please try again"
   },
   "validation": {
     "name": "Start with a capital letter and a minimum of 3 letters",
