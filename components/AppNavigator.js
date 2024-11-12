@@ -235,7 +235,7 @@ export const AppNavigator = () => {
               </TouchableOpacity>
             ),
             headerRight: () => (
-              <TouchableOpacity onPress={() => navigation.navigate("Vocab")}>
+              <TouchableOpacity onPress={() => navigation.navigate("Home")}>
                 <Icon
                   name="home"
                   size={30}

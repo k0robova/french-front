@@ -24,15 +24,20 @@ export const WordLearningScreen = () => {
   const [sound, setSound] = useState();
   const [sessionComplete, setSessionComplete] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [selectedWords, setSelectedWords] = useState([]);
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const id = useSelector((state) => state.vocab.themeId);
-  const vocabData = useSelector(selectVocab);
   const navigation = useNavigation();
   const { t, i18n } = useTranslation();
-
+  const vocabData = useSelector(selectVocab);
   const route = useRoute();
-  const { count, topicName } = route.params;
+  const { count, topicName, wordItem } = route.params;
+
+  const isSingleWordMode = Boolean(wordItem);
+
+  // Якщо ми у режимі одного слова, встановлюємо selectedWords як масив з одного елемента
+  const [selectedWords, setSelectedWords] = useState(
+    isSingleWordMode ? [wordItem] : [] // Якщо режим одного слова - беремо його
+  );
 
   const currentLanguage = i18n.language;
 
@@ -59,9 +64,12 @@ export const WordLearningScreen = () => {
     }
   };
 
+  // Перевірка, чи був переданий один елемент
+
   useEffect(() => {
-    loadProgress();
-    checkCompletion(totalShown);
+    if (!isSingleWordMode) {
+      loadProgress(); // Викликаємо функцію для стандартного режиму навчання
+    }
     return () => {
       if (sound) {
         sound.unloadAsync();
@@ -79,6 +87,13 @@ export const WordLearningScreen = () => {
       saveProgress(newTotalShown);
       checkCompletion(newTotalShown);
     }
+  };
+
+  const handleBackWord = () => {
+    if (isSingleWordMode) {
+      navigation.goBack(); // Повертаємося назад після вивчення одного слова
+    }
+    setCurrentIndex((prevIndex) => prevIndex - 1);
   };
 
   const handleRepeatSameCount = () => {
@@ -142,6 +157,17 @@ export const WordLearningScreen = () => {
     >
       {!sessionComplete ? (
         <>
+          {!isSingleWordMode && (
+            <Text
+              style={{
+                color: isDarkTheme ? "white" : "#67104c",
+                fontSize: 16,
+              }}
+            >
+              {t("LAT.word")}: {currentIndex + 1}
+            </Text>
+          )}
+
           <Image
             source={{ uri: selectedWords[currentIndex]?.image }}
             style={defaultStyles.image}
@@ -169,30 +195,64 @@ export const WordLearningScreen = () => {
               ? selectedWords[currentIndex]?.translationUK
               : selectedWords[currentIndex]?.translationEN}
           </Text>
-          <Text style={{ color: isDarkTheme ? "white" : "#67104c" }}>
-            {t("LAT.word")}: {currentIndex + 1}
-          </Text>
-          <Pressable
-            style={[
-              defaultStyles.button,
-              {
-                width: 200,
-                backgroundColor: isDarkTheme ? "white" : "#67104c",
-              },
-            ]}
-            onPress={handleNextWord}
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 20,
+            }}
           >
-            <Text
-              style={[
-                defaultStyles.btnText,
-                {
-                  color: isDarkTheme ? "#67104c" : "white",
-                },
-              ]}
-            >
-              {t("btn.next")}
-            </Text>
-          </Pressable>
+            {(isSingleWordMode || currentIndex > 0) && (
+              <Pressable
+                style={[
+                  defaultStyles.button,
+                  {
+                    width: 150,
+                    backgroundColor: isDarkTheme ? "white" : "#67104c",
+                    marginRight: 10,
+                  },
+                ]}
+                onPress={handleBackWord}
+              >
+                <Text
+                  style={[
+                    defaultStyles.btnText,
+                    {
+                      color: isDarkTheme ? "#67104c" : "white",
+                    },
+                  ]}
+                >
+                  {t("rg.back")}
+                </Text>
+              </Pressable>
+            )}
+
+            {!isSingleWordMode && (
+              <Pressable
+                style={[
+                  defaultStyles.button,
+                  {
+                    width: 150,
+                    backgroundColor: isDarkTheme ? "white" : "#67104c",
+                  },
+                ]}
+                onPress={handleNextWord}
+              >
+                <Text
+                  style={[
+                    defaultStyles.btnText,
+                    {
+                      color: isDarkTheme ? "#67104c" : "white",
+                    },
+                  ]}
+                >
+                  {t("btn.next")}
+                </Text>
+              </Pressable>
+            )}
+          </View>
         </>
       ) : (
         <View style={{ alignItems: "center" }}>

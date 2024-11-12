@@ -2,14 +2,20 @@ import { useState, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
-import { SafeAreaView, Text, View, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { selectVocab } from "../store/vocab/selectors";
 import { useFocusEffect } from "@react-navigation/native";
 import { defaultStyles } from "./defaultStyles";
 
 export const Learn = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const route = useRoute();
   const { topicName, allWordsCompleted: initialAllWordsCompleted } =
     route.params;
@@ -20,6 +26,8 @@ export const Learn = () => {
   const [allWordsCompleted, setAllWordsCompleted] = useState(
     initialAllWordsCompleted
   );
+
+  const currentLanguage = i18n.language;
 
   // Функція для отримання кількості пройдених слів з AsyncStorage
   const fetchProgress = async () => {
@@ -43,8 +51,8 @@ export const Learn = () => {
   );
 
   // Обробка вибору кількості слів
-  const handlePress = (count) => {
-    navigation.navigate("WordLearningScreen", { count, topicName });
+  const handlePress = (count, wordItem = null) => {
+    navigation.navigate("WordLearningScreen", { count, topicName, wordItem });
   };
 
   const deleteStore = async () => {
@@ -56,6 +64,30 @@ export const Learn = () => {
     } catch (error) {
       console.error("Error removing progress from storage:", error);
     }
+  };
+
+  const renderTopicsItem = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={[
+          defaultStyles.button,
+          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+        ]}
+        onPress={() => handlePress(1, item)}
+      >
+        <Text
+          style={[
+            defaultStyles.btnText,
+            {
+              color: isDarkTheme ? "#67104c" : "white",
+            },
+          ]}
+        >
+          {item.world} /{" "}
+          {currentLanguage === "uk" ? item.translationUK : item.translationEN}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -94,6 +126,13 @@ export const Learn = () => {
               StoreDelete
             </Text>
           </TouchableOpacity>
+          <FlatList
+            style={{ width: "100%" }}
+            data={vocabData}
+            keyExtractor={(item) => item._id}
+            renderItem={renderTopicsItem}
+            contentContainerStyle={{ alignItems: "center" }}
+          />
         </View>
       ) : (
         <View
