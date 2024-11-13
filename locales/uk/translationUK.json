@@ -68,7 +68,8 @@
     "completedWords": "пройдено",
     "words": "слів",
     "sessionCompleted": "Ви завершили сеанс!",
-    "word": "Слово"
+    "word": "Слово",
+    "search": "Пошук"
   },
   "btn": {
     "cancel": "Відмінити",

@@ -68,7 +68,8 @@
     "completedWords": "words completed",
     "words": "words",
     "word": "Word",
-    "sessionCompleted": "You have completed the session!"
+    "sessionCompleted": "You have completed the session!",
+    "search": "Search"
   },
   "btn": {
     "cancel": "Cancel",

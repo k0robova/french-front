@@ -57,7 +57,7 @@ export const Vocab = () => {
             },
           ]}
         >
-          {item.name} /
+          {item.name} /{" "}
           {currentLanguage === "uk" ? item.translationUK : item.translationEN}
         </Text>
       </Pressable>

@@ -8,6 +8,7 @@ import {
   View,
   TouchableOpacity,
   FlatList,
+  TextInput,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { selectVocab } from "../store/vocab/selectors";
@@ -26,6 +27,8 @@ export const Learn = () => {
   const [allWordsCompleted, setAllWordsCompleted] = useState(
     initialAllWordsCompleted
   );
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   const currentLanguage = i18n.language;
 
@@ -90,6 +93,19 @@ export const Learn = () => {
     );
   };
 
+  const filteredVocabData = vocabData.filter((item) => {
+    const searchText = searchQuery.toLowerCase();
+    const wordText = item.world.toLowerCase();
+    const translationText =
+      currentLanguage === "uk"
+        ? item.translationUK.toLowerCase()
+        : item.translationEN.toLowerCase();
+
+    return (
+      wordText.includes(searchText) || translationText.includes(searchText)
+    );
+  });
+
   return (
     <SafeAreaView
       style={[
@@ -126,9 +142,27 @@ export const Learn = () => {
               StoreDelete
             </Text>
           </TouchableOpacity>
+          <TextInput
+            style={{
+              marginTop: 20,
+              height: 40,
+              borderColor: "gray",
+              borderWidth: 1,
+              borderRadius: 5,
+              paddingHorizontal: 10,
+              width: "90%",
+              marginBottom: 20,
+              color: isDarkTheme ? "white" : "#67104c",
+              backgroundColor: isDarkTheme ? "#67104c" : "white",
+            }}
+            placeholder={t("LAT.search")}
+            placeholderTextColor={isDarkTheme ? "white" : "#67104c"}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
           <FlatList
             style={{ width: "100%" }}
-            data={vocabData}
+            data={filteredVocabData}
             keyExtractor={(item) => item._id}
             renderItem={renderTopicsItem}
             contentContainerStyle={{ alignItems: "center" }}
