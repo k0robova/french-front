@@ -21,7 +21,7 @@ import { LearnOrTrainTopic } from "./LearnOrTrainTopic";
 import { Learn } from "./Learn";
 import { Train } from "./Train";
 import { WordLearningScreen } from "./WordLearningScreen";
-
+import { TrainingLevel } from "./TrainingLevel";
 const MainStack = createNativeStackNavigator();
 
 export const AppNavigator = () => {
@@ -225,7 +225,9 @@ export const AppNavigator = () => {
             headerShadowVisible: false,
             headerTintColor: isDarkTheme ? "white" : "#67104c",
             headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("LearnOrTrainTopic")}
+              >
                 <Icon
                   name="arrowleft"
                   size={30}
@@ -250,11 +252,39 @@ export const AppNavigator = () => {
       <MainStack.Screen
         name="Train"
         component={Train}
-        options={{ headerShown: false }}
+        options={({ navigation, route }) => {
+          const topicName = route.params?.topicName ?? "";
+          return {
+            title: topicName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: isDarkTheme ? "#67104c" : "white",
+            },
+            headerShadowVisible: false,
+            headerTintColor: isDarkTheme ? "white" : "#67104c",
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("LearnOrTrainTopic")}
+              >
+                <Icon
+                  name="arrowleft"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          };
+        }}
       />
       <MainStack.Screen
         name="WordLearningScreen"
         component={WordLearningScreen}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="TrainingLevel"
+        component={TrainingLevel}
         options={{ headerShown: false }}
       />
     </MainStack.Navigator>

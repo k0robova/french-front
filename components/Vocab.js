@@ -17,7 +17,7 @@ export const Vocab = () => {
   const dispatch = useDispatch();
   const currentLanguage = i18n.language;
 
-  const handleGetWorlds = async (id, name, translationEN, translationUK) => {
+  const handleGetWorlds = async (id, name) => {
     try {
       const existingData = vocabData.find((item) => item.themeId === id);
 

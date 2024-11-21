@@ -26,8 +26,6 @@ export const LearnOrTrainTopic = () => {
           defaultStyles.btnContainer,
           {
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
           },
         ]}
       >
@@ -54,7 +52,7 @@ export const LearnOrTrainTopic = () => {
             defaultStyles.button,
             { backgroundColor: isDarkTheme ? "white" : "#67104c" },
           ]}
-          onPress={() => navigation.navigate("Train")}
+          onPress={() => navigation.navigate("Train", { topicName })}
         >
           <Text
             style={[
