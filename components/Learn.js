@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { selectVocab } from "../store/vocab/selectors";
@@ -18,15 +19,11 @@ import { defaultStyles } from "./defaultStyles";
 export const Learn = () => {
   const { t, i18n } = useTranslation();
   const route = useRoute();
-  const { topicName, allWordsCompleted: initialAllWordsCompleted } =
-    route.params;
+  const { topicName } = route.params;
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
   const vocabData = useSelector(selectVocab);
   const [progress, setProgress] = useState(0);
-  const [allWordsCompleted, setAllWordsCompleted] = useState(
-    initialAllWordsCompleted
-  );
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -35,11 +32,10 @@ export const Learn = () => {
   // Функція для отримання кількості пройдених слів з AsyncStorage
   const fetchProgress = async () => {
     try {
-      const storedProgress = await AsyncStorage.getItem(
-        `progress_${topicName}`
-      );
-      if (storedProgress) {
-        setProgress(parseInt(storedProgress, 10));
+      const jsonValue = await AsyncStorage.getItem(`progress_${topicName}`);
+      const storegeProgress = jsonValue != null ? JSON.parse(jsonValue) : [];
+      if (Array.isArray(storegeProgress)) {
+        setProgress(storegeProgress.length); // Записуємо довжину масиву прогресу
       }
     } catch (error) {
       console.error("Error fetching progress from storage:", error);
@@ -62,12 +58,24 @@ export const Learn = () => {
     try {
       await AsyncStorage.removeItem(`progress_${topicName}`);
       setProgress(0);
-      setAllWordsCompleted(false); // Оновлюємо стан, щоб повернутися до вибору слів
       console.log(`Progress for topic ${topicName} has been deleted.`);
     } catch (error) {
       console.error("Error removing progress from storage:", error);
     }
   };
+
+  const filteredVocabData = vocabData.filter((item) => {
+    const searchText = searchQuery.trim().toLowerCase();
+    const wordText = item.world.toLowerCase();
+    const translationText =
+      currentLanguage === "uk"
+        ? item.translationUK.toLowerCase()
+        : item.translationEN.toLowerCase();
+
+    return (
+      wordText.includes(searchText) || translationText.includes(searchText)
+    );
+  });
 
   const renderTopicsItem = ({ item }) => {
     return (
@@ -92,19 +100,6 @@ export const Learn = () => {
       </TouchableOpacity>
     );
   };
-
-  const filteredVocabData = vocabData.filter((item) => {
-    const searchText = searchQuery.toLowerCase();
-    const wordText = item.world.toLowerCase();
-    const translationText =
-      currentLanguage === "uk"
-        ? item.translationUK.toLowerCase()
-        : item.translationEN.toLowerCase();
-
-    return (
-      wordText.includes(searchText) || translationText.includes(searchText)
-    );
-  });
 
   return (
     <SafeAreaView
@@ -165,7 +160,7 @@ export const Learn = () => {
             data={filteredVocabData}
             keyExtractor={(item) => item._id}
             renderItem={renderTopicsItem}
-            contentContainerStyle={{ alignItems: "center" }}
+            contentContainerStyle={{ alignItems: "center", paddingBottom: 80 }} // Центрує вміст
           />
         </View>
       ) : (

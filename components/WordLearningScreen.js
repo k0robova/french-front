@@ -31,6 +31,7 @@ export const WordLearningScreen = () => {
   const vocabData = useSelector(selectVocab);
   const route = useRoute();
   const { count, topicName, wordItem } = route.params;
+  const [savedProgress, setSavedProgress] = useState([]); // Створюємо state для прогресу
 
   const isSingleWordMode = Boolean(wordItem);
 
@@ -43,19 +44,28 @@ export const WordLearningScreen = () => {
 
   const filteredWords = vocabData.filter((word) => word.themeId === id);
 
+  // Функція для завантаження прогресу
   const loadProgress = async () => {
-    const savedProgress = await AsyncStorage.getItem(`progress_${topicName}`);
-    if (savedProgress) {
-      setTotalShown(parseInt(savedProgress, 10));
+    try {
+      const jsonValue = await AsyncStorage.getItem(`progress_${topicName}`);
+      const progress = jsonValue != null ? JSON.parse(jsonValue) : [];
+      if (Array.isArray(progress)) {
+        setSavedProgress(progress);
+        setTotalShown(progress.length);
+      }
+      setSelectedWords(
+        filteredWords.slice(progress.length, progress.length + count)
+      );
+    } catch (error) {
+      console.error("Error loading progress:", error);
     }
-    setSelectedWords(filteredWords.slice(totalShown, totalShown + count));
   };
 
-  const saveProgress = async (newTotalShown) => {
-    await AsyncStorage.setItem(
-      `progress_${topicName}`,
-      newTotalShown.toString()
-    );
+  // Функція для збереження прогресу
+  const saveProgress = async (newWord) => {
+    const updatedProgress = [...savedProgress, ...newWord];
+    const progressForStorege = JSON.stringify(updatedProgress);
+    await AsyncStorage.setItem(`progress_${topicName}`, progressForStorege);
   };
 
   const checkCompletion = (totalShown) => {
@@ -84,7 +94,7 @@ export const WordLearningScreen = () => {
       const newTotalShown = totalShown + selectedWords.length;
       setSessionComplete(true);
       setTotalShown(newTotalShown);
-      saveProgress(newTotalShown);
+      saveProgress(selectedWords);
       checkCompletion(newTotalShown);
     }
   };
@@ -136,7 +146,7 @@ export const WordLearningScreen = () => {
   };
 
   const handleTrainWords = () => {
-    navigation.navigate("Train");
+    navigation.navigate("Train", { topicName });
   };
 
   const handleChooseDifferentCount = () => {
