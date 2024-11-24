@@ -97,7 +97,11 @@ export const TrainingLevel = () => {
               height: 20,
               borderRadius: 10,
               backgroundColor:
-                i < totalCorrectAnswers ? "#67104c" : "lightgray",
+                i < totalCorrectAnswers
+                  ? isDarkTheme
+                    ? "white"
+                    : "#67104c" // Для темної теми: білий, для світлої: червоний
+                  : "#A9A9A9", // Для неправильних: сірий в обох темах
               margin: 3,
             }}
           />
@@ -166,15 +170,37 @@ export const TrainingLevel = () => {
   }, [progress]);
 
   return (
-    <SafeAreaView style={[defaultStyles.container]}>
+    <SafeAreaView
+      style={[
+        defaultStyles.container,
+        { backgroundColor: isDarkTheme ? "#67104c" : "white" },
+      ]}
+    >
       {renderProgress()}
+      <TouchableOpacity
+        onPress={handleGoHome}
+        style={{
+          position: "absolute",
+          top: 90, // Зсув вниз від прогресу
+          right: 20,
+          padding: 10, // Додаткове поле навколо іконки
+          borderRadius: 50,
+          zIndex: 10, // Переконатися, що кнопка на передньому плані
+        }}
+      >
+        <Icon name="home" size={30} color={isDarkTheme ? "white" : "#67104c"} />
+      </TouchableOpacity>
       <View>
         <View
           style={{
             flexDirection: "row",
             flexWrap: "wrap",
-            gap: 100,
+            gap: 0,
             padding: 40,
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingHorizontal: 20,
+            marginTop: 20,
           }}
         >
           {choices.map((choice) => (
@@ -182,8 +208,8 @@ export const TrainingLevel = () => {
               key={choice._id}
               onPress={() => handleChoice(choice)}
               style={{
-                width: 70,
-                height: 70,
+                width: 140,
+                height: 140,
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: 20,
@@ -191,33 +217,40 @@ export const TrainingLevel = () => {
             >
               <Image
                 source={{ uri: choice.image }}
-                style={{ width: 100, height: 100, borderRadius: 10 }}
+                style={{
+                  width: 140,
+                  height: 140,
+                  borderRadius: 10,
+                  borderWidth: 1, // Тонкий бордер
+                  borderColor: isDarkTheme ? "white" : "#67104c",
+                }}
               />
             </TouchableOpacity>
           ))}
         </View>
-        <Text
+        <View
           style={{
-            fontSize: 20,
-            marginBottom: 20,
-            textAlign: "center",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
           }}
         >
-          {currentWord?.world}
-        </Text>
+          <Text
+            style={{
+              fontSize: 30,
+              marginBottom: 20,
+              textAlign: "center",
+              fontWeight: "bold",
+              color: isDarkTheme ? "white" : "black",
+            }}
+          >
+            {currentWord?.world}
+          </Text>
 
-        <TouchableOpacity onPress={playSound} disabled={isPlaying}>
-          <Icon name="sound" size={30} color={isPlaying ? "gray" : "black"} />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleGoHome}>
-          <Icon
-            name="home"
-            size={30}
-            color={isDarkTheme ? "black" : "#67104c"}
-            style={{ marginLeft: 5 }}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={playSound} disabled={isPlaying}>
+            <Icon name="sound" size={30} color={isPlaying ? "gray" : "black"} />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
