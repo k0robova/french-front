@@ -7,6 +7,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/AntDesign";
 import { defaultStyles } from "./defaultStyles";
 
 export const Train = () => {
@@ -58,6 +59,14 @@ export const Train = () => {
       ]}
     >
       <View style={defaultStyles.btnContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Icon
+            name="home"
+            size={30}
+            color={isDarkTheme ? "white" : "#67104c"}
+            style={{ marginLeft: 5 }}
+          />
+        </TouchableOpacity>
         {progress.length === 0 && ( // Якщо прогрес порожній, показуємо повідомлення
           <View style={{ alignItems: "center", marginBottom: 20 }}>
             <Text
