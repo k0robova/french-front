@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -7,7 +7,6 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/AntDesign";
 import { defaultStyles } from "./defaultStyles";
 
 export const Train = () => {
@@ -16,32 +15,59 @@ export const Train = () => {
   const route = useRoute();
 
   const { topicName } = route.params;
-
   const [progress, setProgress] = useState([]);
+  const [isLevel1Completed, setIsLevel1Completed] = useState(false);
 
-  // Функція для отримання прогресу
-  const fetchProgress = async () => {
+  // Оновлюємо прогрес після того, як ви закінчите навчання або повернетеся на екран
+  const updateProgress = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(`progress_${topicName}`);
       const storageProgress = jsonValue != null ? JSON.parse(jsonValue) : [];
-      if (Array.isArray(storageProgress)) {
-        setProgress(storageProgress); // Оновлюємо прогрес
+      setProgress(storageProgress);
+
+      // Перевірка завершення всіх слів
+      const isAllWordsCompleted = storageProgress.every(
+        (word) => word.completed
+      );
+      if (isAllWordsCompleted) {
+        alert("Вітаю! Ви завершили всі слова першого рівня.");
+        setIsLevel1Completed(true);
+      } else {
+        setIsLevel1Completed(false);
       }
     } catch (error) {
       console.error("Error fetching progress from storage:", error);
     }
   };
 
+  // Викликаємо `updateProgress` при фокусуванні на екрані Train
   useFocusEffect(
     useCallback(() => {
-      fetchProgress();
+      updateProgress(); // Оновлюємо прогрес
     }, [topicName])
   );
 
+  // Оновлення прогресу в AsyncStorage після змін (наприклад, при завершенні рівня)
+  useEffect(() => {
+    const saveProgressToStorage = async () => {
+      try {
+        await AsyncStorage.setItem(
+          `progress_${topicName}`,
+          JSON.stringify(progress)
+        );
+      } catch (error) {
+        console.error("Error saving progress:", error);
+      }
+    };
+
+    if (progress.length > 0) {
+      saveProgressToStorage(); // Записуємо новий прогрес після кожної зміни
+    }
+  }, [progress, topicName]);
+
   // Обробка переходу до рівнів
   const handlePress = (level) => {
-    if (progress.length > 0) {
-      console.log(progress);
+    if (progress.length > 0 && (level !== 1 || !isLevel1Completed)) {
       navigation.navigate("TrainingLevel", { level, topicName, progress });
     }
   };
@@ -59,15 +85,7 @@ export const Train = () => {
       ]}
     >
       <View style={defaultStyles.btnContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-          <Icon
-            name="home"
-            size={30}
-            color={isDarkTheme ? "white" : "#67104c"}
-            style={{ marginLeft: 5 }}
-          />
-        </TouchableOpacity>
-        {progress.length === 0 && ( // Якщо прогрес порожній, показуємо повідомлення
+        {progress.length === 0 && (
           <View style={{ alignItems: "center", marginBottom: 20 }}>
             <Text
               style={{
@@ -92,9 +110,7 @@ export const Train = () => {
               <Text
                 style={[
                   defaultStyles.btnText,
-                  {
-                    color: isDarkTheme ? "#67104c" : "white",
-                  },
+                  { color: isDarkTheme ? "#67104c" : "white" },
                 ]}
               >
                 Вивчити слова
@@ -109,18 +125,22 @@ export const Train = () => {
               defaultStyles.button,
               {
                 backgroundColor: isDarkTheme ? "white" : "#67104c",
-                opacity: progress.length > 0 ? 1 : 0.5, // Змінюємо прозорість кнопок
+                opacity:
+                  progress.length > 0 &&
+                  (level === 1 ? !isLevel1Completed : true)
+                    ? 1
+                    : 0.5,
               },
             ]}
             onPress={() => handlePress(level)}
-            disabled={progress.length === 0} // Відключаємо кнопки, якщо прогрес = 0
+            disabled={
+              progress.length === 0 || (level === 1 && isLevel1Completed)
+            }
           >
             <Text
               style={[
                 defaultStyles.btnText,
-                {
-                  color: isDarkTheme ? "#67104c" : "white",
-                },
+                { color: isDarkTheme ? "#67104c" : "white" },
               ]}
             >
               Level {level}

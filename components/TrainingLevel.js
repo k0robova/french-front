@@ -5,8 +5,8 @@ import {
   TouchableOpacity,
   View,
   Image,
-  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
@@ -28,7 +28,9 @@ export const TrainingLevel = () => {
   // Встановити випадкове слово
   const setRandomWord = (stats) => {
     const remainingWords = stats.filter((stat) => stat.correctCount < 3);
+    console.log(remainingWords);
     if (remainingWords.length === 0) {
+      console.log("object");
       // Завершення тренування
       alert("Вітаю! Ви виконали всі завдання.");
       navigation.navigate("Train", { topicName });
@@ -57,6 +59,24 @@ export const TrainingLevel = () => {
     setChoices(allChoices.sort(() => Math.random() - 0.5));
   };
 
+  const markCurrentWordsAsCompleted = async () => {
+    try {
+      const updatedProgress = progress.map((word) =>
+        wordStats.some((stat) => stat.word._id === word._id)
+          ? { ...word, completed: true }
+          : word
+      );
+
+      // Зберігаємо оновлений прогрес
+      await AsyncStorage.setItem(
+        `progress_${topicName}`,
+        JSON.stringify(updatedProgress)
+      );
+    } catch (error) {
+      console.error("Помилка оновлення прогресу:", error);
+    }
+  };
+
   // Обробка вибору
   const handleChoice = (chosenWord) => {
     if (chosenWord._id === currentWord._id) {
@@ -74,6 +94,7 @@ export const TrainingLevel = () => {
 
       // Переходимо до наступного завдання, якщо ще не виконано 15
       if (totalCorrectAnswers + 1 === 15) {
+        markCurrentWordsAsCompleted();
         alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
         navigation.navigate("Train", { topicName });
       } else {
@@ -140,28 +161,10 @@ export const TrainingLevel = () => {
     }
   };
 
-  const handleGoHome = () => {
-    Alert.alert(
-      "Попередження",
-      "Якщо ви вийдете, ваш прогрес буде втрачено. Ви впевнені, що хочете вийти?",
-      [
-        {
-          text: "Залишитись",
-          onPress: () => console.log("Залишаємося на ст"),
-          style: "cancel",
-        },
-        {
-          text: "Вийти",
-          onPress: () => navigation.navigate("Home"),
-          style: "destructive",
-        },
-      ]
-    );
-  };
-
   useEffect(() => {
-    if (progress.length === 0) return; // Якщо немає даних
-    const initialStats = progress.slice(0, 5).map((word) => ({
+    const unfinishedWords = progress.filter((word) => !word.completed);
+    if (unfinishedWords.length === 0); // Якщо немає даних
+    const initialStats = unfinishedWords.slice(0, 5).map((word) => ({
       word,
       correctCount: 0,
     }));
@@ -177,19 +180,6 @@ export const TrainingLevel = () => {
       ]}
     >
       {renderProgress()}
-      <TouchableOpacity
-        onPress={handleGoHome}
-        style={{
-          position: "absolute",
-          top: 90, // Зсув вниз від прогресу
-          right: 20,
-          padding: 10, // Додаткове поле навколо іконки
-          borderRadius: 50,
-          zIndex: 10, // Переконатися, що кнопка на передньому плані
-        }}
-      >
-        <Icon name="home" size={30} color={isDarkTheme ? "white" : "#67104c"} />
-      </TouchableOpacity>
       <View>
         <View
           style={{
@@ -255,134 +245,3 @@ export const TrainingLevel = () => {
     </SafeAreaView>
   );
 };
-
-// import { useEffect, useState } from "react";
-// import {
-//   SafeAreaView,
-//   Text,
-//   TouchableOpacity,
-//   View,
-//   Image,
-// } from "react-native";
-// import { useNavigation, useRoute } from "@react-navigation/native";
-// import { defaultStyles } from "./defaultStyles";
-
-// export const TrainingLevel = () => {
-//   const route = useRoute();
-//   const { level, topicName, progress } = route.params;
-//   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-//   const [choices, setChoices] = useState([]);
-//   const navigation = useNavigation();
-
-//   // Функція для генерації варіантів картинок
-//   const generateChoices = (correctWord) => {
-//     const wrongChoices = [];
-//     // Беремо випадкові картинки з прогресу, які не є правильними
-//     while (wrongChoices.length < 3) {
-//       const randomIndex = Math.floor(Math.random() * progress.length);
-//       const wrongChoice = progress[randomIndex];
-//       if (
-//         wrongChoice._id !== correctWord._id &&
-//         !wrongChoices.includes(wrongChoice)
-//       ) {
-//         wrongChoices.push(wrongChoice);
-//       }
-//     }
-//     // Включаємо правильний варіант
-//     wrongChoices.push(correctWord);
-//     // Перемішуємо варіанти
-//     return setChoices(wrongChoices.sort(() => Math.random() - 0.5));
-//   };
-
-//   // Вибираємо перші 5 слів для тренування
-//   const currentWords = progress.slice(0, 5);
-
-//   // Викликається при виборі картинки
-//   const handleChoice = (chosenWord) => {
-//     if (chosenWord._id === currentWords[currentWordIndex]._id) {
-//       // Якщо вибрана картинка правильна, переходимо до наступного слова
-//       if (currentWordIndex < currentWords.length - 1) {
-//         setCurrentWordIndex(currentWordIndex + 1);
-//         generateChoices(currentWords[currentWordIndex + 1]);
-//       } else {
-//         alert("Вітаю! Ви пройшли левел");
-//         // Якщо слова закінчилися, перехід на наступний рівень або завершення
-//         // дати круасан і повідомити про успішне проходження левелу. Перекинути на строінку левелів
-//         navigation.navigate("Train", { topicName }); // Замість цього переходу можна відображати повідомлення про завершення
-//       }
-//     } else {
-//       // Якщо картинка неправильна, відображаємо повідомлення
-//       alert("Спробуйте ще раз");
-//     }
-//   };
-
-//   const renderProgress = () => {
-//     const circles = [];
-//     // має бути 15
-//     const totalExercises = 15;
-//     for (let i = 0; i < totalExercises; i++) {
-//       circles.push(
-//         <View
-//           key={i}
-//           style={{
-//             width: 20,
-//             height: 20,
-//             borderRadius: 10,
-//             backgroundColor: i < currentWordIndex ? "green" : "lightgray", // Зелені кружечки для виконаних вправ
-//             margin: 3,
-//           }}
-//         />
-//       );
-//     }
-//     return (
-//       <View style={{ flexDirection: "row", justifyContent: "center" }}>
-//         {circles}
-//       </View>
-//     );
-//   };
-
-//   // функція на перезапуск три рази
-
-//   useEffect(() => {
-//     // виклкик функції
-//     generateChoices(currentWords[currentWordIndex]);
-//   }, [currentWordIndex]);
-
-//   return (
-//     <SafeAreaView style={[defaultStyles.container]}>
-//       {renderProgress()}
-//       <View style={defaultStyles.btnContainer}>
-//         {/* Відображення картинок */}
-//         <View style={defaultStyles.btnContainer}>
-//           {choices.map((choice) => (
-//             <TouchableOpacity
-//               key={choice._id}
-//               onPress={() => handleChoice(choice)}
-//               style={{
-//                 width: 70,
-//                 height: 70,
-//                 justifyContent: "center",
-//                 alignItems: "center",
-//                 marginBottom: 20,
-//               }}
-//             >
-//               <Image
-//                 source={{ uri: choice.image }} // Припускаємо, що є поле imageUrl
-//                 style={{ width: 70, height: 70, borderRadius: 10 }}
-//               />
-//             </TouchableOpacity>
-//           ))}
-//         </View>
-//         <Text
-//           style={{
-//             fontSize: 20,
-//             marginBottom: 20,
-//             textAlign: "center",
-//           }}
-//         >
-//           {currentWords[currentWordIndex]?.world}
-//         </Text>
-//       </View>
-//     </SafeAreaView>
-//   );
-// };

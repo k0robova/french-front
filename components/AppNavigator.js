@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { Registration } from "./Registration";
 import { Login } from "./Login";
 import { Home } from "../screens/Home";
@@ -45,6 +45,25 @@ export const AppNavigator = () => {
   useEffect(() => {
     handleGetProfile();
   }, []);
+
+  const handleGoHome = () => {
+    Alert.alert(
+      "Попередження",
+      "Якщо ви вийдете, ваш прогрес буде втрачено. Ви впевнені, що хочете вийти?",
+      [
+        {
+          text: "Залишитись",
+          onPress: () => console.log("Залишаємося на ст"),
+          style: "cancel",
+        },
+        {
+          text: "Вийти",
+          onPress: () => navigation.navigate("Home"),
+          style: "destructive",
+        },
+      ]
+    );
+  };
 
   return (
     <MainStack.Navigator>
@@ -208,6 +227,16 @@ export const AppNavigator = () => {
                 />
               </TouchableOpacity>
             ),
+            headerRight: () => (
+              <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                <Icon
+                  name="home"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
           };
         }}
       />
@@ -226,7 +255,9 @@ export const AppNavigator = () => {
             headerTintColor: isDarkTheme ? "white" : "#67104c",
             headerLeft: () => (
               <TouchableOpacity
-                onPress={() => navigation.navigate("LearnOrTrainTopic")}
+                onPress={() =>
+                  navigation.navigate("LearnOrTrainTopic", { topicName })
+                }
               >
                 <Icon
                   name="arrowleft"
@@ -264,10 +295,22 @@ export const AppNavigator = () => {
             headerTintColor: isDarkTheme ? "white" : "#67104c",
             headerLeft: () => (
               <TouchableOpacity
-                onPress={() => navigation.navigate("LearnOrTrainTopic")}
+                onPress={() =>
+                  navigation.navigate("LearnOrTrainTopic", { topicName })
+                }
               >
                 <Icon
                   name="arrowleft"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                <Icon
+                  name="home"
                   size={30}
                   color={isDarkTheme ? "white" : "#67104c"}
                   style={{ marginLeft: 5 }}
@@ -285,7 +328,28 @@ export const AppNavigator = () => {
       <MainStack.Screen
         name="TrainingLevel"
         component={TrainingLevel}
-        options={{ headerShown: false }}
+        options={({ route }) => {
+          const { topicName } = route.params;
+          return {
+            title: topicName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: isDarkTheme ? "#67104c" : "white",
+            },
+            headerShadowVisible: false,
+            headerTintColor: isDarkTheme ? "white" : "#67104c",
+            headerRight: () => (
+              <TouchableOpacity onPress={handleGoHome}>
+                <Icon
+                  name="home"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          };
+        }}
       />
     </MainStack.Navigator>
   );
