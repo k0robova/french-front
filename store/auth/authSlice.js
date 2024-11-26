@@ -3,7 +3,7 @@ import * as authThunks from "./authThunks";
 import * as HelpersReducer from "./helpersAuthReducer";
 
 const initialState = {
-  user: { name: null, email: null, birthDate: null },
+  user: { name: null, email: null, birthDate: null, croissants: 0 },
   token: null,
   theme: false,
   isRefreshing: false,
@@ -54,7 +54,10 @@ export const authSlice = createSlice({
         authThunks.updateUserLngThunk.fulfilled,
         HelpersReducer.handleFulfilledUpdateLng
       )
-
+      .addCase(
+        authThunks.updaterProgressUserThunk.fulfilled,
+        HelpersReducer.handleUpdateProggres
+      )
       .addMatcher(
         (action) => action.type.endsWith("pending"),
         HelpersReducer.handlePending

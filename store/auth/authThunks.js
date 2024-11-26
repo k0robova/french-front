@@ -11,6 +11,7 @@ import {
   updateUser,
   forgotPass,
   restorePassword,
+  updateProgressUser,
 } from "../../services/authService";
 
 export const loginThunk = createAsyncThunk(
@@ -151,6 +152,16 @@ export const loadThemeFromSecureStore = createAsyncThunk(
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updaterProgressUserThunk = createAsyncThunk(
+  async (_, { rejectWithValue }) => {
+    try {
+      return await updateProgressUser();
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   }
 );

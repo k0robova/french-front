@@ -79,3 +79,8 @@ export const restorePassword = async (otp, body) => {
   const data = await instance.post(`/users/restorePassword/${otp}`, body);
   return data;
 };
+
+export const updateProgressUser = async () => {
+  const { data } = await instance.patch("/users/updateProgressUser");
+  return data;
+};

@@ -61,6 +61,12 @@ export const handleFulfilledForgotPass = (state, { payload }) => {
   state.user = payload;
 };
 
+export const handleUpdateProggres = (state, { payload }) => {
+  state.isRefreshing = false;
+  state.error = "";
+  state.user.croissants = payload.croissants;
+};
+
 // export const handleFulfilledRestorePassword
 
 export const handleRejected = (state, { payload }) => {
