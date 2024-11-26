@@ -64,7 +64,7 @@ export const handleFulfilledForgotPass = (state, { payload }) => {
 export const handleUpdateProggres = (state, { payload }) => {
   state.isRefreshing = false;
   state.error = "";
-  state.user.croissants = payload.croissants;
+  state.user.croissants = payload;
 };
 
 // export const handleFulfilledRestorePassword

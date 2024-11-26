@@ -11,7 +11,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
 import { defaultStyles } from "./defaultStyles";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updaterProgressUserThunk } from "../store/auth/authThunks";
 
 export const TrainingLevel = () => {
   const route = useRoute();
@@ -24,13 +25,12 @@ export const TrainingLevel = () => {
   const [sound, setSound] = useState(null);
   const isDarkTheme = useSelector((state) => state.auth.theme);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   // Встановити випадкове слово
   const setRandomWord = (stats) => {
     const remainingWords = stats.filter((stat) => stat.correctCount < 3);
-    console.log(remainingWords);
     if (remainingWords.length === 0) {
-      console.log("object");
       // Завершення тренування
       alert("Вітаю! Ви виконали всі завдання.");
       navigation.navigate("Train", { topicName });
@@ -78,7 +78,7 @@ export const TrainingLevel = () => {
   };
 
   // Обробка вибору
-  const handleChoice = (chosenWord) => {
+  const handleChoice = async (chosenWord) => {
     if (chosenWord._id === currentWord._id) {
       // Якщо відповідь правильна
       setWordStats((prevStats) => {
@@ -95,6 +95,7 @@ export const TrainingLevel = () => {
       // Переходимо до наступного завдання, якщо ще не виконано 15
       if (totalCorrectAnswers + 1 === 15) {
         markCurrentWordsAsCompleted();
+        await dispatch(updaterProgressUserThunk());
         alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
         navigation.navigate("Train", { topicName });
       } else {

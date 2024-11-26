@@ -157,10 +157,13 @@ export const loadThemeFromSecureStore = createAsyncThunk(
 );
 
 export const updaterProgressUserThunk = createAsyncThunk(
+  "user/updateProgress",
   async (_, { rejectWithValue }) => {
     try {
-      return await updateProgressUser();
+      const data = await updateProgressUser();
+      return data;
     } catch (error) {
+      console.error("Помилка під час оновлення прогресу:", error.message);
       return rejectWithValue(error.message);
     }
   }

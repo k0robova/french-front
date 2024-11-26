@@ -82,5 +82,5 @@ export const restorePassword = async (otp, body) => {
 
 export const updateProgressUser = async () => {
   const { data } = await instance.patch("/users/updateProgressUser");
-  return data;
+  return data.croissants;
 };
