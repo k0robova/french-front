@@ -1,32 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { Alert, StyleSheet, TouchableOpacity } from "react-native";
-import { Registration } from "./Registration";
-import { Login } from "./Login";
-import { Home } from "../screens/Home";
-import { LessonsBySubscription } from "./LessonsBySubscription";
-import { StudyAndTrain } from "./StudyAndTrain";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useEffect } from "react";
-import { getProfileThunk } from "../store/auth/authThunks";
-import { Profile } from "../screens/Profile";
-import { ForgotPassword } from "./ForgotPassword";
-import { Support } from "./Support";
-import { Vocab } from "./Vocab";
-import { Phonetic } from "./Phonetic";
-import { Verbs } from "./Verbs";
-import { LearnOrTrainTopic } from "./LearnOrTrainTopic";
-import { Learn } from "./Learn";
-import { Train } from "./Train";
-import { WordLearningScreen } from "./WordLearningScreen";
-import { TrainingLevel } from "./TrainingLevel";
+import { getProfileThunk, logoutThunk } from "../store/auth/authThunks";
+import * as Screens from "../screens";
+import * as Components from "../components";
+import { setTheme } from "../store/auth/authSlice";
 const MainStack = createNativeStackNavigator();
 
 export const AppNavigator = () => {
   const isDarkTheme = useSelector((state) => state.auth.theme);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -39,6 +29,20 @@ export const AppNavigator = () => {
       return;
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const resultAction = await dispatch(logoutThunk());
+      if (logoutThunk.fulfilled.match(resultAction)) {
+        navigation.navigate("Login");
+      } else {
+        Alert.alert("Error", resultAction.error.message);
+      }
+    } catch (error) {
+      console.log("Registration failed:", error);
+      Alert.alert("Error", error.message);
     }
   };
 
@@ -65,31 +69,123 @@ export const AppNavigator = () => {
     );
   };
 
+  const toggleTheme = async () => {
+    const newTheme = !isDarkTheme; // Інвертуємо булеве значення теми
+
+    try {
+      // Зберігаємо нову тему як рядок (булеве значення) в SecureStore
+      await SecureStore.setItemAsync("theme", JSON.stringify(newTheme));
+      // Оновлюємо тему в Redux-стані
+      dispatch(setTheme(newTheme));
+    } catch (error) {
+      console.error("Failed to update theme:", error);
+    }
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
+
   return (
     <MainStack.Navigator>
       <MainStack.Screen
         name="Registration"
-        component={Registration}
+        component={Components.Registration}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
         name="Login"
-        component={Login}
+        component={Components.Login}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
         name="Home"
-        component={Home}
-        options={{ headerShown: false }}
+        component={Screens.Home}
+        options={({ navigation }) => ({
+          headerTitle: () => null, // Приховуємо текст заголовка
+          headerStyle: {
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          },
+          headerShadowVisible: false,
+          headerTintColor: isDarkTheme ? "white" : "#67104c",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() =>
+                changeLanguage(i18n.language === "en" ? "uk" : "en")
+              }
+            >
+              <MaterialIcons
+                name="language"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginLeft: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+              <Icon
+                name="setting"
+                size={30}
+                color={isDarkTheme ? "white" : "#67104c"}
+                style={{ marginRight: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+        })}
       />
       <MainStack.Screen
         name="Profile"
-        component={Profile}
-        options={{ headerShown: false }}
+        component={Screens.Profile}
+        options={({ navigation }) => ({
+          headerTitle: () => (
+            <View style={styles.headerContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                <Icon
+                  name="arrowleft"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  changeLanguage(i18n.language === "en" ? "uk" : "en")
+                }
+              >
+                <MaterialIcons
+                  name="language"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={toggleTheme}>
+                <MaterialIcons
+                  name="light-mode"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleLogout}>
+                <Ionicons
+                  name="log-out"
+                  size={30}
+                  color={isDarkTheme ? "white" : "#67104c"}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+          headerStyle: {
+            backgroundColor: isDarkTheme ? "#67104c" : "white",
+          },
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerLeft: () => null,
+        })}
       />
       <MainStack.Screen
         name="StudyAndTrain"
-        component={StudyAndTrain}
+        component={Components.StudyAndTrain}
         options={({ navigation }) => ({
           title: ` ${t("LAT.lat")}`,
           headerTitleAlign: "center",
@@ -112,12 +208,12 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="LessonsBySubscription"
-        component={LessonsBySubscription}
+        component={Components.LessonsBySubscription}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
         name="Vocab"
-        component={Vocab}
+        component={Components.Vocab}
         options={({ navigation }) => ({
           title: ` ${t("LAT.vocab")}`,
           headerTitleAlign: "center",
@@ -150,17 +246,17 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="ForgotPassword"
-        component={ForgotPassword}
+        component={Components.ForgotPassword}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
         name="Support"
-        component={Support}
+        component={Components.Support}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
         name="Phonetic"
-        component={Phonetic}
+        component={Components.Phonetic}
         options={({ navigation }) => ({
           title: ` ${t("LAT.phonetic")}`,
           headerTitleAlign: "center",
@@ -183,7 +279,7 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="Verbs"
-        component={Verbs}
+        component={Components.Verbs}
         options={({ navigation }) => ({
           title: ` ${t("LAT.verbs")}`,
           headerTitleAlign: "center",
@@ -206,7 +302,7 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="LearnOrTrainTopic"
-        component={LearnOrTrainTopic}
+        component={Components.LearnOrTrainTopic}
         options={({ navigation, route }) => {
           const topicName = route.params?.topicName ?? "";
           return {
@@ -242,7 +338,7 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="Learn"
-        component={Learn}
+        component={Components.Learn}
         options={({ navigation, route }) => {
           const { topicName } = route.params;
           return {
@@ -282,7 +378,7 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="Train"
-        component={Train}
+        component={Components.Train}
         options={({ navigation, route }) => {
           const topicName = route.params?.topicName ?? "";
           return {
@@ -322,12 +418,12 @@ export const AppNavigator = () => {
       />
       <MainStack.Screen
         name="WordLearningScreen"
-        component={WordLearningScreen}
+        component={Components.WordLearningScreen}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
         name="TrainingLevel"
-        component={TrainingLevel}
+        component={Components.TrainingLevel}
         options={({ route }) => {
           const { topicName } = route.params;
           return {
@@ -361,5 +457,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "95%",
   },
 });

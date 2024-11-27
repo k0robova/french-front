@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useSelector } from "react-redux";
 import { defaultStyles } from "../components/defaultStyles";
 
@@ -30,24 +28,6 @@ export const Home = () => {
       }}
     >
       <View style={defaultStyles.container}>
-        <View style={styles.header}>
-          <Pressable
-            onPress={() => changeLanguage(i18n.language === "en" ? "uk" : "en")}
-          >
-            <MaterialIcons
-              name="language"
-              size={26}
-              color={isDarkTheme ? "white" : "#67104c"}
-            />
-          </Pressable>
-          <Pressable onPress={() => navigation.navigate("Profile")}>
-            <AntDesign
-              name="setting"
-              size={26}
-              color={isDarkTheme ? "white" : "#67104c"}
-            />
-          </Pressable>
-        </View>
         <Text
           style={[
             styles.welcomeText,
