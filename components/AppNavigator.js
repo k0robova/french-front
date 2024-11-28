@@ -103,6 +103,7 @@ export const AppNavigator = () => {
         component={Screens.Home}
         options={({ navigation }) => ({
           headerTitle: () => null, // Приховуємо текст заголовка
+          title: null,
           headerStyle: {
             backgroundColor: isDarkTheme ? "#67104c" : "white",
           },
@@ -139,7 +140,7 @@ export const AppNavigator = () => {
         component={Screens.Profile}
         options={({ navigation }) => ({
           headerTitle: () => (
-            <View style={styles.headerContainer}>
+            <View style={[styles.headerContainer, { paddingRight: 20 }]}>
               <TouchableOpacity onPress={() => navigation.navigate("Home")}>
                 <Icon
                   name="arrowleft"

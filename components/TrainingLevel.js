@@ -55,7 +55,9 @@ export const TrainingLevel = () => {
         wrongChoices.push(wrongChoice);
       }
     }
+
     const allChoices = [...wrongChoices, correctWord];
+
     setChoices(allChoices.sort(() => Math.random() - 0.5));
   };
 
@@ -80,26 +82,26 @@ export const TrainingLevel = () => {
   // Обробка вибору
   const handleChoice = async (chosenWord) => {
     if (chosenWord._id === currentWord._id) {
-      // Якщо відповідь правильна
-      setWordStats((prevStats) => {
-        const updatedStats = prevStats.map((stat) =>
-          stat.word._id === currentWord._id
-            ? { ...stat, correctCount: stat.correctCount + 1 }
-            : stat
-        );
-        return updatedStats;
-      });
+      // Оновіть статистику
+      const updatedStats = wordStats.map((stat) =>
+        stat.word._id === currentWord._id
+          ? { ...stat, correctCount: stat.correctCount + 1 }
+          : stat
+      );
+      setWordStats(updatedStats);
 
-      setTotalCorrectAnswers((prev) => prev + 1); // Збільшуємо загальну кількість правильних відповідей
+      // Оновіть кількість правильних відповідей
+      const updatedTotalCorrectAnswers = totalCorrectAnswers + 1;
+      setTotalCorrectAnswers(updatedTotalCorrectAnswers);
 
-      // Переходимо до наступного завдання, якщо ще не виконано 15
-      if (totalCorrectAnswers + 1 === 15) {
-        markCurrentWordsAsCompleted();
+      // Перевірка завершення
+      if (updatedTotalCorrectAnswers === 15) {
+        await markCurrentWordsAsCompleted();
         await dispatch(updaterProgressUserThunk());
         alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
         navigation.navigate("Train", { topicName });
       } else {
-        setRandomWord(wordStats); // Вибір нового слова
+        setRandomWord(updatedStats); // Передайте актуалізований wordStats
       }
     } else {
       alert("Спробуйте ще раз!");
