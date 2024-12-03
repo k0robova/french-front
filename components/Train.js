@@ -27,8 +27,9 @@ export const Train = () => {
 
       // Перевірка завершення всіх слів
       const isAllWordsCompleted = storageProgress.every(
-        (word) => word.completed
+        (word) => word.completed && word.completed.includes(1) // Перевіряємо, чи є в масиві completed елемент зі значенням 1
       );
+
       if (isAllWordsCompleted) {
         alert("Вітаю! Ви завершили всі слова першого рівня.");
         setIsLevel1Completed(true);

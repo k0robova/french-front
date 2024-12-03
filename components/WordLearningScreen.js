@@ -50,8 +50,13 @@ export const WordLearningScreen = () => {
       const jsonValue = await AsyncStorage.getItem(`progress_${topicName}`);
       const progress = jsonValue != null ? JSON.parse(jsonValue) : [];
       if (Array.isArray(progress)) {
-        setSavedProgress(progress);
-        setTotalShown(progress.length);
+        // Додаємо `completed` як порожній масив для всіх слів, де він відсутній
+        const updatedProgress = progress.map((word) => ({
+          ...word,
+          completed: word.completed || [], // Якщо `completed` відсутній, додаємо порожній масив
+        }));
+        setSavedProgress(updatedProgress);
+        setTotalShown(updatedProgress.length);
       }
       setSelectedWords(
         filteredWords.slice(progress.length, progress.length + count)
@@ -62,9 +67,13 @@ export const WordLearningScreen = () => {
   };
 
   // Функція для збереження прогресу
-  const saveProgress = async (newWord) => {
-    const updatedProgress = [...savedProgress, ...newWord];
-    const progressForStorege = JSON.stringify(updatedProgress);
+  const saveProgress = async (word) => {
+    const updatedProgress = word.map((w) => ({
+      ...w,
+      completed: w.completed || [], // Гарантуємо наявність властивості `completed`
+    }));
+    const mergedProgress = [...savedProgress, ...updatedProgress];
+    const progressForStorege = JSON.stringify(mergedProgress);
     await AsyncStorage.setItem(`progress_${topicName}`, progressForStorege);
   };
 
