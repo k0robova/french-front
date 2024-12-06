@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   SafeAreaView,
   View,
@@ -7,25 +7,26 @@ import {
   Image,
   PanResponder,
   Animated,
+  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
-export const SecondLevel = ({ progress }) => {
-  // Дані для рівня
+export const SecondLevel = ({ progress, level, topicName }) => {
   const [images, setImages] = useState([]);
   const [words, setWords] = useState([]);
   const [matches, setMatches] = useState({});
-  const [wordPositions, setWordPositions] = useState([]); // Для зберігання позицій слів
+  const [wordStats, setWordStats] = useState([]);
+  const imageRefs = useRef({}); // Координати картинок
+  const panRefs = useRef({}); // Координати для слів
+  const navigation = useNavigation();
 
   useEffect(() => {
-    // Фільтруємо слова, де в масиві completed немає цифри 2
     const filteredProgress = progress.filter(
       (item) => !item.completed.includes(2)
     );
-
-    // Вибираємо лише перші 5 слів з фільтрованого масиву
     const limitedProgress = filteredProgress.slice(0, 5);
-
-    // Розділяємо слова та картинки у випадковому порядку
+    setWordStats(limitedProgress);
     const shuffledProgress = [...limitedProgress].sort(
       () => Math.random() - 0.5
     );
@@ -45,46 +46,72 @@ export const SecondLevel = ({ progress }) => {
     );
   }, [progress]);
 
-  useEffect(() => {
-    // Записуємо початкові позиції слів після того, як вони з'являться в DOM
-    setWordPositions(
-      words.map((word, index) => {
-        // Початкові координати слів на екрані (наприклад, розміщуємо їх по вертикалі)
-        return { id: word.id, x: 0, y: index * 50 }; // Ініціалізація на базі індексу (ви можете налаштувати це)
-      })
-    );
-  }, [words]);
-
-  const createPanResponder = (wordId, pan, initialPosition) => {
+  const createPanResponder = (wordId, pan) => {
     return PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        pan.setOffset({ x: initialPosition.x, y: initialPosition.y });
-      },
-      onPanResponderMove: (event, gestureState) => {
-        pan.setValue({
-          x: gestureState.moveX - initialPosition.x,
-          y: gestureState.moveY - initialPosition.y,
-        });
-      },
-      onPanResponderRelease: (event, gestureState) => {
-        const droppedImage = images.find(
-          (img) =>
-            Math.abs(gestureState.moveX - img.id.x) < 50 &&
-            Math.abs(gestureState.moveY - img.id.y) < 50
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
+        useNativeDriver: false,
+      }),
+      onPanResponderRelease: (_, gestureState) => {
+        const droppedImage = detectDropArea(
+          gestureState.moveX,
+          gestureState.moveY
         );
-
         if (droppedImage) {
-          handleDrop(wordId, droppedImage.id); // Оновлюємо відповідність
+          handleDrop(wordId, droppedImage.id);
         }
 
-        // Повернення слова в початкову позицію
         Animated.spring(pan, {
           toValue: { x: 0, y: 0 },
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start();
       },
     });
+  };
+
+  const markCurrentWordsAsCompleted = async () => {
+    try {
+      const updatedProgress = progress.map((word) => {
+        if (wordStats.some((stat) => stat._id === word._id)) {
+          return {
+            ...word,
+            completed: word.completed.includes(level)
+              ? word.completed
+              : [...word.completed, level],
+          };
+        }
+        return word;
+      });
+
+      await AsyncStorage.setItem(
+        `progress_${topicName}`,
+        JSON.stringify(updatedProgress)
+      );
+    } catch (error) {
+      console.error("Помилка оновлення прогресу:", error);
+    }
+  };
+
+  const detectDropArea = (x, y) => {
+    console.log(x, y, "x - y");
+    for (const [id, bounds] of Object.entries(imageRefs.current)) {
+      console.log(
+        bounds.left,
+        bounds.right,
+        bounds.top,
+        bounds.bottom,
+        "--Bounds--"
+      );
+      if (
+        x >= bounds.left &&
+        x <= bounds.right &&
+        y >= bounds.top &&
+        y <= bounds.bottom
+      ) {
+        return { id }; // Повертаємо ID картинки, якщо слово в межах зони
+      }
+    }
+    return null;
   };
 
   const handleDrop = (wordId, imageId) => {
@@ -94,9 +121,19 @@ export const SecondLevel = ({ progress }) => {
     }));
   };
 
-  const checkMatches = () => {
-    const isCorrect = images.every((img) => matches[img.id] === img.id);
-    alert(isCorrect ? "Все правильно!" : "Спробуйте ще раз.");
+  const checkMatches = async () => {
+    try {
+      const isCorrect = images.every((img) => matches[img.id] === img.id);
+      if (isCorrect) {
+        await markCurrentWordsAsCompleted();
+        Alert.alert("Все правильно!");
+        navigation.navigate("Train", { topicName });
+        return;
+      }
+      Alert.alert("Спробуйте ще раз.");
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -106,34 +143,45 @@ export const SecondLevel = ({ progress }) => {
         {/* Картинки */}
         <View style={styles.imagesContainer}>
           {images.map((image) => (
-            <View key={image.id} style={styles.imageBox}>
+            <View
+              key={image.id}
+              style={styles.imageBox}
+              onLayout={(event) => {
+                const { x, y, width, height } = event.nativeEvent.layout;
+                imageRefs.current[image.id] = {
+                  left: x,
+                  top: y,
+                  right: x + width,
+                  bottom: y + height,
+                };
+              }}
+            >
               <Image source={{ uri: image.uri }} style={styles.image} />
-              <Text>
-                {matches[image.id]
-                  ? `З'єднано з: ${matches[image.id]}`
-                  : "Перетягніть слово"}
-              </Text>
+              {/* Відображення слова під картинкою */}
+              {matches[image.id] && (
+                <Text style={styles.wordUnderImage}>{matches[image.id]}</Text>
+              )}
             </View>
           ))}
         </View>
 
-        {/* Слова (праворуч) */}
+        {/* Слова */}
         <View style={styles.wordsContainer}>
-          {words.map((word, index) => {
-            const pan = new Animated.ValueXY(); // Окремі координати для кожного слова
-            const initialPosition = wordPositions[index]; // Початкові координати
+          {words.map((word) => {
+            // Якщо для слова ще немає значення, створюємо нове
+            if (!panRefs.current[word.id]) {
+              panRefs.current[word.id] = new Animated.ValueXY();
+            }
+            const pan = panRefs.current[word.id];
 
             return (
               <Animated.View
                 key={word.id}
                 style={[
                   styles.wordBox,
-                  {
-                    transform: pan.getTranslateTransform(), // Додаємо анімацію для кожного слова
-                  },
+                  { transform: pan.getTranslateTransform() },
                 ]}
-                {...createPanResponder(word.id, pan, initialPosition)
-                  .panHandlers} // Додаємо PanResponder
+                {...createPanResponder(word.id, pan).panHandlers}
               >
                 <Text style={styles.word}>{word.text}</Text>
               </Animated.View>
@@ -190,6 +238,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginVertical: 5,
+  },
+  wordUnderImage: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#333",
   },
   word: {
     fontSize: 16,
