@@ -168,16 +168,31 @@ export const LevelComponent = ({
     </View>
   );
 
-  return (
-    <SafeAreaView
-      style={[
-        defaultStyles.container,
-        { backgroundColor: isDarkTheme ? "#67104c" : "white" },
-      ]}
-    >
-      {renderProgress()}
-      {renderContent(currentItem, playSound, isDarkTheme, isPlaying)}
-      {renderChoices(choices, handleChoice, isDarkTheme)}
-    </SafeAreaView>
-  );
+  if (level === 2) {
+    return (
+      <SafeAreaView
+        style={[
+          defaultStyles.container,
+          { backgroundColor: isDarkTheme ? "#67104c" : "white" },
+        ]}
+      >
+        {renderProgress()}
+        {renderContent(currentItem, playSound, isDarkTheme, isPlaying)}
+        {renderChoices(choices, handleChoice, isDarkTheme)}
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView
+        style={[
+          defaultStyles.container,
+          { backgroundColor: isDarkTheme ? "#67104c" : "white" },
+        ]}
+      >
+        {renderProgress()}
+        {renderChoices(choices, handleChoice, isDarkTheme)}
+        {renderContent(currentItem, playSound, isDarkTheme, isPlaying)}
+      </SafeAreaView>
+    );
+  }
 };

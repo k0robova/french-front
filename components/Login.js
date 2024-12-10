@@ -121,14 +121,14 @@ export const Login = () => {
               color={isDarkTheme ? "white" : "#67104c"}
             />
           </Pressable>
-
+          {/* 
           <Pressable onPress={toggleTheme}>
             <MaterialIcons
               name="light-mode"
               size={26}
               color={isDarkTheme ? "white" : "#67104c"}
             />
-          </Pressable>
+          </Pressable> */}
         </View>
         <View style={{ marginVertical: 22 }}>
           <Text

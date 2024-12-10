@@ -16,26 +16,24 @@ export const Train = () => {
 
   const { topicName } = route.params;
   const [progress, setProgress] = useState([]);
-  const [isLevel1Completed, setIsLevel1Completed] = useState(false);
+  const [completedLevels, setCompletedLevels] = useState([]); // Масив завершених рівнів
 
-  // Оновлюємо прогрес після того, як ви закінчите навчання або повернетеся на екран
+  // Оновлення прогресу
   const updateProgress = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(`progress_${topicName}`);
       const storageProgress = jsonValue != null ? JSON.parse(jsonValue) : [];
       setProgress(storageProgress);
 
-      // Перевірка завершення всіх слів
-      const isAllWordsCompleted = storageProgress.every(
-        (word) => word.completed && word.completed.includes(1) // Перевіряємо, чи є в масиві completed елемент зі значенням 1
-      );
-
-      if (isAllWordsCompleted) {
-        alert("Вітаю! Ви завершили всі слова першого рівня.");
-        setIsLevel1Completed(true);
-      } else {
-        setIsLevel1Completed(false);
+      // Перевірка завершення кожного рівня
+      const levels = [];
+      for (let level = 1; level <= 7; level++) {
+        const isLevelCompleted = storageProgress.every(
+          (word) => word.completed && word.completed.includes(level)
+        );
+        if (isLevelCompleted) levels.push(level); // Додаємо завершений рівень
       }
+      setCompletedLevels(levels);
     } catch (error) {
       console.error("Error fetching progress from storage:", error);
     }
@@ -44,11 +42,11 @@ export const Train = () => {
   // Викликаємо `updateProgress` при фокусуванні на екрані Train
   useFocusEffect(
     useCallback(() => {
-      updateProgress(); // Оновлюємо прогрес
+      updateProgress();
     }, [topicName])
   );
 
-  // Оновлення прогресу в AsyncStorage після змін (наприклад, при завершенні рівня)
+  // Оновлення прогресу в AsyncStorage після змін
   useEffect(() => {
     const saveProgressToStorage = async () => {
       try {
@@ -62,13 +60,13 @@ export const Train = () => {
     };
 
     if (progress.length > 0) {
-      saveProgressToStorage(); // Записуємо новий прогрес після кожної зміни
+      saveProgressToStorage();
     }
   }, [progress, topicName]);
 
   // Обробка переходу до рівнів
   const handlePress = (level) => {
-    if (progress.length > 0 && (level !== 1 || !isLevel1Completed)) {
+    if (progress.length > 0 && !completedLevels.includes(level)) {
       navigation.navigate("TrainingLevel", { level, topicName, progress });
     }
   };
@@ -126,17 +124,11 @@ export const Train = () => {
               defaultStyles.button,
               {
                 backgroundColor: isDarkTheme ? "white" : "#67104c",
-                opacity:
-                  progress.length > 0 &&
-                  (level === 1 ? !isLevel1Completed : true)
-                    ? 1
-                    : 0.5,
+                opacity: completedLevels.includes(level) ? 0.5 : 1, // Зміна прозорості
               },
             ]}
             onPress={() => handlePress(level)}
-            disabled={
-              progress.length === 0 || (level === 1 && isLevel1Completed)
-            }
+            disabled={completedLevels.includes(level)} // Заблокуємо, якщо рівень завершено
           >
             <Text
               style={[
