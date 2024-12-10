@@ -435,6 +435,8 @@ export const AppNavigator = () => {
             },
             headerShadowVisible: false,
             headerTintColor: isDarkTheme ? "white" : "#67104c",
+            headerBackVisible: false,
+            headerLeft: () => null,
             headerRight: () => (
               <TouchableOpacity onPress={handleGoHome}>
                 <Icon

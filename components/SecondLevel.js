@@ -1,265 +1,253 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
-  SafeAreaView,
   View,
   Text,
-  StyleSheet,
+  TouchableOpacity,
   Image,
-  PanResponder,
-  Animated,
-  Alert,
+  SafeAreaView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { defaultStyles } from "./defaultStyles";
+import { useDispatch, useSelector } from "react-redux";
+import { updaterProgressUserThunk } from "../store/auth/authThunks";
+import { LevelComponent } from "./LevelComponent";
 
-export const SecondLevel = ({ progress, level, topicName }) => {
-  const [images, setImages] = useState([]);
-  const [words, setWords] = useState([]);
-  const [matches, setMatches] = useState({});
-  const [wordStats, setWordStats] = useState([]);
-  const imageRefs = useRef({}); // Координати картинок
-  const panRefs = useRef({}); // Координати для слів
-  const navigation = useNavigation();
+export const SecondLevel = ({ level, progress, topicName }) => {
+  // const [choices, setChoices] = useState([]);
+  // const [currentImage, setCurrentImage] = useState(null);
+  // const [wordStats, setWordStats] = useState([]);
+  // const [totalCorrectAnswers, setTotalCorrectAnswers] = useState(0); // Загальна кількість правильних відповідей
+  // const navigation = useNavigation();
+  // const dispatch = useDispatch();
+  // const isDarkTheme = useSelector((state) => state.auth.theme);
 
-  useEffect(() => {
-    const filteredProgress = progress.filter(
-      (item) => !item.completed.includes(2)
-    );
-    const limitedProgress = filteredProgress.slice(0, 5);
-    setWordStats(limitedProgress);
-    const shuffledProgress = [...limitedProgress].sort(
-      () => Math.random() - 0.5
-    );
+  // const setRandomImage = (stats) => {
+  //   const remainingWords = stats.filter((stat) => stat.correctCount < 3);
+  //   if (remainingWords.length === 0) {
+  //     alert("Вітаю! Ви виконали всі завдання.");
+  //     navigation.navigate("Train", { topicName });
+  //     return;
+  //   }
+  //   const randomWord =
+  //     remainingWords[Math.floor(Math.random() * remainingWords.length)];
+  //   setCurrentImage(randomWord.word);
+  //   generateChoices(randomWord.word);
+  // };
 
-    setImages(
-      shuffledProgress.map((item) => ({
-        id: item.world,
-        uri: item.image,
-      }))
-    );
+  // const generateChoices = (correctWord) => {
+  //   const wrongChoices = [];
+  //   while (wrongChoices.length < 3) {
+  //     const randomIndex = Math.floor(Math.random() * progress.length);
+  //     const wrongChoice = progress[randomIndex];
+  //     if (
+  //       wrongChoice._id !== correctWord._id &&
+  //       !wrongChoices.some((choice) => choice._id === wrongChoice._id)
+  //     ) {
+  //       wrongChoices.push(wrongChoice);
+  //     }
+  //   }
 
-    setWords(
-      shuffledProgress.map((item) => ({
-        id: item.world,
-        text: item.world,
-      }))
-    );
-  }, [progress]);
+  //   const allChoices = [...wrongChoices, correctWord];
 
-  const createPanResponder = (wordId, pan) => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-        useNativeDriver: false,
-      }),
-      onPanResponderRelease: (_, gestureState) => {
-        const droppedImage = detectDropArea(
-          gestureState.moveX,
-          gestureState.moveY
-        );
-        if (droppedImage) {
-          handleDrop(wordId, droppedImage.id);
-        }
+  //   setChoices(allChoices.sort(() => Math.random() - 0.5));
+  // };
 
-        Animated.spring(pan, {
-          toValue: { x: 0, y: 0 },
-          useNativeDriver: false,
-        }).start();
-      },
-    });
-  };
+  // const markCurrentWordsAsCompleted = async () => {
+  //   try {
+  //     const updatedProgress = progress.map((word) => {
+  //       if (wordStats.some((stat) => stat.word._id === word._id)) {
+  //         return {
+  //           ...word,
+  //           completed: word.completed.includes(level)
+  //             ? word.completed
+  //             : [...word.completed, level],
+  //         };
+  //       }
+  //       return word;
+  //     });
 
-  const markCurrentWordsAsCompleted = async () => {
-    try {
-      const updatedProgress = progress.map((word) => {
-        if (wordStats.some((stat) => stat._id === word._id)) {
-          return {
-            ...word,
-            completed: word.completed.includes(level)
-              ? word.completed
-              : [...word.completed, level],
-          };
-        }
-        return word;
-      });
+  //     await AsyncStorage.setItem(
+  //       `progress_${topicName}`,
+  //       JSON.stringify(updatedProgress)
+  //     );
+  //   } catch (error) {
+  //     console.error("Помилка оновлення прогресу:", error);
+  //   }
+  // };
 
-      await AsyncStorage.setItem(
-        `progress_${topicName}`,
-        JSON.stringify(updatedProgress)
-      );
-    } catch (error) {
-      console.error("Помилка оновлення прогресу:", error);
-    }
-  };
+  // const handleChoice = async (chosenWord) => {
+  //   if (chosenWord._id === currentImage._id) {
+  //     const updatedStats = wordStats.map((stat) =>
+  //       stat.word._id === currentImage._id
+  //         ? { ...stat, correctCount: stat.correctCount + 1 }
+  //         : stat
+  //     );
+  //     setWordStats(updatedStats);
+  //     const updatedTotalCorrectAnswers = totalCorrectAnswers + 1;
+  //     setTotalCorrectAnswers(updatedTotalCorrectAnswers);
 
-  const detectDropArea = (x, y) => {
-    console.log(x, y, "x - y");
-    for (const [id, bounds] of Object.entries(imageRefs.current)) {
-      console.log(
-        bounds.left,
-        bounds.right,
-        bounds.top,
-        bounds.bottom,
-        "--Bounds--"
-      );
-      if (
-        x >= bounds.left &&
-        x <= bounds.right &&
-        y >= bounds.top &&
-        y <= bounds.bottom
-      ) {
-        return { id }; // Повертаємо ID картинки, якщо слово в межах зони
-      }
-    }
-    return null;
-  };
+  //     if (updatedTotalCorrectAnswers === 15) {
+  //       await markCurrentWordsAsCompleted();
+  //       await dispatch(updaterProgressUserThunk());
+  //       alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
+  //       navigation.navigate("Train", { topicName });
+  //     } else {
+  //       setRandomImage(updatedStats);
+  //     }
+  //   } else {
+  //     alert("Спробуйте ще раз!");
+  //   }
+  // };
 
-  const handleDrop = (wordId, imageId) => {
-    setMatches((prev) => ({
-      ...prev,
-      [imageId]: wordId,
-    }));
-  };
+  // const initializeWordStats = () => {
+  //   const unfinishedWords = progress.filter(
+  //     (word) => !word.completed.includes(level)
+  //   );
+  //   if (unfinishedWords.length === 0) return;
+  //   const initialStats = unfinishedWords.slice(0, 5).map((word) => ({
+  //     word,
+  //     correctCount: 0,
+  //   }));
+  //   setWordStats(initialStats);
+  //   setRandomImage(initialStats);
+  // };
 
-  const checkMatches = async () => {
-    try {
-      const isCorrect = images.every((img) => matches[img.id] === img.id);
-      if (isCorrect) {
-        await markCurrentWordsAsCompleted();
-        Alert.alert("Все правильно!");
-        navigation.navigate("Train", { topicName });
-        return;
-      }
-      Alert.alert("Спробуйте ще раз.");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  // useEffect(() => {
+  //   initializeWordStats();
+  // }, [progress]);
+
+  // const renderProgress = () => {
+  //   const totalExercises = 15; // Загальна кількість завдань
+  //   return (
+  //     <View style={{ flexDirection: "row", justifyContent: "center" }}>
+  //       {[...Array(totalExercises)].map((_, i) => (
+  //         <View
+  //           key={i}
+  //           style={{
+  //             width: 20,
+  //             height: 20,
+  //             borderRadius: 10,
+  //             backgroundColor:
+  //               i < totalCorrectAnswers
+  //                 ? isDarkTheme
+  //                   ? "white"
+  //                   : "#67104c" // Для темної теми: білий, для світлої: червоний
+  //                 : "#A9A9A9", // Для неправильних: сірий в обох темах
+  //             margin: 3,
+  //           }}
+  //         />
+  //       ))}
+  //     </View>
+  //   );
+  // };
+
+  const renderContent = (currentImage) => (
+    <View style={{ alignItems: "center", marginVertical: 20 }}>
+      {currentImage && (
+        <Image
+          source={{ uri: currentImage.image }}
+          style={{ width: 200, height: 200, borderRadius: 10 }}
+        />
+      )}
+    </View>
+  );
+
+  const renderChoices = (choices, handleChoice, isDarkTheme) => (
+    <View
+      style={{
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-around",
+        paddingHorizontal: 20,
+      }}
+    >
+      {choices.map((choice) => (
+        <TouchableOpacity
+          key={choice._id}
+          onPress={() => handleChoice(choice)}
+          style={{
+            backgroundColor: isDarkTheme ? "white" : "#67104c",
+            padding: 15,
+            margin: 10,
+            borderRadius: 10,
+            width: "40%",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: isDarkTheme ? "#67104c" : "white",
+            }}
+          >
+            {choice.world}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Відповідність слів до картинок</Text>
-      <View style={styles.gameContainer}>
-        {/* Картинки */}
-        <View style={styles.imagesContainer}>
-          {images.map((image) => (
-            <View
-              key={image.id}
-              style={styles.imageBox}
-              onLayout={(event) => {
-                const { x, y, width, height } = event.nativeEvent.layout;
-                imageRefs.current[image.id] = {
-                  left: x,
-                  top: y,
-                  right: x + width,
-                  bottom: y + height,
-                };
+    <LevelComponent
+      level={level}
+      progress={progress}
+      topicName={topicName}
+      renderChoices={renderChoices}
+      renderContent={renderContent}
+    />
+  );
+
+  return (
+    <SafeAreaView
+      style={[
+        defaultStyles.container,
+        { backgroundColor: isDarkTheme ? "#67104c" : "white" },
+      ]}
+    >
+      {renderProgress()}
+      <View style={{ alignItems: "center", marginVertical: 20 }}>
+        {currentImage && (
+          <Image
+            source={{ uri: currentImage.image }}
+            style={{ width: 200, height: 200, borderRadius: 10 }}
+          />
+        )}
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+          paddingHorizontal: 20,
+        }}
+      >
+        {choices.map((choice) => (
+          <TouchableOpacity
+            key={choice._id}
+            onPress={() => handleChoice(choice)}
+            style={{
+              backgroundColor: isDarkTheme ? "white" : "#67104c",
+              padding: 15,
+              margin: 10,
+              borderRadius: 10,
+              width: "40%",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                color: isDarkTheme ? "#67104c" : "white",
               }}
             >
-              <Image source={{ uri: image.uri }} style={styles.image} />
-              {/* Відображення слова під картинкою */}
-              {matches[image.id] && (
-                <Text style={styles.wordUnderImage}>{matches[image.id]}</Text>
-              )}
-            </View>
-          ))}
-        </View>
-
-        {/* Слова */}
-        <View style={styles.wordsContainer}>
-          {words.map((word) => {
-            // Якщо для слова ще немає значення, створюємо нове
-            if (!panRefs.current[word.id]) {
-              panRefs.current[word.id] = new Animated.ValueXY();
-            }
-            const pan = panRefs.current[word.id];
-
-            return (
-              <Animated.View
-                key={word.id}
-                style={[
-                  styles.wordBox,
-                  { transform: pan.getTranslateTransform() },
-                ]}
-                {...createPanResponder(word.id, pan).panHandlers}
-              >
-                <Text style={styles.word}>{word.text}</Text>
-              </Animated.View>
-            );
-          })}
-        </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Text style={styles.checkButton} onPress={checkMatches}>
-          Перевірити
-        </Text>
+              {choice.world}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#f4f4f4",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 10,
-  },
-  gameContainer: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  imagesContainer: {
-    flex: 1,
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  imageBox: {
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-  },
-  wordsContainer: {
-    flex: 1,
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  wordBox: {
-    backgroundColor: "#e0e0e0",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-  },
-  wordUnderImage: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#333",
-  },
-  word: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  buttonContainer: {
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  checkButton: {
-    padding: 10,
-    backgroundColor: "#67104c",
-    color: "white",
-    fontSize: 18,
-    borderRadius: 5,
-    textAlign: "center",
-  },
-});
