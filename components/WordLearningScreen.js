@@ -4,7 +4,6 @@ import {
   Text,
   View,
   Image,
-  StyleSheet,
   TouchableOpacity,
   Pressable,
 } from "react-native";
@@ -31,13 +30,12 @@ export const WordLearningScreen = () => {
   const vocabData = useSelector(selectVocab);
   const route = useRoute();
   const { count, topicName, wordItem } = route.params;
-  const [savedProgress, setSavedProgress] = useState([]); // Створюємо state для прогресу
+  const [savedProgress, setSavedProgress] = useState([]);
 
   const isSingleWordMode = Boolean(wordItem);
 
-  // Якщо ми у режимі одного слова, встановлюємо selectedWords як масив з одного елемента
   const [selectedWords, setSelectedWords] = useState(
-    isSingleWordMode ? [wordItem] : [] // Якщо режим одного слова - беремо його
+    isSingleWordMode ? [wordItem] : []
   );
 
   const currentLanguage = i18n.language;
@@ -50,10 +48,9 @@ export const WordLearningScreen = () => {
       const jsonValue = await AsyncStorage.getItem(`progress_${topicName}`);
       const progress = jsonValue != null ? JSON.parse(jsonValue) : [];
       if (Array.isArray(progress)) {
-        // Додаємо `completed` як порожній масив для всіх слів, де він відсутній
         const updatedProgress = progress.map((word) => ({
           ...word,
-          completed: word.completed || [], // Якщо `completed` відсутній, додаємо порожній масив
+          completed: word.completed || [],
         }));
         setSavedProgress(updatedProgress);
         setTotalShown(updatedProgress.length);
@@ -70,7 +67,7 @@ export const WordLearningScreen = () => {
   const saveProgress = async (word) => {
     const updatedProgress = word.map((w) => ({
       ...w,
-      completed: w.completed || [], // Гарантуємо наявність властивості `completed`
+      completed: w.completed || [],
     }));
     const mergedProgress = [...savedProgress, ...updatedProgress];
     const progressForStorege = JSON.stringify(mergedProgress);
@@ -83,11 +80,9 @@ export const WordLearningScreen = () => {
     }
   };
 
-  // Перевірка, чи був переданий один елемент
-
   useEffect(() => {
     if (!isSingleWordMode) {
-      loadProgress(); // Викликаємо функцію для стандартного режиму навчання
+      loadProgress();
     }
     return () => {
       if (sound) {
@@ -110,7 +105,7 @@ export const WordLearningScreen = () => {
 
   const handleBackWord = () => {
     if (isSingleWordMode) {
-      navigation.goBack(); // Повертаємося назад після вивчення одного слова
+      navigation.goBack();
     }
     setCurrentIndex((prevIndex) => prevIndex - 1);
   };
@@ -139,6 +134,7 @@ export const WordLearningScreen = () => {
         {},
         onPlaybackStatusUpdate
       );
+      console.log(sound);
       setSound(sound);
       await sound.playAsync();
       setIsPlaying(true);
@@ -160,7 +156,7 @@ export const WordLearningScreen = () => {
 
   const handleChooseDifferentCount = () => {
     setTotalShown(0);
-    navigation.navigate("Learn", { topicName, allWordsCompleted }); // передаємо стан
+    navigation.navigate("Learn", { topicName, allWordsCompleted });
   };
 
   return (

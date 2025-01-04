@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
-  ScrollView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { selectVocab } from "../store/vocab/selectors";

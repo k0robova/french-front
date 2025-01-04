@@ -86,6 +86,7 @@ export const FourtLevel = ({ progress, level, topicName }) => {
 
   const detectDropArea = (x, y) => {
     for (const word of words) {
+      console.log(x, "- x", y, "- y");
       const bounds = wordRefs.current[word.id]; // Координати кожного слова
       if (!bounds) continue; // Пропускаємо, якщо bounds ще не встановлені
       if (
@@ -140,6 +141,24 @@ export const FourtLevel = ({ progress, level, topicName }) => {
     }
   };
 
+  useEffect(() => {
+    words.forEach((word) => {
+      setTimeout(() => {
+        const view = wordRefs.current[word.id];
+        if (view && view.measureInWindow) {
+          view.measureInWindow((x, y, width, height) => {
+            wordRefs.current[word.id] = {
+              left: x,
+              top: y,
+              right: x + width,
+              bottom: y + height,
+            };
+          });
+        }
+      }, 100);
+    });
+  }, [words]);
+
   const checkMatches = async () => {
     try {
       const isCorrect = words.every(
@@ -167,14 +186,23 @@ export const FourtLevel = ({ progress, level, topicName }) => {
             <View
               key={image.id}
               style={styles.imageBox}
-              onLayout={(event) => {
-                const { x, y, width, height } = event.nativeEvent.layout;
-                imageRefs.current[image.id] = {
-                  left: x,
-                  top: y,
-                  right: x + width,
-                  bottom: y + height,
-                };
+              ref={(ref) => {
+                if (ref) imageRefs.current[image.id] = ref;
+              }}
+              onLayout={() => {
+                setTimeout(() => {
+                  const view = imageRefs.current[image.id];
+                  if (view && view.measureInWindow) {
+                    view.measureInWindow((x, y, width, height) => {
+                      imageRefs.current[image.id] = {
+                        left: x,
+                        top: y,
+                        right: x + width,
+                        bottom: y + height,
+                      };
+                    });
+                  }
+                }, 100); // Затримка 100 мс для гарантії, що компоненти змонтовано
               }}
             >
               <Image source={{ uri: image.uri }} style={styles.image} />
@@ -197,14 +225,27 @@ export const FourtLevel = ({ progress, level, topicName }) => {
                   { transform: pan.getTranslateTransform() },
                 ]}
                 {...createPanResponder(word.id, pan).panHandlers}
-                onLayout={(event) => {
-                  const { x, y, width, height } = event.nativeEvent.layout;
-                  wordRefs.current[word.id] = {
-                    left: x,
-                    top: y,
-                    right: x + width,
-                    bottom: y + height,
-                  };
+                ref={(ref) => {
+                  if (ref) wordRefs.current[word.id] = ref;
+                }}
+                onLayout={() => {
+                  setTimeout(() => {
+                    const view = wordRefs.current[word.id];
+                    if (view && view.measureInWindow) {
+                      view.measureInWindow((x, y, width, height) => {
+                        wordRefs.current[word.id] = {
+                          left: x,
+                          top: y,
+                          right: x + width,
+                          bottom: y + height,
+                        };
+                        console.log(
+                          `Координати для слова ${word.id}:`,
+                          wordRefs.current[word.id]
+                        );
+                      });
+                    }
+                  }, 100);
                 }}
               >
                 <Text style={styles.word}>{word.text}</Text>
