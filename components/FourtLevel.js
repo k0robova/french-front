@@ -11,52 +11,74 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
-export const FourtLevel = ({ progress, level, topicName }) => {
+export const FourthLevel = ({ progress, level, topicName }) => {
   const [images, setImages] = useState([]);
   const [words, setWords] = useState([]);
   const [matches, setMatches] = useState({});
   const [wordStats, setWordStats] = useState([]);
+  const [totalCorrectAnswers, setTotalCorrectAnswers] = useState(0);
+  const isDarkTheme = useSelector((state) => state.auth.theme);
   const panRefs = useRef({});
   const imageRefs = useRef({});
   const wordRefs = useRef({});
   const navigation = useNavigation();
 
+  const [lastWords, setLastWords] = useState([]); // Для збереження використаних слів
+  const [iteration, setIteration] = useState(0); // Лічильник ітерацій
+
   useEffect(() => {
     if (!progress || progress.length === 0) return;
-    const filteredProgress = progress.filter(
-      (item) => !item.completed.includes(2)
-    );
-    const limitedProgress = filteredProgress.slice(0, 4);
-    setWordStats(limitedProgress);
 
-    const shuffledImages = limitedProgress
+    // Вибір слів, уникаючи повторення з попередньої ітерації
+    const availableWords = progress.filter(
+      (item) => !lastWords.includes(item.world)
+    );
+
+    // Якщо доступних слів менше 4, дозволяємо повернутись до використаних
+    const selectedWords =
+      availableWords.length >= 4 ? availableWords : progress;
+
+    const shuffledSelection = selectedWords
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 4);
+
+    setLastWords(shuffledSelection.map((item) => item.world)); // Оновлюємо останні слова
+
+    // Підготовка картинок та слів
+    const shuffledImages = shuffledSelection
       .map((item) => ({ id: item.world, uri: item.image }))
       .sort(() => Math.random() - 0.5);
 
-    const shuffledWords = limitedProgress
+    const shuffledWords = shuffledSelection
       .map((item) => ({ id: item.world, text: item.world }))
       .sort(() => Math.random() - 0.5);
 
     setImages(shuffledImages);
     setWords(shuffledWords);
 
+    // Ініціалізація стану відповідностей
     const initialMatches = {};
     shuffledWords.forEach((word) => {
       initialMatches[word.id] = null;
     });
     setMatches(initialMatches);
 
-    // Ініціалізуємо координати для анімацій і позицій
+    // Ініціалізація координат
     shuffledWords.forEach((word) => {
       panRefs.current[word.id] = new Animated.ValueXY();
-      wordRefs.current[word.id] = { left: 0, top: 0, right: 0, bottom: 0 }; // Ініціалізація
+      wordRefs.current[word.id] = { left: 0, top: 0, right: 0, bottom: 0 };
     });
 
     shuffledImages.forEach((image) => {
       imageRefs.current[image.id] = null;
     });
-  }, [progress]);
+  }, [iteration, progress]);
+
+  const handleNextIteration = () => {
+    setIteration((prev) => prev + 1);
+  };
 
   const createPanResponder = (wordId, pan) => {
     return PanResponder.create({
@@ -116,28 +138,12 @@ export const FourtLevel = ({ progress, level, topicName }) => {
 
       return newWords; // Повертаємо оновлений масив
     });
-  };
 
-  const markCurrentWordsAsCompleted = async () => {
-    try {
-      const updatedProgress = progress.map((word) => {
-        if (wordStats.some((stat) => stat._id === word._id)) {
-          return {
-            ...word,
-            completed: word.completed.includes(level)
-              ? word.completed
-              : [...word.completed, level],
-          };
-        }
-        return word;
-      });
-
-      await AsyncStorage.setItem(
-        `progress_${topicName}`,
-        JSON.stringify(updatedProgress)
-      );
-    } catch (error) {
-      console.error("Помилка оновлення прогресу:", error);
+    const isCorrect = words.every(
+      (word, index) => word.id === images[index].id
+    );
+    if (isCorrect) {
+      checkMatches();
     }
   };
 
@@ -165,19 +171,48 @@ export const FourtLevel = ({ progress, level, topicName }) => {
         (word, index) => word.id === images[index].id
       );
       if (isCorrect) {
-        await markCurrentWordsAsCompleted();
-        Alert.alert("Все правильно!");
-        navigation.navigate("Train", { topicName });
+        const updatedTotalCorrectAnswers = totalCorrectAnswers + 1;
+        setTotalCorrectAnswers(updatedTotalCorrectAnswers);
+        if (updatedTotalCorrectAnswers === 15) {
+          // await dispatch(updaterProgressUserThunk());
+          alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
+          navigation.navigate("Train", { topicName });
+        }
+
+        handleNextIteration();
         return;
       }
       Alert.alert("Спробуйте ще раз.");
     } catch (error) {
-      console.log(error.message);
+      console.error("Помилка перевірки:", error.message);
     }
   };
 
+  const renderProgress = () => (
+    <View style={{ flexDirection: "row", justifyContent: "center" }}>
+      {[...Array(15)].map((_, i) => (
+        <View
+          key={i}
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            backgroundColor:
+              i < totalCorrectAnswers
+                ? isDarkTheme
+                  ? "white"
+                  : "#67104c"
+                : "#A9A9A9",
+            margin: 3,
+          }}
+        />
+      ))}
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
+      {renderProgress()}
       <Text style={styles.title}>Відповідність слів до картинок</Text>
       <View style={styles.gameContainer}>
         {/* Картинки */}
@@ -202,7 +237,7 @@ export const FourtLevel = ({ progress, level, topicName }) => {
                       };
                     });
                   }
-                }, 100); // Затримка 100 мс для гарантії, що компоненти змонтовано
+                }, 100);
               }}
             >
               <Image source={{ uri: image.uri }} style={styles.image} />
@@ -227,25 +262,6 @@ export const FourtLevel = ({ progress, level, topicName }) => {
                 {...createPanResponder(word.id, pan).panHandlers}
                 ref={(ref) => {
                   if (ref) wordRefs.current[word.id] = ref;
-                }}
-                onLayout={() => {
-                  setTimeout(() => {
-                    const view = wordRefs.current[word.id];
-                    if (view && view.measureInWindow) {
-                      view.measureInWindow((x, y, width, height) => {
-                        wordRefs.current[word.id] = {
-                          left: x,
-                          top: y,
-                          right: x + width,
-                          bottom: y + height,
-                        };
-                        console.log(
-                          `Координати для слова ${word.id}:`,
-                          wordRefs.current[word.id]
-                        );
-                      });
-                    }
-                  }, 100);
                 }}
               >
                 <Text style={styles.word}>{word.text}</Text>
