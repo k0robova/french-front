@@ -1,10 +1,11 @@
 import React from "react";
 import { FirstLevel } from "./FirstLevel";
 import { useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Text } from "react-native";
 import { SecondLevel } from "./SecondLevel";
 import { FourthLevel } from "./FourtLevel";
 import { ThirdLevel } from "./ThirdLevel";
+import { FifthLevel } from "./FifthLevel";
 
 export const TrainingLevel = () => {
   const route = useRoute();
@@ -35,6 +36,10 @@ export const TrainingLevel = () => {
             progress={progress}
             topicName={topicName}
           />
+        );
+      case 5:
+        return (
+          <FifthLevel level={level} progress={progress} topicName={topicName} />
         );
       // Додайте інші рівні за потреби
       default:
