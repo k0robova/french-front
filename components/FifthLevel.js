@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   Alert,
+  Pressable,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { defaultStyles } from "./defaultStyles";
@@ -40,83 +41,30 @@ export const FifthLevel = ({ progress, level, topicName }) => {
     initializeWordStats();
   }, [progress]);
 
-  // useEffect(() => {
-  //   if (wordStats.length > 0 && iteration < wordStats.length) {
-  //     const currentWord = wordStats[iteration];
-  //     setWord(currentWord.word.world);
-  //     setImageUrl(currentWord.word.image);
-  //     generateWordWithBlanks(currentWord.word.world);
-
-  //     // Ініціалізуємо userInput тільки для пропусків
-  //     setUserInput(
-  //       new Array(currentWord.word.world.length)
-  //         .fill("")
-  //         .map((_, idx) =>
-  //           wordWithBlanks[idx] === "_" ? "" : wordWithBlanks[idx]
-  //         )
-  //     );
-  //   }
-  // }, [iteration, wordStats]);
-
   useEffect(() => {
     if (wordStats.length > 0 && iteration < wordStats.length) {
       const currentWord = wordStats[iteration];
       setWord(currentWord.word.world);
       setImageUrl(currentWord.word.image);
 
-      // Генеруємо слово з пропусками і зберігаємо його в змінну
-      const blanks = generateWordWithBlanks(currentWord.word.world);
+      // Викликаємо функцію і отримуємо пропуски та правильні літери
+      const { wordWithBlanks, correctLetters } = generateWordWithBlanks(
+        currentWord.word.world
+      );
 
-      // Ініціалізуємо userInput тільки для пропусків
-      setUserInput(blanks.map((char) => (char === "_" ? "" : char)));
+      // Оновлюємо стани
+      setWordWithBlanks(wordWithBlanks);
+      setCorrectLetters(correctLetters);
 
-      setWordWithBlanks(blanks); // Оновлюємо стан wordWithBlanks
+      // Ініціалізуємо userInput для введення користувачем
+      setUserInput(wordWithBlanks.map((char) => (char === "_" ? "" : char)));
     }
   }, [iteration, wordStats]);
 
   // Функція генерації пропусків
-  // const generateWordWithBlanks = (word) => {
-  //   const lowerCaseWord = word.toLowerCase();
-
-  //   const wordArray = lowerCaseWord.split("");
-  //   const wordLength = wordArray.length;
-
-  //   let numBlanks = 0;
-  //   if (wordLength <= 3) {
-  //     numBlanks = 1;
-  //   } else if (wordLength >= 4 && wordLength <= 6) {
-  //     numBlanks = 2;
-  //   } else if (wordLength >= 7) {
-  //     numBlanks = 3;
-  //   }
-
-  //   const indices = [];
-  //   while (indices.length < numBlanks) {
-  //     const randomIndex = Math.floor(Math.random() * wordArray.length);
-  //     if (!indices.includes(randomIndex)) {
-  //       indices.push(randomIndex);
-  //     }
-  //   }
-
-  //   const wordWithBlanks = wordArray.map((char, index) => {
-  //     if (indices.includes(index)) {
-  //       return "_";
-  //     } else {
-  //       return char;
-  //     }
-  //   });
-
-  //   // якщо тестити return wordWithBlanks.join("");
-
-  //   // Повертаємо об'єкт з новим словом і правильними буквами
-  //   const correctLetters = indices.map((index) => wordArray[index]);
-
-  //   setWordWithBlanks(wordWithBlanks);
-  //   setCorrectLetters(correctLetters);
-  // };
   const generateWordWithBlanks = (word) => {
     const wordArray = word.split("").map((char) => char.toLowerCase());
-    const wordLength = wordArray.length;
+    const wordLength = wordArray.filter((char) => char !== " ").length; // Ігноруємо пробіли
 
     let numBlanks = 0;
     if (wordLength <= 3) {
@@ -130,58 +78,68 @@ export const FifthLevel = ({ progress, level, topicName }) => {
     const indices = [];
     while (indices.length < numBlanks) {
       const randomIndex = Math.floor(Math.random() * wordArray.length);
-      if (!indices.includes(randomIndex)) {
+      if (!indices.includes(randomIndex) && wordArray[randomIndex] !== " ") {
         indices.push(randomIndex);
       }
     }
 
-    return wordArray.map((char, index) =>
+    // Генеруємо слово з пропусками
+    const wordWithBlanks = wordArray.map((char, index) =>
       indices.includes(index) ? "_" : char
     );
+
+    // Зберігаємо правильні літери в тому ж порядку, як вони з'являються
+    const correctLetters = indices.map((index) => wordArray[index]);
+
+    // Повертаємо об'єкти для оновлення стану
+    return { wordWithBlanks, correctLetters };
   };
 
   // Обробка введених букв
   const handleInputChange = (index, value) => {
-    // Перевірка, щоб введено лише один символ і це літера
-    if (value && /^[a-zA-Z]$/.test(value)) {
-      const newUserInput = [...userInput];
-      console.log("====================================");
-      console.log(userInput, "!!!");
-      console.log("====================================");
-      newUserInput[index] = value.toLowerCase(); // Приводимо до нижнього регістру
-      setUserInput(newUserInput);
+    if (value && /^[a-zA-Z\u00C0-\u017F]$/.test(value)) {
+      setUserInput((prevUserInput) => {
+        const newUserInput = [...prevUserInput];
+        if (wordWithBlanks[index] !== " ") {
+          // Ігноруємо пробіли
+          newUserInput[index] = value.toLowerCase();
+        }
+        return newUserInput;
+      });
     } else if (value === "") {
-      // Якщо введено порожнє значення, дозволяємо видаляти символ
-      const newUserInput = [...userInput];
-      newUserInput[index] = "";
-      setUserInput(newUserInput);
+      setUserInput((prevUserInput) => {
+        const newUserInput = [...prevUserInput];
+        newUserInput[index] = "";
+        return newUserInput;
+      });
     }
   };
 
   const checkAnswer = async () => {
-    console.log("====================================");
-    console.log(userInput);
-    console.log("====================================");
-    // Перевірка довжини введених і правильних літер
-    if (userInput.length !== correctLetters.length) {
+    const filteredUserInput = userInput
+      .filter((_, index) => wordWithBlanks[index] === "_") // Беремо лише пропуски
+      .filter((char) => char !== " "); // Ігноруємо пробіли
+
+    console.log("Filtered User Input:", filteredUserInput);
+    console.log("Correct Letters:", correctLetters);
+
+    if (filteredUserInput.length !== correctLetters.length) {
       alert("Кількість введених літер не співпадає з кількістю пропусків.");
       return;
     }
 
-    // Перевірка на порожні значення
-    if (userInput.some((input) => !input)) {
+    if (filteredUserInput.some((input) => !input)) {
       alert("Всі поля повинні бути заповнені!");
       return;
     }
 
-    // Перевірка, чи правильні введені букви
-    let isCorrect = true;
-    for (let i = 0; i < correctLetters.length; i++) {
-      if (userInput[i] !== correctLetters[i]) {
-        isCorrect = false;
-        break;
-      }
-    }
+    const sortedUserInput = [...filteredUserInput].sort();
+    const sortedCorrectLetters = [...correctLetters].sort();
+
+    const isCorrect = sortedUserInput.every(
+      (char, index) => char === sortedCorrectLetters[index]
+    );
+
     if (isCorrect) {
       setTotalCorrectAnswers((prev) => {
         const updatedTotalCorrectAnswers = prev + 1;
@@ -249,7 +207,7 @@ export const FifthLevel = ({ progress, level, topicName }) => {
       )} */}
 
       {/* Виводимо поля для введення літер */}
-      {wordWithBlanks.map((char, index) =>
+      {/* {wordWithBlanks.map((char, index) =>
         char === "_" ? (
           <TextInput
             key={`${index}-input`} // Унікальний ключ для кожного пропуску
@@ -272,14 +230,80 @@ export const FifthLevel = ({ progress, level, topicName }) => {
             {char}
           </Text>
         )
-      )}
+      )} */}
 
-      <Text
+      <View
+        style={{
+          flexDirection: "row", // Розташування елементів у рядок
+          justifyContent: "center", // Центруємо по горизонталі
+          alignItems: "center", // Центруємо по вертикалі
+          flexWrap: "wrap", // Дозволяємо перенесення на новий рядок, якщо не вистачає місця
+        }}
+      >
+        {wordWithBlanks.map((char, index) =>
+          char === "_" ? (
+            <TextInput
+              key={`${index}-input`}
+              style={{
+                fontSize: 24,
+                textAlign: "center",
+                marginHorizontal: 5,
+                marginVertical: 10,
+                padding: 5,
+                backgroundColor: "red",
+                width: 40,
+                height: 40,
+                borderRadius: 5,
+              }}
+              maxLength={1}
+              value={userInput[index] || ""}
+              onChangeText={(value) => handleInputChange(index, value)}
+              keyboardType="default"
+            />
+          ) : (
+            <Text
+              key={`${index}-text`}
+              style={{
+                fontSize: 24,
+                textAlign: "center",
+                marginHorizontal: char === " " ? 10 : 5, // Більший відступ для пробілів
+                marginVertical: 10,
+                padding: 5,
+                width: char === " " ? 20 : 40, // Менша ширина для пробілів
+                height: 40,
+                lineHeight: 40,
+                borderRadius: 5,
+                backgroundColor: char === " " ? "transparent" : "lightgray",
+              }}
+            >
+              {char}
+            </Text>
+          )
+        )}
+      </View>
+
+      {/* <Text
         onPress={checkAnswer}
         style={{ fontSize: 18, color: "blue", marginTop: 20 }}
       >
         Перевірити
-      </Text>
+      </Text> */}
+      <Pressable
+        style={[
+          defaultStyles.button,
+          { backgroundColor: isDarkTheme ? "white" : "#67104c" },
+        ]}
+        onPress={checkAnswer}
+      >
+        <Text
+          style={[
+            defaultStyles.btnText,
+            { color: isDarkTheme ? "#67104c" : "white" },
+          ]}
+        >
+          Перевірити
+        </Text>
+      </Pressable>
     </SafeAreaView>
   );
 };
