@@ -9,9 +9,10 @@ import {
   Alert,
   Pressable,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { defaultStyles } from "./defaultStyles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updaterProgressUserThunk } from "../store/auth/authThunks";
 
 export const FifthLevel = ({ progress, level, topicName }) => {
   const [word, setWord] = useState("");
@@ -32,11 +33,19 @@ export const FifthLevel = ({ progress, level, topicName }) => {
       (word) => !word.completed.includes(level)
     );
     if (unfinishedWords.length === 0) return;
-    setWordStats(
-      unfinishedWords.slice(0, 5).map((word) => ({ word, correctCount: 0 }))
-    );
-  };
 
+    // Беремо перші 5 слів
+    const selectedWords = unfinishedWords.slice(0, 5);
+
+    // Повторюємо набір із 5 слів тричі
+    const repeatedWords = [];
+    for (let i = 0; i < 3; i++) {
+      repeatedWords.push(...selectedWords);
+    }
+
+    // Створюємо масив зі станом для кожного слова
+    setWordStats(repeatedWords.map((word) => ({ word, correctCount: 0 })));
+  };
   useEffect(() => {
     initializeWordStats();
   }, [progress]);
@@ -97,7 +106,8 @@ export const FifthLevel = ({ progress, level, topicName }) => {
 
   // Обробка введених букв
   const handleInputChange = (index, value) => {
-    if (value && /^[a-zA-Z\u00C0-\u017F]$/.test(value)) {
+    // Дозволяємо лише латинські літери, діакритичні символи та апостроф
+    if (value && /^[a-zA-Z\u00C0-\u017F']$/.test(value)) {
       setUserInput((prevUserInput) => {
         const newUserInput = [...prevUserInput];
         if (wordWithBlanks[index] !== " ") {
@@ -112,6 +122,29 @@ export const FifthLevel = ({ progress, level, topicName }) => {
         newUserInput[index] = "";
         return newUserInput;
       });
+    }
+  };
+
+  const markCurrentWordsAsCompleted = async () => {
+    try {
+      const updatedProgress = progress.map((word) => {
+        if (wordStats.some((stat) => stat.word._id === word._id)) {
+          return {
+            ...word,
+            completed: word.completed.includes(level)
+              ? word.completed
+              : [...word.completed, level],
+          };
+        }
+        return word;
+      });
+
+      await AsyncStorage.setItem(
+        `progress_${topicName}`,
+        JSON.stringify(updatedProgress)
+      );
+    } catch (error) {
+      console.error("Помилка оновлення прогресу:", error);
     }
   };
 
@@ -141,14 +174,16 @@ export const FifthLevel = ({ progress, level, topicName }) => {
     );
 
     if (isCorrect) {
-      setTotalCorrectAnswers((prev) => {
-        const updatedTotalCorrectAnswers = prev + 1;
-        if (updatedTotalCorrectAnswers === 15) {
-          alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
-          navigation.navigate("Train", { topicName });
-        }
-        return updatedTotalCorrectAnswers;
-      });
+      const updatedTotalCorrectAnswers = totalCorrectAnswers + 1;
+      setTotalCorrectAnswers(updatedTotalCorrectAnswers);
+
+      if (updatedTotalCorrectAnswers === 15) {
+        await markCurrentWordsAsCompleted();
+        await dispatch(updaterProgressUserThunk());
+        alert("Вітаю! Ви виконали всі завдання. Ви отримуєте 1 круасан");
+        navigation.navigate("Train", { topicName });
+        return;
+      }
       handleNextIteration();
     } else {
       Alert.alert("Неправильно", "Спробуйте ще раз.");
