@@ -6,6 +6,8 @@ import { SecondLevel } from "./SecondLevel";
 import { FourthLevel } from "./FourtLevel";
 import { ThirdLevel } from "./ThirdLevel";
 import { FifthLevel } from "./FifthLevel";
+import { SixthLevel } from "./SixthLevel";
+import { SeventhLevel } from "./SeventhLevel";
 
 export const TrainingLevel = () => {
   const route = useRoute();
@@ -40,6 +42,18 @@ export const TrainingLevel = () => {
       case 5:
         return (
           <FifthLevel level={level} progress={progress} topicName={topicName} />
+        );
+      case 6:
+        return (
+          <SixthLevel level={level} progress={progress} topicName={topicName} />
+        );
+      case 7:
+        return (
+          <SeventhLevel
+            level={level}
+            progress={progress}
+            topicName={topicName}
+          />
         );
       // Додайте інші рівні за потреби
       default:
