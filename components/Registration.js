@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CheckBox } from "react-native-btr";
@@ -29,8 +28,9 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import "dayjs/locale/uk"; // імпорт української локалі
 import "dayjs/locale/en"; // англійська локаль
-import { setTheme } from "../store/auth/authSlice";
 import { defaultStyles } from "./defaultStyles";
+// import * as SecureStore from "expo-secure-store";
+// import { setTheme } from "../store/auth/authSlice";
 
 dayjs.extend(localizedFormat);
 dayjs.locale("en"); // встановлення локалі за замовчуванням
@@ -191,20 +191,20 @@ export const Registration = () => {
   //   console.log("Current locale:", dayjs.locale());
   // }, [i18n.language]);
 
-  useEffect(() => {
-    const loadTheme = async () => {
-      try {
-        const storedTheme = await SecureStore.getItemAsync("theme");
-        if (storedTheme !== null) {
-          const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
-          dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
-        }
-      } catch (error) {
-        console.error("Failed to load theme:", error);
-      }
-    };
-    loadTheme();
-  });
+  // useEffect(() => {
+  //   const loadTheme = async () => {
+  //     try {
+  //       const storedTheme = await SecureStore.getItemAsync("theme");
+  //       if (storedTheme !== null) {
+  //         const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
+  //         dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to load theme:", error);
+  //     }
+  //   };
+  //   loadTheme();
+  // });
 
   return (
     <TouchableOpacity

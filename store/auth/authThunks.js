@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import * as AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getProfile,
   logIn,
@@ -141,20 +142,35 @@ export const restorePasswordThunk = createAsyncThunk(
   }
 );
 
-export const loadThemeFromSecureStore = createAsyncThunk(
+export const loadThemeFromAsyncStorage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
-      const storedTheme = await SecureStore.getItemAsync("theme");
+      const storedTheme = await AsyncStorage.getItem("theme");
       if (storedTheme) {
-        return JSON.parse(storedTheme); // Повертаємо тему з SecureStore
+        return JSON.parse(storedTheme); // Return the theme from AsyncStorage
       } else {
-        return "light"; // Якщо теми немає, повертаємо стандартну (наприклад, 'light')
+        return "light"; // If no theme is found, return the default theme (e.g., 'light')
       }
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message); // Reject the thunk with the error message
     }
   }
 );
+
+// export const loadThemeFromSecureStore = createAsyncThunk(
+//   async (_, thunkAPI) => {
+//     try {
+//       const storedTheme = await SecureStore.getItemAsync("theme");
+//       if (storedTheme) {
+//         return JSON.parse(storedTheme); // Повертаємо тему з SecureStore
+//       } else {
+//         return "light"; // Якщо теми немає, повертаємо стандартну (наприклад, 'light')
+//       }
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.message);
+//     }
+//   }
+// );
 
 export const updaterProgressUserThunk = createAsyncThunk(
   "user/updateProgress",

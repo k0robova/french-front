@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,7 +16,8 @@ import {
   Image,
 } from "react-native";
 import { loginThunk } from "../store/auth/authThunks";
-import { setTheme } from "../store/auth/authSlice";
+// import * as SecureStore from "expo-secure-store";
+// import { setTheme } from "../store/auth/authSlice";
 import { defaultStyles } from "./defaultStyles";
 
 export const Login = () => {
@@ -74,33 +74,20 @@ export const Login = () => {
     }
   };
 
-  const toggleTheme = async () => {
-    const newTheme = !isDarkTheme; // Інвертуємо булеве значення теми
-
-    try {
-      // Зберігаємо нову тему як рядок (булеве значення) в SecureStore
-      await SecureStore.setItemAsync("theme", JSON.stringify(newTheme));
-      // Оновлюємо тему в Redux-стані
-      dispatch(setTheme(newTheme));
-    } catch (error) {
-      console.error("Failed to update theme:", error);
-    }
-  };
-
-  useEffect(() => {
-    const loadTheme = async () => {
-      try {
-        const storedTheme = await SecureStore.getItemAsync("theme");
-        if (storedTheme !== null) {
-          const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
-          dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
-        }
-      } catch (error) {
-        console.error("Failed to load theme:", error);
-      }
-    };
-    loadTheme();
-  });
+  // useEffect(() => {
+  //   const loadTheme = async () => {
+  //     try {
+  //       const storedTheme = await SecureStore.getItemAsync("theme");
+  //       if (storedTheme !== null) {
+  //         const parsedTheme = JSON.parse(storedTheme); // Конвертуємо з рядка в булеве значення
+  //         dispatch(setTheme(parsedTheme)); // Оновлюємо тему у Redux-стані
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to load theme:", error);
+  //     }
+  //   };
+  //   loadTheme();
+  // });
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);

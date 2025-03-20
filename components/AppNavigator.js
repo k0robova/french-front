@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -73,8 +73,8 @@ export const AppNavigator = () => {
     const newTheme = !isDarkTheme; // Інвертуємо булеве значення теми
 
     try {
-      // Зберігаємо нову тему як рядок (булеве значення) в SecureStore
-      await SecureStore.setItemAsync("theme", JSON.stringify(newTheme));
+      // Зберігаємо нову тему як рядок (булеве значення) в AsyncStorage
+      await AsyncStorage.setItem("theme", JSON.stringify(newTheme)); // Replaced SecureStore with AsyncStorage
       // Оновлюємо тему в Redux-стані
       dispatch(setTheme(newTheme));
     } catch (error) {
